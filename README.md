@@ -1,16 +1,16 @@
-## API
+# API Documentation
 
-### Register
+## Register
 
-#### User Register
+### User Register
 
-- URL : /register
-- Method : POST
-- Request Body:
-  - name as string
-  - email as string
-  - password as string
-- Response :
+- **URL** : `/register`
+- **Method** : `POST`
+- **Request Body**:
+  - `name` as `string`
+  - `email` as `string`
+  - `password` as `string`
+- **Response** :
 
 ```json
 {
@@ -21,12 +21,12 @@
 
 #### User Login
 
-- URL : /auth/login
-- Method : POST
+- **URL** : `/auth/login`
+- **Method** : `POST`
 - Request Body:
-  - email as string
-  - password as string
-- Response:
+  - `email` as `string`
+  - `password` as `string`
+- **Response**:
 
 ```json
 {
@@ -41,11 +41,11 @@
 }
 ```
 
-#### User Gmmail Login
+#### User Gmail Login
 
-- URL : /auth/google
-- Method : GET
-- Response:
+- **URL** : `/auth/google`
+- **Method** : `GET`
+- **Response**:
 
 ```json
 {
