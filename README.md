@@ -23,7 +23,7 @@
 
 - **URL** : `/auth/login`
 - **Method** : `POST`
-- Request Body:
+- **Request** Body:
   - `email` as `string`
   - `password` as `string`
 - **Response**:
