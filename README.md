@@ -19,7 +19,7 @@
 }
 ```
 
-#### User Login
+### User Login
 
 - **URL** : `/auth/login`
 - **Method** : `POST`
@@ -41,7 +41,7 @@
 }
 ```
 
-#### User Gmail Login
+### User Gmail Login
 
 - **URL** : `/auth/google`
 - **Method** : `GET`
@@ -61,7 +61,7 @@
 }
 ```
 
-## Create Product
+### add Product
 
 - **URL** : `/products`
 - **Method** : `POST`
@@ -85,7 +85,7 @@
       "id": "abc123",
       "name": "Lipstick",
       "description": "A long-lasting lipstick",
-      "price": 19.99,
+      "price": 10000,
       "category": "Makeup",
       "imageUrl": "https://storage.googleapis.com/your-bucket/makeup_products/1234567890_lipstick.jpg"
     }
