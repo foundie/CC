@@ -1,42 +1,92 @@
-```
-realtime_chat
-├─ .eslintrc.js
-├─ .gitignore
-├─ .prettierrc
-├─ nest-cli.json
-├─ package-lock.json
-├─ package.json
-├─ README.md
-├─ serviceAccountKey.json
-├─ src
-│  ├─ app.controller.spec.ts
-│  ├─ app.controller.ts
-│  ├─ app.module.ts
-│  ├─ app.service.ts
-│  ├─ auth
-│  │  ├─ auth.controller.ts
-│  │  ├─ auth.module.ts
-│  │  ├─ auth.secret.ts
-│  │  ├─ auth.service.ts
-│  │  └─ auth.utility.ts
-│  ├─ chat
-│  │  ├─ chat.controller.ts
-│  │  ├─ chat.gateway.ts
-│  │  ├─ chat.module.ts
-│  │  └─ chat.service.ts
-│  ├─ guard
-│  │  ├─ jwt.authGuard.ts
-│  │  └─ jwt.strategy.ts
-│  ├─ main.ts
-│  └─ register
-│     ├─ register.controller.ts
-│     ├─ register.module.ts
-│     └─ register.service.ts
-├─ test
-│  ├─ app.e2e-spec.ts
-│  └─ jest-e2e.json
-├─ tsconfig.build.json
-└─ tsconfig.json
+## API
 
+### Register
+
+#### User Register
+
+- URL : /register
+- Method : POST
+- Request Body:
+  - name as string
+  - email as string
+  - password as string
+- Response :
+
+```json
+{
+  "status": "ok",
+  "message": "register successfuly"
+}
 ```
-# CC
+
+#### User Login
+
+- URL : /auth/login
+- Method : POST
+- Request Body:
+  - email as string
+  - password as string
+- Response:
+
+```json
+{
+  "status": "ok",
+  "message": "logged in successfully",
+  "user": {
+    "name": "name",
+    "email": "email@email.com",
+    "role": "role",
+  },
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiam9obiIsImVtYWlsIjoiam9obmRvZUBnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsImN1c3RvbWVyX2lkIjozLCJpYXQiOjE3MDA2MzQxNDR9.sgoDeu8lNRm_SfoXbb7MkpMEn4ghG0g4Le0GFyN2bn8"
+}
+```
+
+#### User Gmmail Login
+
+- URL : /auth/google
+- Method : GET
+- Response:
+
+```json
+{
+  "status": "ok",
+  "message": "logged in successfully",
+  {
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MTU5NDAzMzYsImV4cCI6MTcxNjE5OTUzNn0.d9nLQ_-hSiclGgxyNOjA8Pdj2s-kaufUbJkWmG6wtQE",
+    "user": {
+        "email": "sanseath2@gmail.com",
+        "picture": "https://lh3.googleusercontent.com/a/ACg8ocKlEsb0QnkCTzeH3I-cUkpefThUTPeL8UTr6OxgIFXMmx3lbw=s96-c"
+    }
+}
+}
+```
+
+## Create Product
+
+- **URL** : `/products`
+- **Method** : `POST`
+- **Request Header**:
+  - `Content-Type` : `multipart/form-data`
+- **Request Body** :
+  - `name` as `string` - Nama produk
+  - `description` as `string` - Deskripsi produk
+  - `price` as `number` - Harga produk
+  - `category` as `string` - Kategori produk
+  - `imageFile` as `file` - File gambar produk
+
+- **Response** :
+
+  ```json
+  {
+    "status": "success",
+    "message": "Product successfully created",
+    "documentName": "abc123",
+    "data": {
+      "id": "abc123",
+      "name": "Lipstick",
+      "description": "A long-lasting lipstick",
+      "price": 19.99,
+      "category": "Makeup",
+      "imageUrl": "https://storage.googleapis.com/your-bucket/makeup_products/1234567890_lipstick.jpg"
+    }
+  }
