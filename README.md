@@ -1,5 +1,5 @@
 ```
-realtime_chat
+foundie
 ├─ .eslintrc.js
 ├─ .gitignore
 ├─ .prettierrc
@@ -7,7 +7,6 @@ realtime_chat
 ├─ package-lock.json
 ├─ package.json
 ├─ README.md
-├─ serviceAccountKey.json
 ├─ src
 │  ├─ app.controller.spec.ts
 │  ├─ app.controller.ts
@@ -28,15 +27,21 @@ realtime_chat
 │  │  ├─ jwt.authGuard.ts
 │  │  └─ jwt.strategy.ts
 │  ├─ main.ts
-│  └─ register
-│     ├─ register.controller.ts
-│     ├─ register.module.ts
-│     └─ register.service.ts
+│  ├─ product
+│  │  ├─ product.controller.ts
+│  │  ├─ product.module.ts
+│  │  └─ product.service.ts
+│  ├─ register
+│  │  ├─ register.controller.ts
+│  │  ├─ register.module.ts
+│  │  └─ register.service.ts
+│  └─ type
+│     └─ product.type.ts
 ├─ test
 │  ├─ app.e2e-spec.ts
 │  └─ jest-e2e.json
 ├─ tsconfig.build.json
-└─ tsconfig.json
+├─ tsconfig.json
+└─ uploads
 
 ```
-# CC
