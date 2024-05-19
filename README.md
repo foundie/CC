@@ -73,7 +73,7 @@
   - `description` as `string` - Deskripsi produk
   - `price` as `number` - Harga produk
   - `category` as `string` - Kategori produk
-  - `imageFile` as `file` - File gambar produk
+  - `image` as `file` - File gambar produk
 
 - **Response** :
 
