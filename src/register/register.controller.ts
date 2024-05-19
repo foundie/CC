@@ -1,4 +1,11 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  UploadedFile,
+} from '@nestjs/common';
 import { RegisterService } from './register.service';
 
 @Controller('register')
@@ -8,14 +15,18 @@ export class RegisterController {
   @Post()
   @HttpCode(HttpStatus.OK)
   async register(
+    @Body('nama') name: string,
     @Body('email') email: string,
     @Body('password') password: string,
-    @Body('role') role: string,
+    @Body('usia') age: number,
+    @UploadedFile() profileImage: Express.Multer.File,
   ) {
-    await this.registerService.register(email, password, role);
-    return {
-      status: 'ok',
-      message: 'register successfuly',
-    };
+    return await this.registerService.register(
+      name,
+      email,
+      password,
+      age,
+      profileImage,
+    );
   }
 }

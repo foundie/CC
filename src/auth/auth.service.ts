@@ -8,6 +8,7 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
   private client: OAuth2Client;
+  private failedLoginAttempts = 0;
 
   constructor(private jwtService: JwtService) {
     this.client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -50,36 +51,51 @@ export class AuthService {
   }
 
   async loginWithEmail(email: string, password: string) {
-    // Dapatkan referensi ke Firestore
     const db = admin.firestore();
-
-    // Cari pengguna di Firestore berdasarkan email
     const userDoc = await db.collection('users').doc(email).get();
 
     if (!userDoc.exists) {
-      throw new Error('User does not exist');
+      return {
+        status: 'error',
+        message: 'User does not exist',
+      };
     }
 
     const userRecord = userDoc.data();
-
-    // Verifikasi password dengan bcrypt
     const isPasswordCorrect = await bcrypt.compare(
       password,
       userRecord.password,
     );
 
     if (!isPasswordCorrect) {
-      throw new Error('Invalid email or password');
+      this.failedLoginAttempts++;
+      if (this.failedLoginAttempts >= 5) {
+        return {
+          status: 'error',
+          message:
+            'You have reached the maximum number of login attempts. Please try again later.',
+        };
+      }
+      return {
+        status: 'error',
+        message: 'Invalid email or password',
+      };
     }
 
-    // Jika email dan password benar, buat token JWT
+    // Jika login berhasil, reset hitungan percobaan login yang gagal
+    this.failedLoginAttempts = 0;
+
     const payload = { username: userRecord.email, sub: userRecord.uid };
     return {
-      access_token: this.jwtService.sign(payload),
+      status: 'ok',
+      message: 'logged in successfully',
       user: {
-        id: userRecord.uid,
+        name: userRecord.name,
         email: userRecord.email,
         role: userRecord.role,
+        age: userRecord.age, // tambahkan usia
+        profileImageUrl: userRecord.profileImageUrl, // tambahkan URL gambar profil
+        token: this.jwtService.sign(payload),
       },
     };
   }

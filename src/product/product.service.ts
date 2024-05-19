@@ -15,8 +15,6 @@ export class ProductService {
   ) {
     try {
       const productRef = this.db.collection('products').doc();
-
-      // Upload the image to Firebase Storage
       const bucket = this.storage.bucket();
       const fileName = `makeup_products/${Date.now()}_${imageFile.originalname}`;
       const file = bucket.file(fileName);
@@ -29,7 +27,6 @@ export class ProductService {
       stream.write(imageFile.buffer);
       stream.end();
 
-      // Get the URL of the uploaded image
       let imageUrl;
       await stream.on('finish', async () => {
         const signedUrls = await file.getSignedUrl({
@@ -38,7 +35,6 @@ export class ProductService {
         });
         imageUrl = signedUrls[0];
 
-        // Add the image URL to the product data
         const productData = {
           ...createProductDto,
           imageUrl: imageUrl,

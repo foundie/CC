@@ -29,10 +29,6 @@ export class AuthController {
     @Body('email') email: string,
     @Body('password') password: string,
   ) {
-    const result = await this.authService.loginWithEmail(email, password);
-    return {
-      message: 'Login berhasil',
-      token: result.access_token,
-    };
+    return await this.authService.loginWithEmail(email, password);
   }
 }
