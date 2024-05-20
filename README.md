@@ -179,7 +179,7 @@
   }
 }
 ```
-### Create Comment
+### Add Comment
 
 - **URL** : `/community/comment/:postId`
 - **Method** : `POST`
@@ -206,7 +206,7 @@
 }
 
 ```
-### Create Reply
+### Add Reply
 
 - **URL** : `/community/reply/:commentId`
 - **Method** : `POST`
@@ -232,7 +232,7 @@
   }
 }
 ```
-### Create Like
+### Add Like
 
 - **URL** : `/community/like/:postId`
 - **Method** : `POST`
