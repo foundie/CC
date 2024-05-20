@@ -129,7 +129,7 @@
 ```
 ### Get Post Data
 
-- **URL** : `community/:postId`
+- **URL** : `/community/:postId`
 - **Method** : `GET`
 - **Auth required** : `YES`
 - **Permissions required** : `None`
