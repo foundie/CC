@@ -93,8 +93,8 @@ export class AuthService {
         name: userRecord.name,
         email: userRecord.email,
         role: userRecord.role,
-        age: userRecord.age, // tambahkan usia
-        profileImageUrl: userRecord.profileImageUrl, // tambahkan URL gambar profil
+        age: userRecord.age,
+        profileImageUrl: userRecord.profileImageUrl,
         token: this.jwtService.sign(payload),
       },
     };

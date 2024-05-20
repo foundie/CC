@@ -8,12 +8,14 @@ import { jwtConstants } from './auth/auth.secret';
 import { JwtStrategy } from './guard/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ProductModule } from './product/product.module';
+import { CommunityModule } from './community/community.module';
 
 @Module({
   imports: [
     ChatModule,
     AuthModule,
     RegisterModule,
+    CommunityModule,
     ProductModule,
     JwtModule.register({
       secret: jwtConstants.secret,
