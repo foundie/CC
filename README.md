@@ -67,9 +67,9 @@
 ```
 ## Products
 
-### add Product
+### Add Product
 
-- **URL** : `/products`
+- **URL** : `/products/add`
 - **Method** : `POST`
 - **Request Header**:
   - `Content-Type` : `multipart/form-data`
@@ -96,6 +96,93 @@
       "imageUrl": "https://storage.googleapis.com/your-bucket/makeup_products/1234567890_lipstick.jpg"
     }
   }
-```
 
 ## Community
+
+### Add Post
+
+- **URL** : `/community/post`
+- **Method** : `POST`
+- **Auth required** : YES
+- **Permissions required** : None
+- **Request Header**:
+  - `Content-Type` : `multipart/form-data`
+- **Request Body** :
+  - `title` as `string` - Judul post
+  - `text` as `string` - Teks post
+  - `imageFile` as `file` - File gambar post
+
+- **Response** :
+
+```json
+{
+  "status": "ok",
+  "message": "Post successfully created",
+  "data": {
+    "postId": "id post",
+    "email": "email pengguna",
+    "title": "judul post",
+    "text": "teks post",
+    "imageUrl": "url gambar post",
+    "timestamp": "timestamp server"
+  }
+}
+```
+### Get Post Data
+
+- **URL** : `/:postId`
+- **Method** : `GET`
+- **Auth required** : YES
+- **Permissions required** : None
+- **URL Parameters** :
+  - `postId` as `string` - ID dari post
+
+- **Response** :
+
+<details>
+  <summary>Response</summary>
+```json
+{
+  "status": "ok",
+  "message": "Post data successfully retrieved",
+  "data": {
+    "post": {
+      "postId": "id post",
+      "email": "email pengguna",
+      "title": "judul post",
+      "text": "teks post",
+      "imageUrl": "url gambar post",
+      "timestamp": "timestamp server"
+    },
+    "comments": [
+      {
+        "commentId": "id komentar",
+        "postId": "id post",
+        "email": "email pengguna",
+        "text": "teks komentar",
+        "timestamp": "timestamp server",
+        "replies": [
+          {
+            "replyId": "id balasan",
+            "commentId": "id komentar",
+            "email": "email pengguna",
+            "text": "teks balasan",
+            "timestamp": "timestamp server"
+          },
+          ...
+        ]
+      },
+      ...
+    ],
+    "likes": [
+      {
+        "likeId": "id suka",
+        "postId": "id post",
+        "email": "email pengguna",
+        "timestamp": "timestamp server"
+      },
+      ...
+    ]
+  }
+}
+</details>
