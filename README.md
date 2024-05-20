@@ -3,7 +3,7 @@
 ## Register
 
 ### User Register
-<details>
+
 - **URL** : `/register`
 - **Method** : `POST`
 - **Request Header**:
@@ -22,7 +22,6 @@
   "message": "register successfuly"
 }
 ```
-</details>
 
 ### User Login
 
