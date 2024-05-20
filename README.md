@@ -4,7 +4,6 @@
 
 ### User Register
 <details>
-<summary>How do I dropdown?</summary>
 - **URL** : `/register`
 - **Method** : `POST`
 - **Request Header**:
