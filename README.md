@@ -97,22 +97,20 @@
     }
   }
 
-# Community
-
 ## Community Post
 
 ### Add Post
 
 - **URL** : `/community/post`
 - **Method** : `POST`
-- **Auth required** : YES
-- **Permissions required** : None
+- **Auth required** : `YES`
+- **Permissions required** : `None`
 - **Request Header**:
   - `Content-Type` : `multipart/form-data`
 - **Request Body** :
-  - `title` as `string` - Judul post
-  - `text` as `string` - Teks post
-  - `imageFile` as `file` - File gambar post
+  - `title` as `string` - `Judul post`
+  - `text` as `string` - `Teks post`
+  - `imageFile` as `file` - `File gambar post`
 
 - **Response** :
 
@@ -134,10 +132,10 @@
 
 - **URL** : `community/:postId`
 - **Method** : `GET`
-- **Auth required** : YES
-- **Permissions required** : None
+- **Auth required** : `YES`
+- **Permissions required** : `None`
 - **URL Parameters** :
-  - `postId` as `string` - ID dari post
+  - `postId` as `string` - `ID dari post`
 
 - **Response** :
 ```json
@@ -168,10 +166,8 @@
             "text": "teks balasan",
             "timestamp": "timestamp server"
           },
-          ...
         ]
       },
-      ...
     ],
     "likes": [
       {
@@ -180,7 +176,6 @@
         "email": "email pengguna",
         "timestamp": "timestamp server"
       },
-      ...
     ]
   }
 }
@@ -192,12 +187,12 @@
 
 - **URL** : `/community/comment/:postId`
 - **Method** : `POST`
-- **Auth required** : YES
-- **Permissions required** : None
+- **Auth required** : `YES`
+- **Permissions required** : `None`
 - **URL Parameters** :
-  - `postId` as `string` - ID dari post
+  - `postId` as `string` - `ID dari post`
 - **Request Body** :
-  - `text` as `string` - Teks komentar
+  - `text` as `string` - `Teks komentar`
 
 - **Response** :
 
@@ -221,12 +216,12 @@
 
 - **URL** : `/community/reply/:commentId`
 - **Method** : `POST`
-- **Auth required** : YES
-- **Permissions required** : None
+- **Auth required** : `YES`
+- **Permissions required** : `None`
 - **URL Parameters** :
-  - `commentId` as `string` - ID dari komentar
+  - `commentId` as `string` - `ID dari komentar`
 - **Request Body** :
-  - `text` as `string` - Teks balasan
+  - `text` as `string` - `Teks balasan`
 
 - **Response** :
 
@@ -249,10 +244,10 @@
 
 - **URL** : `/community/like/:postId`
 - **Method** : `POST`
-- **Auth required** : YES
-- **Permissions required** : None
+- **Auth required** : `YES`
+- **Permissions required** : `None`
 - **URL Parameters** :
-  - `postId` as `string` - ID dari post
+  - `postId` as `string` - `ID dari post`
 
 - **Response** :
 
