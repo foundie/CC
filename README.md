@@ -65,6 +65,7 @@
   }
 }
 ```
+## Products
 
 ### add Product
 
@@ -95,3 +96,6 @@
       "imageUrl": "https://storage.googleapis.com/your-bucket/makeup_products/1234567890_lipstick.jpg"
     }
   }
+```
+
+## Community
