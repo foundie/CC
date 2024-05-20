@@ -97,8 +97,7 @@
     }
   }
 
-## Community Post
-
+## Community
 ### Add Post
 
 - **URL** : `/community/post`
@@ -180,9 +179,6 @@
   }
 }
 ```
-
-## Community Comment
-
 ### Create Comment
 
 - **URL** : `/community/comment/:postId`
@@ -210,8 +206,6 @@
 }
 
 ```
-## Community Reply
-
 ### Create Reply
 
 - **URL** : `/community/reply/:commentId`
@@ -238,8 +232,6 @@
   }
 }
 ```
-## Community Like
-
 ### Create Like
 
 - **URL** : `/community/like/:postId`
