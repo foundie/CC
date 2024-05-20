@@ -1,9 +1,9 @@
 # API Documentation
 
 ## Register
-
+<details>
+  <summary>Click me</summary>
 ### User Register
-
 - **URL** : `/register`
 - **Method** : `POST`
 - **Request Header**:
@@ -22,7 +22,7 @@
   "message": "register successfuly"
 }
 ```
-
+</details>
 ### User Login
 
 - **URL** : `/auth/login`
