@@ -1,8 +1,7 @@
 # API Documentation
 
 ## Register
-<details>
-  <summary>Click me</summary>
+
 ### User Register
 - **URL** : `/register`
 - **Method** : `POST`
@@ -22,7 +21,6 @@
   "message": "register successfuly"
 }
 ```
-</details>
 ### User Login
 
 - **URL** : `/auth/login`
