@@ -97,7 +97,9 @@
     }
   }
 
-## Community
+# Community
+
+## Community Post
 
 ### Add Post
 
@@ -130,7 +132,7 @@
 ```
 ### Get Post Data
 
-- **URL** : `/:postId`
+- **URL** : `community/:postId`
 - **Method** : `GET`
 - **Auth required** : YES
 - **Permissions required** : None
@@ -138,9 +140,6 @@
   - `postId` as `string` - ID dari post
 
 - **Response** :
-
-<details>
-  <summary>Response</summary>
 ```json
 {
   "status": "ok",
@@ -185,4 +184,86 @@
     ]
   }
 }
-</details>
+```
+
+## Community Comment
+
+### Create Comment
+
+- **URL** : `/community/comment/:postId`
+- **Method** : `POST`
+- **Auth required** : YES
+- **Permissions required** : None
+- **URL Parameters** :
+  - `postId` as `string` - ID dari post
+- **Request Body** :
+  - `text` as `string` - Teks komentar
+
+- **Response** :
+
+```json
+{
+  "status": "ok",
+  "message": "Comment successfully created",
+  "data": {
+    "commentId": "id komentar",
+    "email": "email pengguna",
+    "postId": "id post",
+    "text": "teks komentar",
+    "timestamp": "timestamp server"
+  }
+}
+
+```
+## Community Reply
+
+### Create Reply
+
+- **URL** : `/community/reply/:commentId`
+- **Method** : `POST`
+- **Auth required** : YES
+- **Permissions required** : None
+- **URL Parameters** :
+  - `commentId` as `string` - ID dari komentar
+- **Request Body** :
+  - `text` as `string` - Teks balasan
+
+- **Response** :
+
+```json
+{
+  "status": "ok",
+  "message": "Reply successfully created",
+  "data": {
+    "replyId": "id balasan",
+    "email": "email pengguna",
+    "commentId": "id komentar",
+    "text": "teks balasan",
+    "timestamp": "timestamp server"
+  }
+}
+```
+## Community Like
+
+### Create Like
+
+- **URL** : `/community/like/:postId`
+- **Method** : `POST`
+- **Auth required** : YES
+- **Permissions required** : None
+- **URL Parameters** :
+  - `postId` as `string` - ID dari post
+
+- **Response** :
+
+```json
+{
+  "status": "ok",
+  "message": "Like successfully created",
+  "likeId": "id suka",
+  "data": {
+    "email": "email pengguna",
+    "postId": "id post",
+    "timestamp": "timestamp server"
+  }
+}
