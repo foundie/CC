@@ -8,11 +8,11 @@
 - **Request Header**:
   - `Content-Type` : `multipart/form-data`
 - **Request Body** :
-  - `nama` as `string` - Nama
-  - `email` as `string` - Email
-  - `password` as `string` - Password
-  - `usia` as `number` - Kategori produk
-  - `image` as `file` - File Foto Profile
+  - `nama` as `string` -` Nama`
+  - `email` as `string` - `Email`
+  - `password` as `string` - `Password`
+  - `usia` as `number` - `Kategori produk`
+  - `image` as `file` - `File Foto Profile`
 - **Response** :
 
 ```json
@@ -74,11 +74,11 @@
 - **Request Header**:
   - `Content-Type` : `multipart/form-data`
 - **Request Body** :
-  - `name` as `string` - Nama produk
-  - `description` as `string` - Deskripsi produk
-  - `price` as `number` - Harga produk
-  - `category` as `string` - Kategori produk
-  - `image` as `file` - File gambar produk
+  - `name` as `string` - `Nama produk`
+  - `description` as `string` - `Deskripsi produk`
+  - `price` as `number` - `Harga produk`
+  - `category` as `string` - `Kategori produk`
+  - `image` as `file` - `File gambar produk`
 
 - **Response** :
 
@@ -135,7 +135,7 @@
 - **Request Header**:
   - `Content-Type` : `application/json`
 - **URL Parameters** :
-  - `postId` as `string` - ID dari postingan yang akan dihapus
+  - `postId` as `string` - `ID dari postingan yang akan dihapus`
 - **Response** :
 
 ```json
