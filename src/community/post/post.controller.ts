@@ -8,6 +8,7 @@ import {
   UploadedFile,
   Get,
   Param,
+  Delete,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -32,5 +33,11 @@ export class PostController {
   @UseGuards(AuthGuard('jwt'))
   async getPostData(@Param('postId') postId: string) {
     return await this.postService.getPostData(postId);
+  }
+
+  @Delete(':postId')
+  @UseGuards(AuthGuard('jwt'))
+  async deletePost(@Request() req, @Param('postId') postId: string) {
+    return await this.postService.deletePost(req.user.username, postId);
   }
 }

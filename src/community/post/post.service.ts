@@ -13,43 +13,67 @@ export class PostService {
     text: string,
     imageFile: Express.Multer.File,
   ) {
+    if (!title) {
+      return {
+        status: 'error',
+        message: 'Title is required',
+      };
+    }
+
+    if (imageFile && !imageFile.mimetype.startsWith('image/')) {
+      return {
+        status: 'error',
+        message: 'Invalid file type. Only images are allowed',
+      };
+    }
+
     const postRef = this.db.collection('posts').doc();
     const bucket = this.storage.bucket();
-    const fileName = `user/${email}/posts/${Date.now()}/${imageFile.originalname}`;
-    const file = bucket.file(fileName);
-    const stream = file.createWriteStream({
-      metadata: {
-        contentType: imageFile.mimetype,
-      },
-    });
-
-    stream.write(imageFile.buffer);
-    stream.end();
-
     let imageUrl;
-    await new Promise<void>((resolve, reject) => {
-      stream.on('finish', async () => {
-        try {
-          const signedUrls = await file.getSignedUrl({
-            action: 'read',
-            expires: '03-09-2491',
-          });
-          imageUrl = signedUrls[0];
-          resolve();
-        } catch (error) {
-          reject(error);
-        }
+
+    if (imageFile) {
+      const fileName = `user/${email}/posts/${Date.now()}/${imageFile.originalname}`;
+      const file = bucket.file(fileName);
+      const stream = file.createWriteStream({
+        metadata: {
+          contentType: imageFile.mimetype,
+        },
       });
 
-      stream.on('error', reject);
-    });
+      stream.write(imageFile.buffer);
+      stream.end();
+
+      try {
+        await new Promise<void>((resolve, reject) => {
+          stream.on('finish', async () => {
+            try {
+              const signedUrls = await file.getSignedUrl({
+                action: 'read',
+                expires: '03-09-2491',
+              });
+              imageUrl = signedUrls[0];
+              resolve();
+            } catch (error) {
+              reject(error);
+            }
+          });
+
+          stream.on('error', reject);
+        });
+      } catch (error) {
+        return {
+          status: 'error',
+          message: 'Failed to upload image',
+        };
+      }
+    }
 
     const postData = {
       postId: postRef.id,
       email,
       title,
       text,
-      imageUrl,
+      imageUrl: imageUrl || '',
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
     };
 
@@ -96,6 +120,64 @@ export class PostService {
         comments: commentsData,
         likes: likesData,
       },
+    };
+  }
+
+  async deletePost(email: string, postId: string) {
+    const postSnapshot = await this.db.collection('posts').doc(postId).get();
+    const postData = postSnapshot.data();
+
+    if (postData.email !== email) {
+      return {
+        status: 'error',
+        message: 'You are not authorized to delete this post',
+      };
+    }
+
+    if (postData.imageUrl) {
+      const urlParts = decodeURIComponent(postData.imageUrl)
+        .split('?')[0]
+        .split('/');
+      const file = urlParts.slice(4).join('/');
+      await this.storage.bucket().file(file).delete();
+    }
+
+    // Hapus komentar dan balasan
+    const commentsQuerySnapshot = await this.db
+      .collection('comments')
+      .where('postId', '==', postId)
+      .get();
+    const batch = this.db.batch();
+    commentsQuerySnapshot.docs.forEach((doc) => {
+      batch.delete(doc.ref);
+      this.db
+        .collection('replies')
+        .where('commentId', '==', doc.id)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            batch.delete(doc.ref);
+          });
+        });
+    });
+
+    // Hapus suka
+    const likesQuerySnapshot = await this.db
+      .collection('likes')
+      .where('postId', '==', postId)
+      .get();
+    likesQuerySnapshot.docs.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    // Hapus post
+    batch.delete(postSnapshot.ref);
+
+    // Jalankan batch
+    await batch.commit();
+    return {
+      status: 'ok',
+      message: 'Post and related data successfully deleted',
     };
   }
 }
