@@ -224,6 +224,24 @@
 }
 
 ```
+### Delete Comment
+
+- **URL** : `/community/comment/:commentId`
+- **Method** : `DELETE`
+- **Auth required** : `YES`
+- **Request Header**:
+  - `Content-Type` : `application/json`
+- **URL Parameters** :
+  - `commentId` as `string` - `ID dari komentar yang akan dihapus`
+- **Response** :
+
+```json
+{
+  "status": "ok",
+  "message": "Comment and related replies successfully deleted"
+}
+```
+
 ### Add Reply
 
 - **URL** : `/community/reply/:commentId`
@@ -250,6 +268,24 @@
   }
 }
 ```
+### Delete Comment
+
+- **URL** : `/community/reply/:replyId`
+- **Method** : `DELETE`
+- **Auth required** : `YES`
+- **Request Header**:
+  - `Content-Type` : `application/json`
+- **URL Parameters** :
+  - `replyId` as `string` - `ID dari reply yang akan dihapus`
+- **Response** :
+
+```json
+{
+  "status": "ok",
+  "message": "Reply successfully deleted"
+}
+```
+
 ### Add Like
 
 - **URL** : `/community/like/:postId`
@@ -272,3 +308,21 @@
     "timestamp": "timestamp server"
   }
 }
+```
+### Delete Like
+
+- **URL** : `/community/like/:likeId`
+- **Method** : `DELETE`
+- **Auth required** : `YES`
+- **Request Header**:
+  - `Content-Type` : `application/json`
+- **URL Parameters** :
+  - `LikeId` as `string` - `ID dari Like yang akan dihapus`
+- **Response** :
+
+```json
+{
+  "status": "ok",
+  "message": "Like successfully deleted"
+}
+```
