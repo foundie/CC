@@ -127,6 +127,24 @@
   }
 }
 ```
+### Delete Post
+
+- **URL** : `/community/:postId`
+- **Method** : `DELETE`
+- **Auth required** : `YES`
+- **Request Header**:
+  - `Content-Type` : `application/json`
+- **URL Parameters** :
+  - `postId` as `string` - ID dari postingan yang akan dihapus
+- **Response** :
+
+```json
+{
+  "status": "ok",
+  "message": "Post and related data successfully deleted"
+}
+```+
+
 ### Get Post Data
 
 - **URL** : `/community/:postId`
