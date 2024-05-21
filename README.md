@@ -143,7 +143,7 @@
   "status": "ok",
   "message": "Post and related data successfully deleted"
 }
-```+
+```
 
 ### Get Post Data
 
