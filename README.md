@@ -268,7 +268,7 @@
   }
 }
 ```
-### Delete Comment
+### Delete reply
 
 - **URL** : `/community/reply/:replyId`
 - **Method** : `DELETE`
