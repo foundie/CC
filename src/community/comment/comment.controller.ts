@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Delete,
   UseGuards,
   Request,
   Body,
@@ -22,5 +23,12 @@ export class CommentController {
   ) {
     const email = req.user.username;
     return await this.commentService.createComment(email, postId, text);
+  }
+
+  @Delete(':commentId')
+  @UseGuards(AuthGuard('jwt'))
+  async deleteComment(@Request() req, @Param('commentId') commentId: string) {
+    const email = req.user.username;
+    return await this.commentService.deleteComment(email, commentId);
   }
 }

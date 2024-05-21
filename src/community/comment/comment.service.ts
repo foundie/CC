@@ -6,6 +6,21 @@ export class CommentService {
   private db = admin.firestore();
 
   async createComment(email: string, postId: string, text: string) {
+    const postSnapshot = await this.db.collection('posts').doc(postId).get();
+    if (!postSnapshot.exists) {
+      return {
+        status: 'error',
+        message: 'Post not found',
+      };
+    }
+
+    if (!text) {
+      return {
+        status: 'error',
+        message: 'Comment text is required',
+      };
+    }
+
     const commentRef = this.db.collection('comments').doc();
     const commentData = {
       commentId: commentRef.id,
@@ -17,7 +32,6 @@ export class CommentService {
 
     await commentRef.set(commentData);
 
-    // Get the document with the filled timestamp
     const doc = await commentRef.get();
     const dataWithTimestamp = doc.data();
 
@@ -27,6 +41,48 @@ export class CommentService {
       data: {
         ...dataWithTimestamp,
       },
+    };
+  }
+
+  async deleteComment(email: string, commentId: string) {
+    const commentSnapshot = await this.db
+      .collection('comments')
+      .doc(commentId)
+      .get();
+    const commentData = commentSnapshot.data();
+
+    if (!commentSnapshot.exists) {
+      return {
+        status: 'error',
+        message: 'Comment not found',
+      };
+    }
+
+    if (commentData.email !== email) {
+      return {
+        status: 'error',
+        message: 'You are not authorized to delete this comment',
+      };
+    }
+
+    // Hapus balasan
+    const repliesQuerySnapshot = await this.db
+      .collection('replies')
+      .where('commentId', '==', commentId)
+      .get();
+    const batch = this.db.batch();
+    repliesQuerySnapshot.docs.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    // Hapus komentar
+    batch.delete(commentSnapshot.ref);
+
+    // Jalankan batch
+    await batch.commit();
+    return {
+      status: 'ok',
+      message: 'Comment and related replies successfully deleted',
     };
   }
 }

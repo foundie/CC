@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Delete,
   UseGuards,
   Request,
   Body,
@@ -22,5 +23,12 @@ export class ReplyController {
   ) {
     const email = req.user.username;
     return await this.replyService.createReply(email, commentId, text);
+  }
+
+  @Delete(':replyId')
+  @UseGuards(AuthGuard('jwt'))
+  async deleteReply(@Request() req, @Param('replyId') replyId: string) {
+    const email = req.user.username;
+    return await this.replyService.deleteReply(email, replyId);
   }
 }
