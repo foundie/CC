@@ -44,7 +44,6 @@ Teknologi yang digunakan :
     "name": "name",
     "email": "email@email.com",
     "role": "role",
-    "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/...",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiam9obiIsImVtYWlsIjoiam9obmRvZUBnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsImN1c3RvbWVyX2lkIjozLCJpYXQiOjE3MDA2MzQxNDR9.sgoDeu8lNRm_SfoXbb7MkpMEn4ghG0g4Le0GFyN2bn8"
   }
   
@@ -71,20 +70,23 @@ Teknologi yang digunakan :
 }
 ```
 
-### Update Profile Image
-- **URL** : `/update-profile-image`
+### Update Biodata
+- **URL** : `/biodata/add`
 - **Method** : `POST`
 - **Auth required** : `YES`
 - **Request Header**:
   - `Content-Type` : `multipart/form-data`
 - **Request Body** :
+  - `phone` as `text` - `nomor telephone`
+  - `location` as `text` - `lokasi`
+  - `gender` as `text` - `gender`
   - `image` as `file` - `File Foto Profile`
 - **Response** :
 
 ```json
 {
   "status": "ok",
-  "message": "Profile image uploaded successfully"
+  "message": "Biodata updated successfully"
 }
 ```
 
@@ -120,6 +122,31 @@ Teknologi yang digunakan :
       "imageUrl": "https://storage.googleapis.com/your-bucket/makeup_products/1234567890_lipstick.jpg"
     }
   }
+
+### Get Biodata
+
+- **URL** : `/biodata/me`
+- **Method** : `GET`
+- **Response**:
+
+```json
+{
+    "status": "ok",
+    "message": "Biodata fetched successfully",
+    "user": {
+        "role": "user",
+        "name": "johndoe",
+        "email": "johndoe@example.com",
+        "gender": "Pria",
+        "phone": "08123456789",
+        "location": "Amerika",
+        "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/......"
+    }
+}
+```
+
+
+  
 
 ## Community
 ### Add Post
