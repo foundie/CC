@@ -1,3 +1,13 @@
+# Backend for SerenityLink
+
+> Capstone Project ENTS-H120
+
+Teknologi yang digunakan :
+1. Nest Js
+2. Firestore
+3. cloud build
+
+
 # API Documentation
 
 ## Register
