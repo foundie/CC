@@ -1,4 +1,4 @@
-# Backend for SerenityLink
+# Backend for Foundie
 
 > Capstone Project ENTS-H120
 
