@@ -9,6 +9,7 @@ import { JwtStrategy } from './guard/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ProductModule } from './product/product.module';
 import { CommunityModule } from './community/community.module';
+import { BiodataModule } from './biodata/biodata.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { CommunityModule } from './community/community.module';
     RegisterModule,
     CommunityModule,
     ProductModule,
+    BiodataModule,
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '3d' },

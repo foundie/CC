@@ -93,7 +93,6 @@ export class AuthService {
         name: userRecord.name,
         email: userRecord.email,
         role: userRecord.role,
-        profileImageUrl: userRecord.profileImageUrl,
         token: this.jwtService.sign(payload),
       },
     };
