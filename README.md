@@ -89,6 +89,28 @@ Teknologi yang digunakan :
   "message": "Biodata updated successfully"
 }
 ```
+### Get Biodata
+
+- **URL** : `/biodata/me`
+- **Method** : `GET`
+- **Auth required** : `YES`
+- **Response**:
+
+```json
+{
+    "status": "ok",
+    "message": "Biodata fetched successfully",
+    "user": {
+        "role": "user",
+        "name": "johndoe",
+        "email": "johndoe@example.com",
+        "gender": "Pria",
+        "phone": "08123456789",
+        "location": "Amerika",
+        "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/......"
+    }
+}
+```
 
 
 ## Products
@@ -122,31 +144,6 @@ Teknologi yang digunakan :
       "imageUrl": "https://storage.googleapis.com/your-bucket/makeup_products/1234567890_lipstick.jpg"
     }
   }
-
-### Get Biodata
-
-- **URL** : `/biodata/me`
-- **Method** : `GET`
-- **Response**:
-
-```json
-{
-    "status": "ok",
-    "message": "Biodata fetched successfully",
-    "user": {
-        "role": "user",
-        "name": "johndoe",
-        "email": "johndoe@example.com",
-        "gender": "Pria",
-        "phone": "08123456789",
-        "location": "Amerika",
-        "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/......"
-    }
-}
-```
-
-
-  
 
 ## Community
 ### Add Post
