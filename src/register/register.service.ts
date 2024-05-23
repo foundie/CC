@@ -8,13 +8,7 @@ export class RegisterService {
   private db = admin.firestore();
   private storage = admin.storage();
 
-  async register(
-    name: string,
-    email: string,
-    password: string,
-    age: number,
-    profileImage: Express.Multer.File,
-  ) {
+  async register(name: string, email: string, password: string) {
     const userDoc = await this.db.collection('users').doc(email).get();
     if (userDoc.exists) {
       return {
@@ -22,19 +16,7 @@ export class RegisterService {
         message: 'Email already exists',
       };
     }
-    if (profileImage.size > 1024 * 1024) {
-      return {
-        status: 'error',
-        message: 'Profile image should not be more than 1MB',
-      };
-    }
-    if (!profileImage.mimetype.startsWith('image/')) {
-      return {
-        status: 'error',
-        message: 'Uploaded file is not an image',
-      };
-    }
-    if (!name || !email || !password || !age || !profileImage) {
+    if (!name || !email || !password) {
       return {
         status: 'error',
         message: 'All fields are required',
@@ -55,7 +37,46 @@ export class RegisterService {
       };
     }
 
-    // Upload profile image to Firebase Storage
+    await admin.auth().setCustomUserClaims(userRecord.uid, { role: 'user' });
+    await this.db.collection('users').doc(email).set({
+      name,
+      email,
+      password: hashedPassword,
+      role: 'user',
+    });
+
+    return {
+      status: 'ok',
+      message: 'register successfuly',
+    };
+  }
+
+  async uploadProfileImage(email: string, profileImage: Express.Multer.File) {
+    if (profileImage.size > 1024 * 1024) {
+      return {
+        status: 'error',
+        message: 'Profile image should not be more than 1MB',
+      };
+    }
+    if (!profileImage.mimetype.startsWith('image/')) {
+      return {
+        status: 'error',
+        message: 'Uploaded file is not an image',
+      };
+    }
+
+    // Get the old profile image URL
+    const userDoc = await this.db.collection('users').doc(email).get();
+    const userData = userDoc.data();
+    const oldImageUrl = userData.profileImageUrl;
+
+    // Delete the old profile image from Firebase Storage
+    if (oldImageUrl) {
+      const oldImageFileName = `user/${email}/profilePicture`;
+      const oldImageFile = this.storage.bucket().file(oldImageFileName);
+      await oldImageFile.delete();
+    }
+
     const bucket = this.storage.bucket();
     const fileName = `user/${email}/profilePicture`;
     const file = bucket.file(fileName);
@@ -86,19 +107,13 @@ export class RegisterService {
       stream.on('error', reject);
     });
 
-    await admin.auth().setCustomUserClaims(userRecord.uid, { role: 'user' });
-    await this.db.collection('users').doc(email).set({
-      name,
-      email,
-      password: hashedPassword,
-      role: 'user',
-      age,
+    await this.db.collection('users').doc(email).update({
       profileImageUrl: imageUrl,
     });
 
     return {
       status: 'ok',
-      message: 'register successfuly',
+      message: 'Profile image uploaded successfully',
     };
   }
 }
