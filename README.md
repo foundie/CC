@@ -157,7 +157,7 @@ Teknologi yang digunakan :
 - **Request Body** :
   - `title` as `string` - `Judul post`
   - `text` as `string` - `Teks post`
-  - `imageFile` as `file` - `File gambar post`
+  - `image` as `file` - `File gambar post`
 
 - **Response** :
 
