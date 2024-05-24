@@ -253,7 +253,7 @@ Teknologi yang digunakan :
   - `q` as `string` - `Judul postingan yang dicari`
   - `l` as `number` - `Jumlah maksimal postingan yang ditampilkan`
   - `skip` as `number` - `Jumlah postingan awal yang dilewati`
-  - `sort` as `string` - `Urutan postingan, `popular` untuk urutan berdasarkan likesCount, `default` berdasarkan waktu posting`
+  - `sort` as `string` - `Urutan postingan, **popular** untuk urutan berdasarkan likesCount, **default** berdasarkan waktu posting`
   - `example` - `http://localhost:3000/community?q=lipstik&l=10&sort=popular`
 - **Response** :
 
