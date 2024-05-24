@@ -193,7 +193,7 @@ Teknologi yang digunakan :
 }
 ```
 
-### Get Post Data
+### Get Detail Post
 
 - **URL** : `/community/:postId`
 - **Method** : `GET`
@@ -245,6 +245,39 @@ Teknologi yang digunakan :
   }
 }
 ```
+### Get All Post Data
+- **URL** : `/community`
+- **Method** : `GET`
+- **Auth required** : `YES`
+- **Params Parameters** :
+  - `q` as `string` - `Judul postingan yang dicari`
+  - `l` as `number` - `Jumlah maksimal postingan yang ditampilkan`
+  - `skip` as `number` - `Jumlah postingan awal yang dilewati`
+  - `sort` as `string` - `Urutan postingan, `popular` untuk urutan berdasarkan likesCount, `default` berdasarkan waktu posting`
+  - `example` - `http://localhost:3000/community?q=lipstik&l=10&sort=popular`
+- **Response** :
+
+```json
+{
+    "status": "ok",
+    "message": "Posts successfully retrieved",
+    "data": [
+        {
+            "imageUrl": "",
+            "postId": "yH9UWr5oqKsKWRap94D0",
+            "text": "lorem",
+            "title": "like 2",
+            "email": "johndoe@example.com",
+            "timestamp": {
+                "_seconds": 1716517459,
+                "_nanoseconds": 973000000
+            },
+            "likesCount": 2
+        }
+    ]
+}
+```
+
 ### Add Comment
 
 - **URL** : `/community/comment/:postId`
