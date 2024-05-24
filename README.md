@@ -254,7 +254,7 @@ Teknologi yang digunakan :
   - `l` as `number` - `Jumlah maksimal postingan yang ditampilkan`
   - `skip` as `number` - `Jumlah postingan awal yang dilewati`
   - `sort` as `string` - `Urutan postingan, **popular** untuk urutan berdasarkan likesCount, **default** berdasarkan waktu posting`
-  - `example` - `http://localhost:3000/community?q=lipstik&l=10&sort=popular`
+  - `example` - `http://localhost:3000/community?q=lipstik&l=1&sort=popular`
 - **Response** :
 
 ```json
@@ -263,10 +263,10 @@ Teknologi yang digunakan :
     "message": "Posts successfully retrieved",
     "data": [
         {
-            "imageUrl": "",
+            "imageUrl": "https://storage.googleapis.com/storage-foundie/user/...",
             "postId": "yH9UWr5oqKsKWRap94D0",
             "text": "lorem",
-            "title": "like 2",
+            "title": "lisptik",
             "email": "johndoe@example.com",
             "timestamp": {
                 "_seconds": 1716517459,
