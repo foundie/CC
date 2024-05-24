@@ -1,6 +1,11 @@
 // post.service.ts
 import { Injectable } from '@nestjs/common';
 import * as admin from 'firebase-admin';
+import {
+  CollectionReference,
+  DocumentData,
+  Query,
+} from '@google-cloud/firestore';
 
 @Injectable()
 export class PostService {
@@ -75,6 +80,7 @@ export class PostService {
       text,
       imageUrl: imageUrl || '',
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      likesCount: 0,
     };
 
     await postRef.set(postData);
@@ -121,6 +127,48 @@ export class PostService {
         likes: likesData,
       },
     };
+  }
+
+  async getFilteredPosts(q: string, l: number, skip: number, sort: string) {
+    let postsQuery: Query<DocumentData> = this.db.collection(
+      'posts',
+    ) as CollectionReference;
+
+    // Filter by search query
+    if (q) {
+      postsQuery = postsQuery.where('title', '==', q);
+    }
+
+    // Sorting
+    if (sort === 'popular') {
+      postsQuery = postsQuery.orderBy('likesCount', 'desc');
+    } else {
+      postsQuery = postsQuery.orderBy('timestamp', 'desc');
+    }
+
+    if (l) {
+      postsQuery = postsQuery.limit(l);
+    }
+    if (skip) {
+      postsQuery = postsQuery.offset(skip);
+    }
+
+    const postsSnapshot = await postsQuery.get();
+    const postsData = postsSnapshot.docs.map((doc) => doc.data());
+
+    if (postsData.length === 0) {
+      return {
+        status: 'ok',
+        message: 'No posts found',
+        data: postsData,
+      };
+    } else {
+      return {
+        status: 'ok',
+        message: 'Posts successfully retrieved',
+        data: postsData,
+      };
+    }
   }
 
   async deletePost(email: string, postId: string) {

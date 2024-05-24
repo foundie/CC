@@ -6,8 +6,9 @@ export class LikeService {
   private db = admin.firestore();
 
   async createLike(email: string, postId: string) {
-    // Validasi jika postId tidak ada di database
-    const postSnapshot = await this.db.collection('posts').doc(postId).get();
+    const postRef = this.db.collection('posts').doc(postId);
+    const postSnapshot = await postRef.get();
+
     if (!postSnapshot.exists) {
       return {
         status: 'error',
@@ -36,6 +37,11 @@ export class LikeService {
 
     await likeRef.set(likeData);
 
+    // Tambahkan likesCount di post
+    await postRef.update({
+      likesCount: admin.firestore.FieldValue.increment(1),
+    });
+
     return {
       status: 'ok',
       message: 'Like successfully created',
@@ -45,7 +51,8 @@ export class LikeService {
   }
 
   async deleteLike(email: string, likeId: string) {
-    const likeSnapshot = await this.db.collection('likes').doc(likeId).get();
+    const likeRef = this.db.collection('likes').doc(likeId);
+    const likeSnapshot = await likeRef.get();
     const likeData = likeSnapshot.data();
 
     if (!likeSnapshot.exists) {
@@ -63,7 +70,13 @@ export class LikeService {
     }
 
     // Hapus like
-    await likeSnapshot.ref.delete();
+    await likeRef.delete();
+
+    // Kurangi likesCount di post
+    const postRef = this.db.collection('posts').doc(likeData.postId);
+    await postRef.update({
+      likesCount: admin.firestore.FieldValue.increment(-1),
+    });
 
     return {
       status: 'ok',

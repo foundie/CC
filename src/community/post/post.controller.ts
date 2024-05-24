@@ -8,6 +8,7 @@ import {
   UploadedFile,
   Get,
   Param,
+  Query,
   Delete,
 } from '@nestjs/common';
 import { PostService } from './post.service';
@@ -33,6 +34,22 @@ export class PostController {
   @UseGuards(AuthGuard('jwt'))
   async getPostData(@Param('postId') postId: string) {
     return await this.postService.getPostData(postId);
+  }
+
+  @Get()
+  @UseGuards(AuthGuard('jwt'))
+  async getFilteredPosts(
+    @Query('q') q: string,
+    @Query('l') l: string,
+    @Query('skip') skip: string,
+    @Query('sort') sort: string,
+  ) {
+    return await this.postService.getFilteredPosts(
+      q,
+      parseInt(l),
+      parseInt(skip),
+      sort,
+    );
   }
 
   @Delete(':postId')
