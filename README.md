@@ -71,7 +71,7 @@
 - **Auth required** : `YES`
 - **Request Header**:
   - `Content-Type` : `multipart/form-data`
-- **Request Body (Optional) ** :
+- **Request Body (Optional)** :
   - `name` as `string` -` Nama`
   - `phone` as `text` - `nomor telephone`
   - `location` as `text` - `lokasi`
