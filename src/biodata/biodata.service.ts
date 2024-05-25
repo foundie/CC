@@ -10,93 +10,92 @@ export class BiodataService {
 
   async addBiodata(
     email: string,
-    name: string = '',
-    phone: string = '',
-    location: string = '',
-    gender: string = '',
+    name?: string,
+    phone?: string,
+    location?: string,
+    gender?: string,
     profileImage?: Express.Multer.File,
   ) {
     if (!email && !name && !phone && !location && !gender && !profileImage) {
       return {
         status: 'error',
-        message: 'At least one field must be provided',
+        message: 'Setidaknya satu field harus diisi',
       };
     }
-    if (profileImage.size > 1024 * 1024) {
-      return {
-        status: 'error',
-        message: 'Profile image should not be more than 1MB',
-      };
-    }
-    if (!profileImage.mimetype.startsWith('image/')) {
-      return {
-        status: 'error',
-        message: 'Uploaded file is not an image',
-      };
-    }
-
-    const userDoc = await this.db.collection('users').doc(email).get();
-    let userData = userDoc.data();
-    const oldImageUrl = userData.profileImageUrl;
-
-    if (oldImageUrl) {
-      const oldImageFileName = `user/${email}/profilePicture`;
-      const oldImageFile = this.storage.bucket().file(oldImageFileName);
-      await oldImageFile.delete();
-    }
-
-    const bucket = this.storage.bucket();
-    const fileName = `user/${email}/profilePicture`;
-    const file = bucket.file(fileName);
-    const stream = file.createWriteStream({
-      metadata: {
-        contentType: profileImage.mimetype,
-      },
-    });
-
-    stream.write(profileImage.buffer);
-    stream.end();
 
     let imageUrl;
-    await new Promise<void>((resolve, reject) => {
-      stream.on('finish', async () => {
-        try {
-          const signedUrls = await file.getSignedUrl({
-            action: 'read',
-            expires: '03-09-2491',
-          });
-          imageUrl = signedUrls[0];
-          resolve();
-        } catch (error) {
-          reject(error);
-        }
+    if (profileImage) {
+      if (profileImage.size > 1024 * 1024) {
+        return {
+          status: 'error',
+          message: 'Profile image should not be more than 1MB',
+        };
+      }
+      if (!profileImage.mimetype.startsWith('image/')) {
+        return {
+          status: 'error',
+          message: 'Uploaded file is not an image',
+        };
+      }
+
+      const userDoc = await this.db.collection('users').doc(email).get();
+      const userData = userDoc.data();
+      const oldImageUrl = userData.profileImageUrl;
+
+      if (oldImageUrl) {
+        const oldImageFileName = `user/${email}/profilePicture`;
+        const oldImageFile = this.storage.bucket().file(oldImageFileName);
+        await oldImageFile.delete();
+      }
+
+      const bucket = this.storage.bucket();
+      const fileName = `user/${email}/profilePicture`;
+      const file = bucket.file(fileName);
+      const stream = file.createWriteStream({
+        metadata: {
+          contentType: profileImage.mimetype,
+        },
       });
 
-      stream.on('error', reject);
-    });
+      stream.write(profileImage.buffer);
+      stream.end();
+
+      await new Promise<void>((resolve, reject) => {
+        stream.on('finish', async () => {
+          try {
+            const signedUrls = await file.getSignedUrl({
+              action: 'read',
+              expires: '03-09-2491',
+            });
+            imageUrl = signedUrls[0];
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        });
+
+        stream.on('error', reject);
+      });
+    }
 
     const userDocRef = this.db.collection('users').doc(email);
+    let userData = (await userDocRef.get()).data();
 
-    userData = userDoc.data();
+    userData = {
+      ...userData,
+      name: name !== undefined ? name : userData.name || '',
+      phone: phone !== undefined ? phone : userData.phone || '',
+      location: location !== undefined ? location : userData.location || '',
+      gender: gender !== undefined ? gender : userData.gender || '',
+    };
 
-    if (userData) {
-      userData = {
-        ...userData,
-        name: name !== undefined ? name : '',
-        phone: phone !== undefined ? phone : '',
-        location: location !== undefined ? location : '',
-        gender: gender !== undefined ? gender : '',
-        profileImageUrl: imageUrl || userData.profileImageUrl,
-      };
-    } else {
-      userData = {
-        phone,
-        location,
-        gender,
-        profileImageUrl: imageUrl,
-      };
+    if (imageUrl) {
+      userData.profileImageUrl = imageUrl;
+    } else if (userData.profileImageUrl === undefined) {
+      userData.profileImageUrl = '';
     }
-    -(await userDocRef.set(userData, { merge: true }));
+
+    await userDocRef.set(userData, { merge: true });
 
     return {
       status: 'ok',
