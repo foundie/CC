@@ -137,7 +137,7 @@
       "description": "A long-lasting lipstick",
       "price": 10000,
       "category": "Makeup",
-      "imageUrl": "https://storage.googleapis.com/your-bucket/makeup_products/1234567890_lipstick.jpg"
+      "image": "https://storage.googleapis.com/your-bucket/makeup_products/1234567890_lipstick.jpg"
     }
   }
 
