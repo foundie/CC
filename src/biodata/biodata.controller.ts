@@ -22,14 +22,16 @@ export class BiodataController {
   @HttpCode(HttpStatus.OK)
   async uploadProfileImage(
     @Request() req,
-    @Body('phone') phone: string,
-    @Body('location') location: string,
-    @Body('gender') gender: string,
+    @Body('name') name: string = '',
+    @Body('phone') phone: string = '',
+    @Body('location') location: string = '',
+    @Body('gender') gender: string = '',
     @UploadedFile() profileImage: Express.Multer.File,
   ) {
     const email = req.user.username;
     return await this.biodataService.addBiodata(
       email,
+      name,
       phone,
       location,
       gender,

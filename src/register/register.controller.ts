@@ -10,7 +10,7 @@ export class RegisterController {
   @Post('register')
   @HttpCode(HttpStatus.OK)
   async register(
-    @Body('nama') name: string,
+    @Body('name') name: string,
     @Body('email') email: string,
     @Body('password') password: string,
   ) {

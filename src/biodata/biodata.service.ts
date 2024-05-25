@@ -10,11 +10,18 @@ export class BiodataService {
 
   async addBiodata(
     email: string,
-    phone: string,
-    location: string,
-    gender: string,
-    profileImage: Express.Multer.File,
+    name: string = '',
+    phone: string = '',
+    location: string = '',
+    gender: string = '',
+    profileImage?: Express.Multer.File,
   ) {
+    if (!email && !name && !phone && !location && !gender && !profileImage) {
+      return {
+        status: 'error',
+        message: 'At least one field must be provided',
+      };
+    }
     if (profileImage.size > 1024 * 1024) {
       return {
         status: 'error',
@@ -75,9 +82,10 @@ export class BiodataService {
     if (userData) {
       userData = {
         ...userData,
-        phone: phone || userData.phone,
-        location: location || userData.location,
-        gender: gender || userData.gender,
+        name: name !== undefined ? name : '',
+        phone: phone !== undefined ? phone : '',
+        location: location !== undefined ? location : '',
+        gender: gender !== undefined ? gender : '',
         profileImageUrl: imageUrl || userData.profileImageUrl,
       };
     } else {
