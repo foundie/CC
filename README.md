@@ -11,7 +11,7 @@
 - **URL** : `/register`
 - **Method** : `POST`
 - **Request Body** :
-  - `nama` as `string` -` Nama`
+  - `name` as `string` -` Nama`
   - `email` as `string` - `Email`
   - `password` as `string` - `Password`
 - **Response** :
@@ -71,7 +71,8 @@
 - **Auth required** : `YES`
 - **Request Header**:
   - `Content-Type` : `multipart/form-data`
-- **Request Body** :
+- **Request Body (Optional) ** :
+  - `name` as `string` -` Nama`
   - `phone` as `text` - `nomor telephone`
   - `location` as `text` - `lokasi`
   - `gender` as `text` - `gender`
