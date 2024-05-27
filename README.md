@@ -3,6 +3,7 @@ foundie
 ├─ .eslintrc.js
 ├─ .gitignore
 ├─ .prettierrc
+├─ Dockerfile
 ├─ nest-cli.json
 ├─ package-lock.json
 ├─ package.json
@@ -18,11 +19,37 @@ foundie
 │  │  ├─ auth.secret.ts
 │  │  ├─ auth.service.ts
 │  │  └─ auth.utility.ts
+│  ├─ biodata
+│  │  ├─ biodata.controller.ts
+│  │  ├─ biodata.module.ts
+│  │  └─ biodata.service.ts
 │  ├─ chat
 │  │  ├─ chat.controller.ts
 │  │  ├─ chat.gateway.ts
 │  │  ├─ chat.module.ts
 │  │  └─ chat.service.ts
+│  ├─ community
+│  │  ├─ comment
+│  │  │  ├─ comment.controller.ts
+│  │  │  ├─ comment.module.ts
+│  │  │  └─ comment.service.ts
+│  │  ├─ community.module.ts
+│  │  ├─ follow
+│  │  │  ├─ follow.controller.ts
+│  │  │  ├─ follow.module.ts
+│  │  │  └─ follow.service.ts
+│  │  ├─ like
+│  │  │  ├─ like.controller.ts
+│  │  │  ├─ like.module.ts
+│  │  │  └─ like.service.ts
+│  │  ├─ post
+│  │  │  ├─ post.controller.ts
+│  │  │  ├─ post.module.ts
+│  │  │  └─ post.service.ts
+│  │  └─ reply
+│  │     ├─ reply.controller.ts
+│  │     ├─ reply.module.ts
+│  │     └─ reply.service.ts
 │  ├─ guard
 │  │  ├─ jwt.authGuard.ts
 │  │  └─ jwt.strategy.ts
