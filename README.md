@@ -109,14 +109,13 @@
 ```
 
 ### User Follow
+
 - **URL** : `/follow/:followingEmail`
 - **Method** : `POST`
 - **Auth required** : `YES`
-- **Permissions required** : `None`
-- **URL Parameters** :
+- - **Request Body** :
   - `followingEmail` as `string` - `Email Dari Pengguna Yang akan di Ikuti`
-
-- **Response** :
+- **Response**:
 
 ```json
 {
@@ -130,31 +129,29 @@
     }
 }
 ```
-
 ### User Unfollow
+
 - **URL** : `/follow/:followingEmail`
 - **Method** : `DELETE`
 - **Auth required** : `YES`
-- **Permissions required** : `None`
-- **URL Parameters** :
-  - `followingEmail` as `string` - `Email Dari Pengguna Yang akan di Ikuti`
-
-- **Response** :
+- - **Request Body** :
+  - `followingEmail` as `string` - `Email Dari Pengguna Yang akan di unfollow`
+- **Response**:
 
 ```json
 {
-     status: 'ok',
-     message: 'Unfollowed successfully',
+    "status": "ok",
+    "message": "Unfollowed successfully",
 }
 ```
 
-### Get User Following and Followers
+### Get User Following and Follower
+
 - **URL** : `/follow/data`
 - **Method** : `GET`
 - **Auth required** : `YES`
-- **Permissions required** : `None`
+- **Response**:
 
-- **Response** :
 ```json
 {
     "status": "ok",
@@ -168,8 +165,9 @@
             "sanseath2@gmail.com"
         ]
     }
-}}
+}
 ```
+
 
 
 ## Products
