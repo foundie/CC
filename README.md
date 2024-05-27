@@ -113,7 +113,7 @@
 - **URL** : `/follow/:followingEmail`
 - **Method** : `POST`
 - **Auth required** : `YES`
-- - **Request Body** :
+- **Request Body** :
   - `followingEmail` as `string` - `Email Dari Pengguna Yang akan di Ikuti`
 - **Response**:
 
@@ -134,7 +134,7 @@
 - **URL** : `/follow/:followingEmail`
 - **Method** : `DELETE`
 - **Auth required** : `YES`
-- - **Request Body** :
+- **Request Body** :
   - `followingEmail` as `string` - `Email Dari Pengguna Yang akan di unfollow`
 - **Response**:
 
