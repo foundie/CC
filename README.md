@@ -108,6 +108,69 @@
 }
 ```
 
+### User Follow
+- **URL** : `/follow/:followingEmail`
+- **Method** : `POST`
+- **Auth required** : `YES`
+- **Permissions required** : `None`
+- **URL Parameters** :
+  - `followingEmail` as `string` - `Email Dari Pengguna Yang akan di Ikuti`
+
+- **Response** :
+
+```json
+{
+    "status": "ok",
+    "message": "Follow successfully created",
+    "followId": "RQUdNOfr8XiKmavyrKN1",
+    "data": {
+        "followerEmail": "sansb746@gmail.com",
+        "followingEmail": "johndoe@example.com",
+        "timestamp": {}
+    }
+}
+```
+
+### User Unfollow
+- **URL** : `/follow/:followingEmail`
+- **Method** : `DELETE`
+- **Auth required** : `YES`
+- **Permissions required** : `None`
+- **URL Parameters** :
+  - `followingEmail` as `string` - `Email Dari Pengguna Yang akan di Ikuti`
+
+- **Response** :
+
+```json
+{
+     status: 'ok',
+     message: 'Unfollowed successfully',
+}
+```
+
+### Get User Following and Followers
+- **URL** : `/follow/data`
+- **Method** : `GET`
+- **Auth required** : `YES`
+- **Permissions required** : `None`
+
+- **Response** :
+```json
+{
+    "status": "ok",
+    "message": "Followers and following successfully retrieved",
+    "data": {
+        "Followers": [
+            "sanseath2@gmail.com",
+            "sansb746@gmail.com"
+        ],
+        "Following": [
+            "sanseath2@gmail.com"
+        ]
+    }
+}}
+```
+
 
 ## Products
 
