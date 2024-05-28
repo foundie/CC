@@ -16,7 +16,7 @@ export class PostService {
     email: string,
     title: string,
     text: string,
-    imageFile: Express.Multer.File,
+    imageFiles: Express.Multer.File[],
   ) {
     if (!title) {
       return {
@@ -25,51 +25,63 @@ export class PostService {
       };
     }
 
-    if (imageFile && !imageFile.mimetype.startsWith('image/')) {
+    if (imageFiles && imageFiles.length > 5) {
       return {
         status: 'error',
-        message: 'Invalid file type. Only images are allowed',
+        message: 'You can only upload up to 5 images',
       };
     }
 
     const postRef = this.db.collection('posts').doc();
     const bucket = this.storage.bucket();
-    let imageUrl;
+    const imageUrls = [];
 
-    if (imageFile) {
-      const fileName = `user/${email}/posts/${Date.now()}/${imageFile.originalname}`;
-      const file = bucket.file(fileName);
-      const stream = file.createWriteStream({
-        metadata: {
-          contentType: imageFile.mimetype,
-        },
-      });
+    if (imageFiles) {
+      const timestamp = Date.now(); // Create timestamp here
 
-      stream.write(imageFile.buffer);
-      stream.end();
+      for (const imageFile of imageFiles) {
+        if (!imageFile.mimetype.startsWith('image/')) {
+          return {
+            status: 'error',
+            message: 'Invalid file type. Only images are allowed',
+          };
+        }
 
-      try {
-        await new Promise<void>((resolve, reject) => {
-          stream.on('finish', async () => {
-            try {
-              const signedUrls = await file.getSignedUrl({
-                action: 'read',
-                expires: '03-09-2491',
-              });
-              imageUrl = signedUrls[0];
-              resolve();
-            } catch (error) {
-              reject(error);
-            }
-          });
-
-          stream.on('error', reject);
+        // Use the same timestamp for all images
+        const fileName = `user/${email}/posts/${timestamp}/${imageFile.originalname}`;
+        const file = bucket.file(fileName);
+        const stream = file.createWriteStream({
+          metadata: {
+            contentType: imageFile.mimetype,
+          },
         });
-      } catch (error) {
-        return {
-          status: 'error',
-          message: 'Failed to upload image',
-        };
+
+        stream.write(imageFile.buffer);
+        stream.end();
+
+        try {
+          await new Promise<void>((resolve, reject) => {
+            stream.on('finish', async () => {
+              try {
+                const signedUrls = await file.getSignedUrl({
+                  action: 'read',
+                  expires: '03-09-2491',
+                });
+                imageUrls.push(signedUrls[0]);
+                resolve();
+              } catch (error) {
+                reject(error);
+              }
+            });
+
+            stream.on('error', reject);
+          });
+        } catch (error) {
+          return {
+            status: 'error',
+            message: 'Failed to upload image',
+          };
+        }
       }
     }
 
@@ -78,7 +90,7 @@ export class PostService {
       email,
       title,
       text,
-      imageUrl: imageUrl || '',
+      imageUrls: imageUrls || [],
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
       likesCount: 0,
     };

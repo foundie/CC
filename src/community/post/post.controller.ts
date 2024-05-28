@@ -5,14 +5,16 @@ import {
   UseGuards,
   Request,
   Body,
-  UploadedFile,
+  UploadedFiles,
   Get,
   Param,
   Query,
   Delete,
+  UseInterceptors,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { AuthGuard } from '@nestjs/passport';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('community')
 export class PostController {
@@ -20,14 +22,15 @@ export class PostController {
 
   @Post('post')
   @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(FilesInterceptor('image'))
   async createPost(
     @Request() req,
     @Body('title') title: string,
     @Body('text') text: string,
-    @UploadedFile() imageFile: Express.Multer.File,
+    @UploadedFiles() imageFiles: Express.Multer.File[],
   ) {
     const email = req.user.username;
-    return await this.postService.createPost(email, title, text, imageFile);
+    return await this.postService.createPost(email, title, text, imageFiles);
   }
 
   @Get(':postId')

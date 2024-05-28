@@ -9,9 +9,11 @@ import {
   UploadedFile,
   UseGuards,
   Request,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { BiodataService } from './biodata.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('biodata')
 export class BiodataController {
@@ -20,6 +22,7 @@ export class BiodataController {
   @Post('add')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
+  @UseInterceptors(FileInterceptor('image'))
   async uploadProfileImage(
     @Request() req,
     @Body('name') name?: string,

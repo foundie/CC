@@ -4,7 +4,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as admin from 'firebase-admin';
 import * as dotenv from 'dotenv';
-import * as multer from 'multer';
 
 dotenv.config();
 
@@ -19,10 +18,6 @@ admin.initializeApp({
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
-
-  // Konfigurasi Multer untuk menangani file yang diunggah
-  const upload = multer();
-  app.use(upload.single('image'));
 
   await app.listen(3000);
 }
