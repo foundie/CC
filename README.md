@@ -214,7 +214,7 @@
 - **Request Body** :
   - `title` as `string` - `Judul post`
   - `text` as `string` - `Teks post`
-  - `image` as `file` - `File gambar post`
+  - `image` as `file` - `File gambar post maksimal 5 gambar`
 
 - **Response** :
 
