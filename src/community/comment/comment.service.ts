@@ -11,6 +11,7 @@ export class CommentService {
       return {
         status: 'error',
         message: 'Post not found',
+        error: true,
       };
     }
 
@@ -18,6 +19,7 @@ export class CommentService {
       return {
         status: 'error',
         message: 'Comment text is required',
+        error: true,
       };
     }
 
@@ -41,6 +43,7 @@ export class CommentService {
       data: {
         ...dataWithTimestamp,
       },
+      error: false,
     };
   }
 
@@ -55,6 +58,7 @@ export class CommentService {
       return {
         status: 'error',
         message: 'Comment not found',
+        error: true,
       };
     }
 
@@ -62,6 +66,7 @@ export class CommentService {
       return {
         status: 'error',
         message: 'You are not authorized to delete this comment',
+        error: true,
       };
     }
 
@@ -83,6 +88,7 @@ export class CommentService {
     return {
       status: 'ok',
       message: 'Comment and related replies successfully deleted',
+      error: false,
     };
   }
 }

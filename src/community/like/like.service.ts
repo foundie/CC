@@ -13,6 +13,7 @@ export class LikeService {
       return {
         status: 'error',
         message: 'Post not found',
+        error: true,
       };
     }
 
@@ -25,6 +26,7 @@ export class LikeService {
       return {
         status: 'error',
         message: 'You have already liked this post',
+        error: true,
       };
     }
 
@@ -47,6 +49,7 @@ export class LikeService {
       message: 'Like successfully created',
       likeId: likeRef.id,
       data: likeData,
+      error: false,
     };
   }
 
@@ -59,6 +62,7 @@ export class LikeService {
       return {
         status: 'error',
         message: 'Like not found',
+        error: true,
       };
     }
 
@@ -66,6 +70,7 @@ export class LikeService {
       return {
         status: 'error',
         message: 'You are not authorized to delete this like',
+        error: true,
       };
     }
 
@@ -81,6 +86,7 @@ export class LikeService {
     return {
       status: 'ok',
       message: 'Like successfully deleted',
+      error: false,
     };
   }
 }

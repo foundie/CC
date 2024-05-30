@@ -20,6 +20,7 @@ export class BiodataService {
       return {
         status: 'error',
         message: 'Setidaknya satu field harus diisi',
+        error: true,
       };
     }
 
@@ -29,12 +30,14 @@ export class BiodataService {
         return {
           status: 'error',
           message: 'Profile image should not be more than 1MB',
+          error: true,
         };
       }
       if (!profileImage.mimetype.startsWith('image/')) {
         return {
           status: 'error',
           message: 'Uploaded file is not an image',
+          error: true,
         };
       }
 
@@ -100,6 +103,7 @@ export class BiodataService {
     return {
       status: 'ok',
       message: 'Biodata updated successfully',
+      error: false,
     };
   }
 

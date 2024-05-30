@@ -58,6 +58,7 @@ export class AuthService {
       return {
         status: 'error',
         message: 'User does not exist',
+        error: true,
       };
     }
 
@@ -74,11 +75,13 @@ export class AuthService {
           status: 'error',
           message:
             'You have reached the maximum number of login attempts. Please try again later.',
+          error: true,
         };
       }
       return {
         status: 'error',
         message: 'Invalid email or password',
+        error: true,
       };
     }
 
@@ -95,6 +98,7 @@ export class AuthService {
         role: userRecord.role,
         token: this.jwtService.sign(payload),
       },
+      error: false,
     };
   }
 }

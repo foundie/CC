@@ -14,12 +14,22 @@ export class RegisterService {
       return {
         status: 'error',
         message: 'Email already exists',
+        error: true,
       };
     }
     if (!name || !email || !password) {
       return {
         status: 'error',
         message: 'All fields are required',
+        error: true,
+      };
+    }
+
+    if (password.length < 8) {
+      return {
+        status: 'error',
+        message: 'Password must be at least 8 characters long',
+        error: true,
       };
     }
 
@@ -34,6 +44,7 @@ export class RegisterService {
       return {
         status: 'error',
         message: 'The email address is already in use by another account.',
+        error: true,
       };
     }
 
@@ -47,7 +58,8 @@ export class RegisterService {
 
     return {
       status: 'ok',
-      message: 'register successfuly',
+      message: 'Register successfully',
+      error: false,
     };
   }
 }

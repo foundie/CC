@@ -51,6 +51,7 @@ export class ProductService {
           id: productRef.id,
           ...createProductDto,
           imageUrl: imageUrl, // Include imageUrl in the response
+          error: false,
         },
       };
     } catch (error) {

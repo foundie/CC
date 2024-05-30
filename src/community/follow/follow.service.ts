@@ -13,6 +13,7 @@ export class FollowService {
       return {
         status: 'error',
         message: 'The user you want to follow does not exist',
+        error: true,
       };
     }
 
@@ -26,6 +27,7 @@ export class FollowService {
       return {
         status: 'error',
         message: 'You are already following this user',
+        error: true,
       };
     }
 
@@ -51,6 +53,7 @@ export class FollowService {
       message: 'Follow successfully created',
       followId: followRef.id,
       data: followData,
+      error: false,
     };
   }
 
@@ -67,6 +70,7 @@ export class FollowService {
       return {
         status: 'error',
         message: 'You are not following this user',
+        error: true,
       };
     }
 
@@ -83,6 +87,7 @@ export class FollowService {
     return {
       status: 'ok',
       message: 'Unfollowed successfully',
+      error: false,
     };
   }
 
@@ -110,6 +115,7 @@ export class FollowService {
         Followers: followersData,
         Following: followingData,
       },
+      error: false,
     };
   }
 }

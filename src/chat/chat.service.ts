@@ -33,6 +33,7 @@ export class ChatService {
       status: 'ok',
       message: 'chat send successfully',
       chat,
+      error: false,
     };
   }
 

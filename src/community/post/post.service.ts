@@ -22,6 +22,7 @@ export class PostService {
       return {
         status: 'error',
         message: 'Title is required',
+        error: true,
       };
     }
 
@@ -29,6 +30,7 @@ export class PostService {
       return {
         status: 'error',
         message: 'You can only upload up to 5 images',
+        error: true,
       };
     }
 
@@ -36,18 +38,20 @@ export class PostService {
     const bucket = this.storage.bucket();
     const imageUrls = [];
 
+    const titleArray = title.split(' ');
+
     if (imageFiles) {
-      const timestamp = Date.now(); // Create timestamp here
+      const timestamp = Date.now();
 
       for (const imageFile of imageFiles) {
         if (!imageFile.mimetype.startsWith('image/')) {
           return {
             status: 'error',
             message: 'Invalid file type. Only images are allowed',
+            error: true,
           };
         }
 
-        // Use the same timestamp for all images
         const fileName = `user/${email}/posts/${timestamp}/${imageFile.originalname}`;
         const file = bucket.file(fileName);
         const stream = file.createWriteStream({
@@ -80,6 +84,7 @@ export class PostService {
           return {
             status: 'error',
             message: 'Failed to upload image',
+            error: true,
           };
         }
       }
@@ -89,6 +94,7 @@ export class PostService {
       postId: postRef.id,
       email,
       title,
+      titleArray,
       text,
       imageUrls: imageUrls || [],
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
@@ -99,16 +105,30 @@ export class PostService {
     const savedPost = await postRef.get();
     const savedPostData = savedPost.data();
 
+    delete savedPostData.titleArray;
+
     return {
       status: 'ok',
       message: 'Post successfully created',
       data: savedPostData,
+      error: false,
     };
   }
 
   async getPostData(postId: string) {
     const postSnapshot = await this.db.collection('posts').doc(postId).get();
+
+    if (!postSnapshot.exists) {
+      return {
+        status: 'error',
+        message: 'Post not found',
+        error: true,
+      };
+    }
+
     const postData = postSnapshot.data();
+
+    delete postData.titleArray;
 
     const commentsQuerySnapshot = await this.db
       .collection('comments')
@@ -138,6 +158,7 @@ export class PostService {
         comments: commentsData,
         likes: likesData,
       },
+      error: false,
     };
   }
 
@@ -145,11 +166,6 @@ export class PostService {
     let postsQuery: Query<DocumentData> = this.db.collection(
       'posts',
     ) as CollectionReference;
-
-    // Filter by search query
-    if (q) {
-      postsQuery = postsQuery.where('title', '==', q);
-    }
 
     // Sorting
     if (sort === 'popular') {
@@ -166,19 +182,35 @@ export class PostService {
     }
 
     const postsSnapshot = await postsQuery.get();
-    const postsData = postsSnapshot.docs.map((doc) => doc.data());
+    let postsData = postsSnapshot.docs.map((doc) => doc.data());
+
+    // Filter by search query
+    if (q) {
+      const searchWords = q.split(' ');
+      postsData = postsData.filter((post) =>
+        searchWords.every((word) => post.titleArray.includes(word)),
+      );
+    }
+
+    // Remove titleArray from the response
+    postsData = postsData.map((post) => {
+      delete post.titleArray;
+      return post;
+    });
 
     if (postsData.length === 0) {
       return {
         status: 'ok',
         message: 'No posts found',
         data: postsData,
+        error: false,
       };
     } else {
       return {
         status: 'ok',
         message: 'Posts successfully retrieved',
         data: postsData,
+        error: false,
       };
     }
   }
@@ -191,15 +223,16 @@ export class PostService {
       return {
         status: 'error',
         message: 'You are not authorized to delete this post',
+        error: true,
       };
     }
 
-    if (postData.imageUrl) {
-      const urlParts = decodeURIComponent(postData.imageUrl)
-        .split('?')[0]
-        .split('/');
-      const file = urlParts.slice(4).join('/');
-      await this.storage.bucket().file(file).delete();
+    if (postData.imageUrls) {
+      for (const imageUrl of postData.imageUrls) {
+        const urlParts = decodeURIComponent(imageUrl).split('?')[0].split('/');
+        const file = urlParts.slice(4).join('/');
+        await this.storage.bucket().file(file).delete();
+      }
     }
 
     // Hapus komentar dan balasan
@@ -238,6 +271,7 @@ export class PostService {
     return {
       status: 'ok',
       message: 'Post and related data successfully deleted',
+      error: false,
     };
   }
 }

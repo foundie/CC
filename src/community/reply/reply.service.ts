@@ -14,6 +14,7 @@ export class ReplyService {
       return {
         status: 'error',
         message: 'Comment not found',
+        error: true,
       };
     }
 
@@ -21,6 +22,7 @@ export class ReplyService {
       return {
         status: 'error',
         message: 'Reply text is required',
+        error: true,
       };
     }
 
@@ -39,6 +41,7 @@ export class ReplyService {
       status: 'ok',
       message: 'Reply successfully created',
       data: replyData,
+      error: false,
     };
   }
 
@@ -53,6 +56,7 @@ export class ReplyService {
       return {
         status: 'error',
         message: 'Reply not found',
+        error: true,
       };
     }
 
@@ -60,6 +64,7 @@ export class ReplyService {
       return {
         status: 'error',
         message: 'You are not authorized to delete this reply',
+        error: true,
       };
     }
 
@@ -69,6 +74,7 @@ export class ReplyService {
     return {
       status: 'ok',
       message: 'Reply successfully deleted',
+      error: false,
     };
   }
 }
