@@ -19,7 +19,8 @@
 ```json
 {
   "status": "ok",
-  "message": "register successfuly"
+  "message": "register successfuly",
+  "error": false
 }
 ```
 ### User Login
@@ -41,7 +42,7 @@
     "role": "role",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiam9obiIsImVtYWlsIjoiam9obmRvZUBnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsImN1c3RvbWVyX2lkIjozLCJpYXQiOjE3MDA2MzQxNDR9.sgoDeu8lNRm_SfoXbb7MkpMEn4ghG0g4Le0GFyN2bn8"
   }
-  
+  "error": false
 }
 ```
 
@@ -62,6 +63,7 @@
         "picture": "https://lh3.googleusercontent.com/a/ACg8ocKlEsb0QnkCTzeH3I-cUkpefThUTPeL8UTr6OxgIFXMmx3lbw=s96-c"
     }
   }
+  "error": false
 }
 ```
 
@@ -82,7 +84,8 @@
 ```json
 {
   "status": "ok",
-  "message": "Biodata updated successfully"
+  "message": "Biodata updated successfully",
+  "error": false
 }
 ```
 ### Get Biodata
@@ -105,6 +108,7 @@
         "location": "Amerika",
         "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/......"
     }
+    "error": false
 }
 ```
 
@@ -127,6 +131,7 @@
         "followingEmail": "johndoe@example.com",
         "timestamp": {}
     }
+    "error": false
 }
 ```
 ### User Unfollow
@@ -142,6 +147,7 @@
 {
     "status": "ok",
     "message": "Unfollowed successfully",
+    "error": false
 }
 ```
 
@@ -165,6 +171,7 @@
             "sanseath2@gmail.com"
         ]
     }
+    "error": false
 }
 ```
 
@@ -200,6 +207,7 @@
       "category": "Makeup",
       "image": "https://storage.googleapis.com/your-bucket/makeup_products/1234567890_lipstick.jpg"
     }
+    "error": false
   }
 
 ## Community
@@ -230,6 +238,7 @@
     "imageUrl": "url gambar post",
     "timestamp": "timestamp server"
   }
+  "error": false
 }
 ```
 ### Delete Post
@@ -246,7 +255,8 @@
 ```json
 {
   "status": "ok",
-  "message": "Post and related data successfully deleted"
+  "message": "Post and related data successfully deleted",
+  "error": false
 }
 ```
 
@@ -300,6 +310,7 @@
       },
     ]
   }
+  "error": false
 }
 ```
 ### Get All Post Data
@@ -332,6 +343,7 @@
             "likesCount": 2
         }
     ]
+    "error": false
 }
 ```
 
@@ -359,6 +371,7 @@
     "text": "teks komentar",
     "timestamp": "timestamp server"
   }
+  "error": false
 }
 
 ```
@@ -376,7 +389,8 @@
 ```json
 {
   "status": "ok",
-  "message": "Comment and related replies successfully deleted"
+  "message": "Comment and related replies successfully deleted",
+  "error": false
 }
 ```
 
@@ -404,6 +418,7 @@
     "text": "teks balasan",
     "timestamp": "timestamp server"
   }
+  "error": false
 }
 ```
 ### Delete reply
@@ -420,7 +435,8 @@
 ```json
 {
   "status": "ok",
-  "message": "Reply successfully deleted"
+  "message": "Reply successfully deleted",
+  "error": false
 }
 ```
 
@@ -445,6 +461,7 @@
     "postId": "id post",
     "timestamp": "timestamp server"
   }
+  "error": false
 }
 ```
 ### Delete Like
@@ -461,6 +478,7 @@
 ```json
 {
   "status": "ok",
-  "message": "Like successfully deleted"
+  "message": "Like successfully deleted",
+  "error": false
 }
 ```
