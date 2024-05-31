@@ -19,7 +19,7 @@ export class ChatController {
 
   @UseGuards(JwtAuthGuard)
   @Post('send')
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.CREATED)
   async sendMessage(
     @Request() req,
     @Body('to') to: string,

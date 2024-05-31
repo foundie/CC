@@ -1,5 +1,4 @@
-// chat.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 
 @Injectable()
@@ -30,7 +29,7 @@ export class ChatService {
     );
 
     return {
-      status: 'ok',
+      status: HttpStatus.CREATED,
       message: 'chat send successfully',
       chat,
       error: false,
@@ -46,9 +45,20 @@ export class ChatService {
     // Dapatkan percakapan
     const conversationDoc = await conversationRef.get();
     if (!conversationDoc.exists) {
-      throw new Error('Conversation does not exist');
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'Conversation does not exist',
+          error: true,
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
-    return conversationDoc.data();
+    return {
+      status: HttpStatus.OK,
+      message: 'Biodata fetched successfully',
+      user: conversationDoc.data(),
+    };
   }
 }

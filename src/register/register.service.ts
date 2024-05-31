@@ -1,5 +1,4 @@
-// register.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 import * as bcrypt from 'bcrypt';
 
@@ -11,26 +10,35 @@ export class RegisterService {
   async register(name: string, email: string, password: string) {
     const userDoc = await this.db.collection('users').doc(email).get();
     if (userDoc.exists) {
-      return {
-        status: 'error',
-        message: 'Email already exists',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.CONFLICT,
+          message: 'Email already exists',
+          error: true,
+        },
+        HttpStatus.CONFLICT,
+      );
     }
     if (!name || !email || !password) {
-      return {
-        status: 'error',
-        message: 'All fields are required',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          message: 'All fields are required',
+          error: true,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     if (password.length < 8) {
-      return {
-        status: 'error',
-        message: 'Password must be at least 8 characters long',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          message: 'Password must be at least 8 characters long',
+          error: true,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -41,11 +49,14 @@ export class RegisterService {
         password: hashedPassword,
       });
     } catch (error) {
-      return {
-        status: 'error',
-        message: 'The email address is already in use by another account.',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.CONFLICT,
+          message: 'The email address is already in use by another account.',
+          error: true,
+        },
+        HttpStatus.CONFLICT,
+      );
     }
 
     await admin.auth().setCustomUserClaims(userRecord.uid, { role: 'user' });
@@ -57,7 +68,7 @@ export class RegisterService {
     });
 
     return {
-      status: 'ok',
+      status: HttpStatus.CREATED,
       message: 'Register successfully',
       error: false,
     };

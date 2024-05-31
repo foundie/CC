@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 
 @Injectable()
@@ -10,11 +10,14 @@ export class LikeService {
     const postSnapshot = await postRef.get();
 
     if (!postSnapshot.exists) {
-      return {
-        status: 'error',
-        message: 'Post not found',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'Post not found',
+          error: true,
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const likeSnapshot = await this.db
@@ -23,11 +26,14 @@ export class LikeService {
       .where('postId', '==', postId)
       .get();
     if (!likeSnapshot.empty) {
-      return {
-        status: 'error',
-        message: 'You have already liked this post',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.CONFLICT,
+          message: 'You have already liked this post',
+          error: true,
+        },
+        HttpStatus.CONFLICT,
+      );
     }
 
     const likeRef = this.db.collection('likes').doc();
@@ -45,7 +51,7 @@ export class LikeService {
     });
 
     return {
-      status: 'ok',
+      status: HttpStatus.CREATED,
       message: 'Like successfully created',
       likeId: likeRef.id,
       data: likeData,
@@ -59,19 +65,25 @@ export class LikeService {
     const likeData = likeSnapshot.data();
 
     if (!likeSnapshot.exists) {
-      return {
-        status: 'error',
-        message: 'Like not found',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'Like not found',
+          error: true,
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     if (likeData.email !== email) {
-      return {
-        status: 'error',
-        message: 'You are not authorized to delete this like',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.UNAUTHORIZED,
+          message: 'You are not authorized to delete this like',
+          error: true,
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
     }
 
     // Hapus like
@@ -84,7 +96,7 @@ export class LikeService {
     });
 
     return {
-      status: 'ok',
+      status: HttpStatus.OK,
       message: 'Like successfully deleted',
       error: false,
     };

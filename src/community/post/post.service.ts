@@ -1,5 +1,5 @@
 // post.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 import {
   CollectionReference,
@@ -19,19 +19,25 @@ export class PostService {
     imageFiles: Express.Multer.File[],
   ) {
     if (!title) {
-      return {
-        status: 'error',
-        message: 'Title is required',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          message: 'Title is required',
+          error: true,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     if (imageFiles && imageFiles.length > 5) {
-      return {
-        status: 'error',
-        message: 'You can only upload up to 5 images',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          message: 'You can only upload up to 5 images',
+          error: true,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const postRef = this.db.collection('posts').doc();
@@ -45,11 +51,14 @@ export class PostService {
 
       for (const imageFile of imageFiles) {
         if (!imageFile.mimetype.startsWith('image/')) {
-          return {
-            status: 'error',
-            message: 'Invalid file type. Only images are allowed',
-            error: true,
-          };
+          throw new HttpException(
+            {
+              status: HttpStatus.BAD_REQUEST,
+              message: 'Invalid file type. Only images are allowed',
+              error: true,
+            },
+            HttpStatus.BAD_REQUEST,
+          );
         }
 
         const fileName = `user/${email}/posts/${timestamp}/${imageFile.originalname}`;
@@ -81,11 +90,14 @@ export class PostService {
             stream.on('error', reject);
           });
         } catch (error) {
-          return {
-            status: 'error',
-            message: 'Failed to upload image',
-            error: true,
-          };
+          throw new HttpException(
+            {
+              status: HttpStatus.INTERNAL_SERVER_ERROR,
+              message: 'Failed to upload image',
+              error: true,
+            },
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
         }
       }
     }
@@ -108,7 +120,7 @@ export class PostService {
     delete savedPostData.titleArray;
 
     return {
-      status: 'ok',
+      status: HttpStatus.CREATED,
       message: 'Post successfully created',
       data: savedPostData,
       error: false,
@@ -119,11 +131,14 @@ export class PostService {
     const postSnapshot = await this.db.collection('posts').doc(postId).get();
 
     if (!postSnapshot.exists) {
-      return {
-        status: 'error',
-        message: 'Post not found',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'Post not found',
+          error: true,
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const postData = postSnapshot.data();
@@ -151,7 +166,7 @@ export class PostService {
     const likesData = likesQuerySnapshot.docs.map((doc) => doc.data());
 
     return {
-      status: 'ok',
+      status: HttpStatus.OK,
       message: 'Post data successfully retrieved',
       data: {
         post: postData,
@@ -199,15 +214,17 @@ export class PostService {
     });
 
     if (postsData.length === 0) {
-      return {
-        status: 'ok',
-        message: 'No posts found',
-        data: postsData,
-        error: false,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'No posts found',
+          error: true,
+        },
+        HttpStatus.NOT_FOUND,
+      );
     } else {
       return {
-        status: 'ok',
+        status: HttpStatus.OK,
         message: 'Posts successfully retrieved',
         data: postsData,
         error: false,
@@ -220,11 +237,14 @@ export class PostService {
     const postData = postSnapshot.data();
 
     if (postData.email !== email) {
-      return {
-        status: 'error',
-        message: 'You are not authorized to delete this post',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.UNAUTHORIZED,
+          message: 'You are not authorized to delete this post',
+          error: true,
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
     }
 
     if (postData.imageUrls) {
@@ -269,7 +289,7 @@ export class PostService {
     // Jalankan batch
     await batch.commit();
     return {
-      status: 'ok',
+      status: HttpStatus.OK,
       message: 'Post and related data successfully deleted',
       error: false,
     };

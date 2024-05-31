@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { OAuth2Client } from 'google-auth-library';
 import * as admin from 'firebase-admin';
@@ -55,11 +55,14 @@ export class AuthService {
     const userDoc = await db.collection('users').doc(email).get();
 
     if (!userDoc.exists) {
-      return {
-        status: 'error',
-        message: 'User does not exist',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.UNAUTHORIZED,
+          message: 'User does not exist',
+          error: true,
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
     }
 
     const userRecord = userDoc.data();
@@ -71,18 +74,24 @@ export class AuthService {
     if (!isPasswordCorrect) {
       this.failedLoginAttempts++;
       if (this.failedLoginAttempts >= 5) {
-        return {
-          status: 'error',
-          message:
-            'You have reached the maximum number of login attempts. Please try again later.',
-          error: true,
-        };
+        throw new HttpException(
+          {
+            status: HttpStatus.FORBIDDEN,
+            message:
+              'You have reached the maximum number of login attempts. Please try again later.',
+            error: true,
+          },
+          HttpStatus.FORBIDDEN,
+        );
       }
-      return {
-        status: 'error',
-        message: 'Invalid email or password',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.UNAUTHORIZED,
+          message: 'Invalid email or password',
+          error: true,
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
     }
 
     // Jika login berhasil, reset hitungan percobaan login yang gagal
@@ -90,7 +99,7 @@ export class AuthService {
 
     const payload = { username: userRecord.email, sub: userRecord.uid };
     return {
-      status: 'ok',
+      status: HttpStatus.OK,
       message: 'logged in successfully',
       user: {
         name: userRecord.name,

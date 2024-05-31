@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // biodata.service.tss
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 
 @Injectable()
@@ -17,28 +17,37 @@ export class BiodataService {
     profileImage?: Express.Multer.File,
   ) {
     if (!email && !name && !phone && !location && !gender && !profileImage) {
-      return {
-        status: 'error',
-        message: 'Setidaknya satu field harus diisi',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          message: 'Setidaknya satu field harus diisi',
+          error: true,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     let imageUrl;
     if (profileImage) {
       if (profileImage.size > 1024 * 1024) {
-        return {
-          status: 'error',
-          message: 'Profile image should not be more than 1MB',
-          error: true,
-        };
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            message: 'Profile image should not be more than 1MB',
+            error: true,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
       }
       if (!profileImage.mimetype.startsWith('image/')) {
-        return {
-          status: 'error',
-          message: 'Uploaded file is not an image',
-          error: true,
-        };
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            message: 'Uploaded file is not an image',
+            error: true,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       const userDoc = await this.db.collection('users').doc(email).get();
@@ -101,7 +110,7 @@ export class BiodataService {
     await userDocRef.set(userData, { merge: true });
 
     return {
-      status: 'ok',
+      status: HttpStatus.CREATED,
       message: 'Biodata updated successfully',
       error: false,
     };
@@ -112,7 +121,7 @@ export class BiodataService {
     const { password, ...userData } = userDoc.data();
 
     return {
-      status: 'ok',
+      status: HttpStatus.OK,
       message: 'Biodata fetched successfully',
       user: userData,
     };

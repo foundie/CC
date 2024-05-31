@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 
 @Injectable()
@@ -11,19 +11,25 @@ export class ReplyService {
       .doc(commentId)
       .get();
     if (!commentSnapshot.exists) {
-      return {
-        status: 'error',
-        message: 'Comment not found',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'Comment not found',
+          error: true,
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     if (!text) {
-      return {
-        status: 'error',
-        message: 'Reply text is required',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          message: 'Reply text is required',
+          error: true,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const replyRef = this.db.collection('replies').doc();
@@ -38,7 +44,7 @@ export class ReplyService {
     await replyRef.set(replyData);
 
     return {
-      status: 'ok',
+      status: HttpStatus.CREATED,
       message: 'Reply successfully created',
       data: replyData,
       error: false,
@@ -53,26 +59,32 @@ export class ReplyService {
     const replyData = replySnapshot.data();
 
     if (!replySnapshot.exists) {
-      return {
-        status: 'error',
-        message: 'Reply not found',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'Reply not found',
+          error: true,
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     if (replyData.email !== email) {
-      return {
-        status: 'error',
-        message: 'You are not authorized to delete this reply',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.UNAUTHORIZED,
+          message: 'You are not authorized to delete this reply',
+          error: true,
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
     }
 
     // Hapus balasan
     await replySnapshot.ref.delete();
 
     return {
-      status: 'ok',
+      status: HttpStatus.OK,
       message: 'Reply successfully deleted',
       error: false,
     };

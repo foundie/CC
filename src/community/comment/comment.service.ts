@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 
 @Injectable()
@@ -8,19 +8,25 @@ export class CommentService {
   async createComment(email: string, postId: string, text: string) {
     const postSnapshot = await this.db.collection('posts').doc(postId).get();
     if (!postSnapshot.exists) {
-      return {
-        status: 'error',
-        message: 'Post not found',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'Post not found',
+          error: true,
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     if (!text) {
-      return {
-        status: 'error',
-        message: 'Comment text is required',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          message: 'Comment text is required',
+          error: true,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const commentRef = this.db.collection('comments').doc();
@@ -38,7 +44,7 @@ export class CommentService {
     const dataWithTimestamp = doc.data();
 
     return {
-      status: 'ok',
+      status: HttpStatus.CREATED,
       message: 'Comment successfully created',
       data: {
         ...dataWithTimestamp,
@@ -55,19 +61,25 @@ export class CommentService {
     const commentData = commentSnapshot.data();
 
     if (!commentSnapshot.exists) {
-      return {
-        status: 'error',
-        message: 'Comment not found',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'Comment not found',
+          error: true,
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     if (commentData.email !== email) {
-      return {
-        status: 'error',
-        message: 'You are not authorized to delete this comment',
-        error: true,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.UNAUTHORIZED,
+          message: 'You are not authorized to delete this comment',
+          error: true,
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
     }
 
     // Hapus balasan
@@ -86,7 +98,7 @@ export class CommentService {
     // Jalankan batch
     await batch.commit();
     return {
-      status: 'ok',
+      status: HttpStatus.OK,
       message: 'Comment and related replies successfully deleted',
       error: false,
     };

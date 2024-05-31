@@ -1,6 +1,4 @@
-// product.service.ts
-
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { CreateProductDto } from '../type/product.type';
 import * as admin from 'firebase-admin';
 
@@ -44,7 +42,7 @@ export class ProductService {
       });
 
       return {
-        status: 'success',
+        status: HttpStatus.CREATED,
         message: 'Product successfully created',
         documentName: productRef.id,
         data: {
@@ -56,12 +54,14 @@ export class ProductService {
       };
     } catch (error) {
       console.error('Error creating product: ', error);
-      // Return the error message in the response
-      return {
-        status: 'error',
-        message: 'Error creating product',
-        error: error.message,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Error creating product',
+          error: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

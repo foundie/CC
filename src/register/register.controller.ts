@@ -8,7 +8,7 @@ export class RegisterController {
   constructor(private registerService: RegisterService) {}
 
   @Post('register')
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.CREATED)
   async register(
     @Body('name') name: string,
     @Body('email') email: string,

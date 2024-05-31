@@ -21,7 +21,7 @@ export class BiodataController {
 
   @Post('add')
   @UseGuards(AuthGuard('jwt'))
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('image'))
   async uploadProfileImage(
     @Request() req,
