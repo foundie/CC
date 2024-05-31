@@ -192,7 +192,7 @@
   - `price` as `number` - `Harga produk`
   - `category` as `string` - `Kategori produk`
   - `image` as `file` - `File gambar produk`
-
+  - 
 - **Response** :
 
   ```json
@@ -209,6 +209,26 @@
       "image": "https://storage.googleapis.com/your-bucket/makeup_products/1234567890_lipstick.jpg"
     }
     "error": false
+  }
+  
+### List Product
+
+- **URL** : `/products`
+- **Method** : `GET`
+- **Response** :
+- 
+   ```json
+  {
+    "error": false,
+    "status": "success",
+    "data": {
+      "Brand": "hanasui",
+      "Product Title": "Lipstick",
+      "description": "A long-lasting lipstick",
+      "price": 10000,
+      "category": "Makeup",
+      "Product URL": "https://hanasui.id/makeup/lip_cream"
+    }
   }
 
 ## Community
