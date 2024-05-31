@@ -2,6 +2,7 @@
 > Capstone Project ENTS-H120
 
 **Development backend link : https://foundie-backend-dev-b3pq7ueuta-uc.a.run.app/**
+**Backend Link 2 : https://foundie-backend-hapijs-dev-b3pq7ueuta-uc.a.run.app**
 
 # API Documentation
 
