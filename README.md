@@ -216,18 +216,57 @@
 - **URL** : `/products`
 - **Method** : `GET`
 - **Response** :
-- 
+  
    ```json
   {
     "error": false,
     "status": "success",
     "data": {
-      "Brand": "hanasui",
-      "Product Title": "Lipstick",
-      "description": "A long-lasting lipstick",
-      "price": 10000,
-      "category": "Makeup",
-      "Product URL": "https://hanasui.id/makeup/lip_cream"
+        "Brand": "hanasui",
+        "Product Title": "Hanasui Mattedorable Lip Cream 03 Star",
+        "Variant Name": "03 Star",
+        "Type": "lip",
+        "Color Hex": "#e64468",
+        "Color RGB": "(230, 68, 104)",
+        "Season 1 Name": "spring warm",
+        "Season 1 Percent": 50.09388903027193,
+        "S1 Closest Color": "[251.0, 95.0, 87.0]",
+        "Season 2 Name": "summer cool ",
+        "Season 2 Percent": 49.90611096972805,
+        "S2 Closest Color": "[208.0, 49.0, 79.0]",
+        "Product URL": "https://hanasui.id/makeup/lip_cream"
+    }
+  }
+
+### Filter Product
+
+- **URL** : `/products/filter`
+- **Method** : `POST`
+- **Request Header**:
+  - `Content-Type` : `multipart/form-data`
+- **Request Body** :
+  - `name` as `string` - `Product Title`
+  - `season` as `string` - `Season Name`
+- **Response** :
+  
+   ```json
+  {
+    "error": false,
+    "status": "success",
+    "data": {
+        "Brand": "hanasui",
+        "Product Title": "Hanasui Mattedorable Lip Cream 03 Star",
+        "Variant Name": "03 Star",
+        "Type": "lip",
+        "Color Hex": "#e64468",
+        "Color RGB": "(230, 68, 104)",
+        "Season 1 Name": "spring warm",
+        "Season 1 Percent": 50.09388903027193,
+        "S1 Closest Color": "[251.0, 95.0, 87.0]",
+        "Season 2 Name": "summer cool ",
+        "Season 2 Percent": 49.90611096972805,
+        "S2 Closest Color": "[208.0, 49.0, 79.0]",
+        "Product URL": "https://hanasui.id/makeup/lip_cream"
     }
   }
 
