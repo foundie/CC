@@ -482,3 +482,77 @@
   "error": false
 }
 ```
+
+## Community Group
+### Create Group
+- **URL** : `community/create`
+- **Method** : `POST`
+- **Auth required** : `YES`
+- **Request Header**:
+  - `Content-Type` : `multipart/form-data`
+- **Request Body (Optional)** :
+  - `title` as `string` -` Nama Group`
+  - `topics` as `text` - `Topik yang akan di angkat di group untuk memisahkan topic bisa gunakan koma(,)`
+  - `description` as `text` - `Deskripsi group`
+  - `image` as `file` - `File Foto Profile Group`
+- **Response** :
+
+```json
+{
+    "statusCode": 201,
+    "message": "Group successfully created",
+    "groupId": "YnHnxPwwtgqALxgrNAQb",
+    "data": {
+        "creator": "test@api.com",
+        "title": "TEST GROUP API",
+        "imageUrl": "https://storage.googleapis.com/storage-foundie/groups/....",
+        "topics": [
+            "API",
+            "TEST",
+            "BACKEND"
+        ],
+        "description": "TEST GROUP API FOR NOW",
+        "subscription": 0,
+        "timestamp": {}
+    }
+}
+```
+
+### Group Subscription
+
+- **URL** : `/community/:GroupID/subscribe`
+- **Method** : `POST`
+- **Auth required** : `YES`
+- **Request Params** :
+  - `GroupID` as `string` - `ID dari group yang akan user subscribe`
+- **Response**:
+
+```json
+{
+    "status": 201,
+    "message": "Successfully joined the group",
+    "membershipId": "Zgpb1sRiycmW3R5bsCMJ",
+    "data": {
+        "email": "test@api.com",
+        "groupId": "YnHnxPwwtgqALxgrNAQb",
+        "joinedAt": {}
+    }
+}
+```
+
+### Group Unsubs
+
+- **URL** : `/community/:GroupID/unsubscribe`
+- **Method** : `DELETE`
+- **Auth required** : `YES`
+- **Request Params** :
+  - `GroupID` as `string` - `ID dari group yang akan user subscribe`
+- **Response**:
+
+```json
+{
+    "statusCode": 200,
+    "message": "Successfully left the group",
+    "error": false
+}
+```
