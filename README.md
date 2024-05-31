@@ -18,7 +18,7 @@
 
 ```json
 {
-  "status": "ok",
+  "status": 201,
   "message": "register successfuly",
   "error": false
 }
@@ -34,7 +34,7 @@
 
 ```json
 {
-  "status": "ok",
+  "status": 200,
   "message": "logged in successfully",
   "user": {
     "name": "name",
@@ -83,7 +83,7 @@
 
 ```json
 {
-  "status": "ok",
+  "status": 201,
   "message": "Biodata updated successfully",
   "error": false
 }
@@ -97,7 +97,7 @@
 
 ```json
 {
-    "status": "ok",
+    "status": 200,
     "message": "Biodata fetched successfully",
     "user": {
         "role": "user",
@@ -123,7 +123,7 @@
 
 ```json
 {
-    "status": "ok",
+    "status": 201,
     "message": "Follow successfully created",
     "followId": "RQUdNOfr8XiKmavyrKN1",
     "data": {
@@ -145,7 +145,7 @@
 
 ```json
 {
-    "status": "ok",
+    "status": 200,
     "message": "Unfollowed successfully",
     "error": false
 }
@@ -160,7 +160,7 @@
 
 ```json
 {
-    "status": "ok",
+    "status": 200,
     "message": "Followers and following successfully retrieved",
     "data": {
         "Followers": [
@@ -196,7 +196,7 @@
 
   ```json
   {
-    "status": "success",
+    "status": 201,
     "message": "Product successfully created",
     "documentName": "abc123",
     "data": {
@@ -228,7 +228,7 @@
 
 ```json
 {
-  "status": "ok",
+  "status": 201,
   "message": "Post successfully created",
   "data": {
     "postId": "id post",
@@ -254,7 +254,7 @@
 
 ```json
 {
-  "status": "ok",
+  "status": 200,
   "message": "Post and related data successfully deleted",
   "error": false
 }
@@ -272,7 +272,7 @@
 - **Response** :
 ```json
 {
-  "status": "ok",
+  "status": 200,
   "message": "Post data successfully retrieved",
   "data": {
     "post": {
@@ -327,7 +327,7 @@
 
 ```json
 {
-    "status": "ok",
+    "status": 200,
     "message": "Posts successfully retrieved",
     "data": [
         {
@@ -362,7 +362,7 @@
 
 ```json
 {
-  "status": "ok",
+  "status": 201,
   "message": "Comment successfully created",
   "data": {
     "commentId": "id komentar",
@@ -388,7 +388,7 @@
 
 ```json
 {
-  "status": "ok",
+  "status": 200,
   "message": "Comment and related replies successfully deleted",
   "error": false
 }
@@ -409,7 +409,7 @@
 
 ```json
 {
-  "status": "ok",
+  "status": 201,
   "message": "Reply successfully created",
   "data": {
     "replyId": "id balasan",
@@ -434,7 +434,7 @@
 
 ```json
 {
-  "status": "ok",
+  "status": 200,
   "message": "Reply successfully deleted",
   "error": false
 }
@@ -453,7 +453,7 @@
 
 ```json
 {
-  "status": "ok",
+  "status": 201,
   "message": "Like successfully created",
   "likeId": "id suka",
   "data": {
@@ -477,7 +477,7 @@
 
 ```json
 {
-  "status": "ok",
+  "status": 200,
   "message": "Like successfully deleted",
   "error": false
 }
