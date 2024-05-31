@@ -20,7 +20,7 @@ export class BiodataService {
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
-          message: 'Setidaknya satu field harus diisi',
+          message: 'All fields must be filled',
           error: true,
         },
         HttpStatus.BAD_REQUEST,
