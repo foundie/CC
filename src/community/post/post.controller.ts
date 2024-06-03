@@ -10,6 +10,7 @@ import {
   Param,
   Query,
   Delete,
+  Patch,
   UseInterceptors,
 } from '@nestjs/common';
 import { PostService } from './post.service';
@@ -59,5 +60,25 @@ export class PostController {
   @UseGuards(AuthGuard('jwt'))
   async deletePost(@Request() req, @Param('postId') postId: string) {
     return await this.postService.deletePost(req.user.username, postId);
+  }
+
+  @Patch(':postId')
+  @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(FilesInterceptor('image'))
+  async editPost(
+    @Request() req,
+    @Param('postId') postId: string,
+    @Body('title') title: string,
+    @Body('text') text: string,
+    @UploadedFiles() imageFiles: Express.Multer.File[],
+  ) {
+    const email = req.user.username;
+    return await this.postService.editPost(
+      email,
+      postId,
+      title,
+      text,
+      imageFiles,
+    );
   }
 }

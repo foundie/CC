@@ -45,10 +45,9 @@ export class PostService {
     const imageUrls = [];
 
     const titleArray = title.split(' ');
+    const timestamp = Date.now();
 
     if (imageFiles) {
-      const timestamp = Date.now();
-
       for (const imageFile of imageFiles) {
         if (!imageFile.mimetype.startsWith('image/')) {
           throw new HttpException(
@@ -110,6 +109,7 @@ export class PostService {
       text,
       imageUrls: imageUrls || [],
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      createdTimestamp: timestamp,
       likesCount: 0,
     };
 
@@ -123,6 +123,150 @@ export class PostService {
       status: HttpStatus.CREATED,
       message: 'Post successfully created',
       data: savedPostData,
+      error: false,
+    };
+  }
+
+  async editPost(
+    email: string,
+    postId: string,
+    title: string,
+    text: string,
+    imageFiles: Express.Multer.File[],
+  ) {
+    const postRef = this.db.collection('posts').doc(postId);
+    const postSnapshot = await postRef.get();
+
+    if (!postSnapshot.exists) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'Post not found',
+          error: true,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const postData = postSnapshot.data();
+
+    if (postData.email !== email) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: 'You do not have permission to edit this post',
+          error: true,
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    const updatedData = {
+      title: title || postData.title,
+      text: text || postData.text,
+      titleArray: (title || postData.title).split(' '),
+      imageUrls: postData.imageUrls || [],
+    };
+
+    const bucket = this.storage.bucket();
+
+    // Delete old images
+    if (postData.imageUrls && postData.imageUrls.length > 0) {
+      for (const imageUrl of postData.imageUrls) {
+        const url = new URL(imageUrl);
+        const pathname = decodeURIComponent(url.pathname);
+        const fileName = pathname.substring(pathname.indexOf('/', 1) + 1);
+        const file = bucket.file(fileName);
+        try {
+          await file.delete();
+        } catch (error) {
+          console.error(`Failed to delete file ${fileName}:`, error);
+        }
+      }
+    }
+
+    // Upload new images
+    if (imageFiles && imageFiles.length > 0) {
+      if (imageFiles.length > 5) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            message: 'You can only upload up to 5 images',
+            error: true,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      const imageUrls = [];
+      // Use the original timestamp for the folder name
+      const timestampInMilliseconds = postData.createdTimestamp;
+
+      for (const imageFile of imageFiles) {
+        if (!imageFile.mimetype.startsWith('image/')) {
+          throw new HttpException(
+            {
+              status: HttpStatus.BAD_REQUEST,
+              message: 'Invalid file type. Only images are allowed',
+              error: true,
+            },
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+
+        const fileName = `user/${email}/posts/${timestampInMilliseconds}/${imageFile.originalname}`;
+        const file = bucket.file(fileName);
+        const stream = file.createWriteStream({
+          metadata: {
+            contentType: imageFile.mimetype,
+          },
+        });
+
+        stream.write(imageFile.buffer);
+        stream.end();
+
+        try {
+          await new Promise<void>((resolve, reject) => {
+            stream.on('finish', async () => {
+              try {
+                const signedUrls = await file.getSignedUrl({
+                  action: 'read',
+                  expires: '03-09-2491',
+                });
+                imageUrls.push(signedUrls[0]);
+                resolve();
+              } catch (error) {
+                reject(error);
+              }
+            });
+
+            stream.on('error', reject);
+          });
+        } catch (error) {
+          throw new HttpException(
+            {
+              status: HttpStatus.INTERNAL_SERVER_ERROR,
+              message: 'Failed to upload image',
+              error: true,
+            },
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      }
+
+      updatedData.imageUrls = imageUrls;
+    }
+
+    await postRef.update(updatedData);
+    const updatedPost = await postRef.get();
+    const updatedPostData = updatedPost.data();
+
+    delete updatedPostData.titleArray;
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Post successfully updated',
+      data: updatedPostData,
       error: false,
     };
   }
