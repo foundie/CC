@@ -180,37 +180,6 @@
 
 ## Products
 
-### Add Product
-
-- **URL** : `/products/add`
-- **Method** : `POST`
-- **Request Header**:
-  - `Content-Type` : `multipart/form-data`
-- **Request Body** :
-  - `name` as `string` - `Nama produk`
-  - `description` as `string` - `Deskripsi produk`
-  - `price` as `number` - `Harga produk`
-  - `category` as `string` - `Kategori produk`
-  - `image` as `file` - `File gambar produk`
-  - 
-- **Response** :
-
-  ```json
-  {
-    "status": 201,
-    "message": "Product successfully created",
-    "documentName": "abc123",
-    "data": {
-      "id": "abc123",
-      "name": "Lipstick",
-      "description": "A long-lasting lipstick",
-      "price": 10000,
-      "category": "Makeup",
-      "image": "https://storage.googleapis.com/your-bucket/makeup_products/1234567890_lipstick.jpg"
-    }
-    "error": false
-  }
-  
 ### List Product
 
 - **URL** : `/products`
@@ -301,6 +270,39 @@
   "error": false
 }
 ```
+### Edit Post
+
+- **URL** : `/community/postId`
+- **Method** : `PATCH`
+- **Auth required** : `YES`
+- **Permissions required** : `None`
+- **URL Parameters** :
+  - `postId` as `string` - `ID dari postingan yang akan di edit`
+- **Request Header**:
+  - `Content-Type` : `multipart/form-data`
+- **Request Body** :
+  - `title` as `string` - `Judul post`
+  - `text` as `string` - `Teks post`
+  - `image` as `file` - `File gambar post maksimal 5 gambar`
+
+- **Response** :
+
+```json
+{
+  "status": 201,
+  "message": "Post successfully updated,
+  "data": {
+    "postId": "id post",
+    "email": "email pengguna",
+    "title": "judul post",
+    "text": "teks post",
+    "imageUrl": "url gambar post",
+    "timestamp": "timestamp server"
+  }
+  "error": false
+}
+```
+
 ### Delete Post
 
 - **URL** : `/community/:postId`
