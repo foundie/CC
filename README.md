@@ -290,7 +290,7 @@
 ```json
 {
   "status": 201,
-  "message": "Post successfully updated,
+  "message": "Post successfully updated",
   "data": {
     "postId": "id post",
     "email": "email pengguna",
