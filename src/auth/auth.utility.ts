@@ -1,3 +1,4 @@
+// auth.utility.ts
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { config } from 'dotenv';
@@ -9,7 +10,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: 'http://localhost:3000/auth/google/redirect',
+      callbackURL:
+        'https://foundie-backend-dev-b3pq7ueuta-uc.a.run.app/auth/google/redirect',
       scope: ['email', 'profile'],
     });
   }
