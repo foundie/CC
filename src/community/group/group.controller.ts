@@ -4,14 +4,15 @@ import {
   UseGuards,
   Request,
   Body,
-  UploadedFile,
-  UseInterceptors,
+  UploadedFiles,
   Param,
   Delete,
+  Get,
+  UseInterceptors,
 } from '@nestjs/common';
 import { GroupService } from './group.service';
 import { AuthGuard } from '@nestjs/passport';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('community')
 export class GroupController {
@@ -25,7 +26,7 @@ export class GroupController {
     @Body('title') title: string,
     @Body('topics') topics: string,
     @Body('description') description: string,
-    @UploadedFile() imageFile: Express.Multer.File,
+    @UploadedFiles() imageFile: Express.Multer.File,
   ) {
     // Menggunakan email dari pengguna yang saat ini masuk
     const creator = req.user.username;
@@ -52,5 +53,31 @@ export class GroupController {
     // Menggunakan email dari pengguna yang saat ini masuk
     const email = req.user.username;
     return await this.groupService.leaveGroup(email, groupId);
+  }
+
+  @Post(':groupId/post')
+  @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(FilesInterceptor('image'))
+  async createGroupPost(
+    @Request() req,
+    @Param('groupId') groupId: string,
+    @Body('title') title: string,
+    @Body('text') text: string,
+    @UploadedFiles() imageFiles: Express.Multer.File[],
+  ) {
+    const email = req.user.username;
+    return await this.groupService.createGroupPost(
+      email,
+      groupId,
+      title,
+      text,
+      imageFiles,
+    );
+  }
+
+  @Get(':groupId/members')
+  @UseGuards(AuthGuard('jwt'))
+  async getGroupMembers(@Param('groupId') groupId: string) {
+    return await this.groupService.getGroupMembers(groupId);
   }
 }

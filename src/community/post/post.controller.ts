@@ -56,6 +56,24 @@ export class PostController {
     );
   }
 
+  @Get(':groupId/posts')
+  @UseGuards(AuthGuard('jwt'))
+  async getGroupPosts(
+    @Param('groupId') groupId: string,
+    @Query('q') q: string,
+    @Query('l') l: string,
+    @Query('skip') skip: string,
+    @Query('sort') sort: string,
+  ) {
+    return await this.postService.getGroupPosts(
+      groupId,
+      q,
+      parseInt(l),
+      parseInt(skip),
+      sort,
+    );
+  }
+
   @Delete(':postId')
   @UseGuards(AuthGuard('jwt'))
   async deletePost(@Request() req, @Param('postId') postId: string) {

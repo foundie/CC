@@ -109,12 +109,34 @@ export class FollowService {
       (doc) => doc.data().followingEmail,
     );
 
+    // Get all group memberships of the user
+    const groupMembershipSnapshot = await this.db
+      .collection('groupMemberships')
+      .where('email', '==', email)
+      .get();
+
+    const groupMembershipData = [];
+    for (const doc of groupMembershipSnapshot.docs) {
+      const groupId = doc.data().groupId;
+      const groupSnapshot = await this.db
+        .collection('groups')
+        .doc(groupId)
+        .get();
+      const groupData = groupSnapshot.data();
+      groupMembershipData.push({
+        groupId: groupId,
+        title: groupData.title,
+      });
+    }
+
     return {
       status: HttpStatus.OK,
-      message: 'Followers and following successfully retrieved',
+      message:
+        'Followers, following, and group memberships successfully retrieved',
       data: {
         Followers: followersData,
         Following: followingData,
+        GroupMemberships: groupMembershipData,
       },
       error: false,
     };

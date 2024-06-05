@@ -214,8 +214,12 @@ export class PostService {
           );
         }
 
-        const fileName = `user/${email}/posts/${timestampInMilliseconds}/${imageFile.originalname}`;
-        const file = bucket.file(fileName);
+        // Check if it's a group post and set the file path accordingly
+        const filePath = postData.groupPost
+          ? `groups/${postData.groupId}/posts/${timestampInMilliseconds}_${imageFile.originalname}`
+          : `user/${email}/posts/${timestampInMilliseconds}_${imageFile.originalname}`;
+
+        const file = bucket.file(filePath);
         const stream = file.createWriteStream({
           metadata: {
             contentType: imageFile.mimetype,
@@ -325,6 +329,67 @@ export class PostService {
     let postsQuery: Query<DocumentData> = this.db.collection(
       'posts',
     ) as CollectionReference;
+
+    // Sorting
+    if (sort === 'popular') {
+      postsQuery = postsQuery.orderBy('likesCount', 'desc');
+    } else {
+      postsQuery = postsQuery.orderBy('timestamp', 'desc');
+    }
+
+    if (l) {
+      postsQuery = postsQuery.limit(l);
+    }
+    if (skip) {
+      postsQuery = postsQuery.offset(skip);
+    }
+
+    const postsSnapshot = await postsQuery.get();
+    let postsData = postsSnapshot.docs.map((doc) => doc.data());
+
+    // Filter by search query
+    if (q) {
+      const searchWords = q.split(' ');
+      postsData = postsData.filter((post) =>
+        searchWords.every((word) => post.titleArray.includes(word)),
+      );
+    }
+
+    // Remove titleArray from the response
+    postsData = postsData.map((post) => {
+      delete post.titleArray;
+      return post;
+    });
+
+    if (postsData.length === 0) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'No posts found',
+          error: true,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    } else {
+      return {
+        status: HttpStatus.OK,
+        message: 'Posts successfully retrieved',
+        data: postsData,
+        error: false,
+      };
+    }
+  }
+
+  async getGroupPosts(
+    groupId: string,
+    q: string,
+    l: number,
+    skip: number,
+    sort: string,
+  ) {
+    let postsQuery: Query<DocumentData> = this.db
+      .collection('posts')
+      .where('groupId', '==', groupId) as CollectionReference;
 
     // Sorting
     if (sort === 'popular') {

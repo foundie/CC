@@ -251,4 +251,141 @@ export class GroupService {
       error: false,
     };
   }
+
+  async createGroupPost(
+    email: string,
+    groupId: string,
+    title: string,
+    text: string,
+    imageFiles: Express.Multer.File[],
+  ) {
+    // Validasi input
+    if (!email || !groupId || !title || !text || !imageFiles) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          message: 'All fields must be filled',
+          error: true,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // Cek apakah pengguna adalah anggota grup
+    const membershipSnapshot = await this.db
+      .collection('groupMemberships')
+      .where('email', '==', email)
+      .where('groupId', '==', groupId)
+      .get();
+    if (membershipSnapshot.empty) {
+      throw new HttpException(
+        {
+          status: HttpStatus.CONFLICT,
+          message: 'You are not a member of this group',
+          error: true,
+        },
+        HttpStatus.CONFLICT,
+      );
+    }
+
+    // Buat postingan di dalam grup
+    const postRef = this.db.collection('posts').doc();
+    const bucket = this.storage.bucket();
+    const imageUrls = [];
+
+    for (const imageFile of imageFiles) {
+      const fileName = `groups/${groupId}/posts/${Date.now()}_${imageFile.originalname}`;
+      const file = bucket.file(fileName);
+      const stream = file.createWriteStream({
+        metadata: {
+          contentType: imageFile.mimetype,
+        },
+      });
+
+      stream.write(imageFile.buffer);
+      stream.end();
+
+      await new Promise<void>((resolve, reject) => {
+        stream.on('finish', async () => {
+          try {
+            const signedUrls = await file.getSignedUrl({
+              action: 'read',
+              expires: '03-09-2491',
+            });
+            imageUrls.push(signedUrls[0]);
+            resolve();
+          } catch (error) {
+            reject(
+              new HttpException(
+                {
+                  status: HttpStatus.INTERNAL_SERVER_ERROR,
+                  message: 'Failed to upload image',
+                  error: true,
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR,
+              ),
+            );
+          }
+        });
+
+        stream.on('error', (error) => {
+          reject(
+            new HttpException(
+              {
+                status: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Failed to upload image',
+                error: true,
+              },
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            ),
+          );
+        });
+      });
+    }
+
+    const postData = {
+      postId: postRef.id,
+      email,
+      groupId,
+      title,
+      text,
+      imageUrls,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      groupPost: true, // menandakan ini adalah postingan grup
+    };
+
+    await postRef.set(postData);
+    return {
+      status: HttpStatus.CREATED,
+      message: 'Post successfully created',
+      data: postData,
+    };
+  }
+
+  async getGroupMembers(groupId: string) {
+    const membershipsSnapshot = await this.db
+      .collection('groupMemberships')
+      .where('groupId', '==', groupId)
+      .get();
+
+    if (membershipsSnapshot.empty) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'No members found',
+          error: true,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const membersData = membershipsSnapshot.docs.map((doc) => doc.data());
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Members successfully retrieved',
+      data: membersData,
+      error: false,
+    };
+  }
 }
