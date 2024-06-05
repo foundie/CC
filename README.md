@@ -184,7 +184,27 @@
 }
 ```
 
+## Predict Feature
 
+### Face Classification
+
+- **URL** : `/predict/face`
+- **Method** : `POST`
+- **Request Header**:
+  - `Content-Type` : `multipart/form-data`
+- **Request Body** :
+  - `immage` as `file` - `User's Face`
+- **Response** :
+
+  ```json
+  {
+    "error": false,
+    "status": "success",
+    "data": {
+        "prediction": "High Visual Weight",
+        "message": "Jenis klasifikasi wajah Anda adalah High Visual Weight",
+    }
+  }
 
 ## Products
 
