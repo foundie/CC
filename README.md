@@ -553,7 +553,8 @@
 }
 ```
 
-## Community Group (NOTE: untuk fitur comment, reply, like, delete, edit, get detail post untuk postingan grup sama seperti postingan user)
+## Community Group
+> (NOTE: untuk fitur comment, reply, like, delete, edit, dan get detail post untuk postingan grup sama seperti postingan user)
 ### Create Group
 - **URL** : `community/create`
 - **Method** : `POST`
@@ -650,7 +651,7 @@
   "message": "Post successfully created",
   "data": {
     "groupPost": true,
-    "groupId": "qwsdawedawokeaasd,
+    "groupId": "qwsdawedawokeaasd",
     "postId": "id post",
     "email": "email pengguna yang telah join ke grup",
     "title": "judul post",
