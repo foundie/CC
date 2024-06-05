@@ -193,7 +193,7 @@
 - **Request Header**:
   - `Content-Type` : `multipart/form-data`
 - **Request Body** :
-  - `immage` as `file` - `User's Face`
+  - `image` as `file` - `User's Face`
 - **Response** :
 
   ```json
