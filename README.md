@@ -173,6 +173,12 @@
         "Following": [
             "sanseath2@gmail.com"
         ]
+        "GroupMemberships": [
+            {
+                "groupId": "YnHnxPwwtgqALxgrNAQb",
+                "title": "TEST GROUP API"
+            }
+        ]
     }
     "error": false
 }
@@ -547,7 +553,7 @@
 }
 ```
 
-## Community Group
+## Community Group (NOTE: untuk fitur comment, reply, like, delete, edit, get detail post untuk postingan grup sama seperti postingan user)
 ### Create Group
 - **URL** : `community/create`
 - **Method** : `POST`
@@ -620,3 +626,103 @@
     "error": false
 }
 ```
+
+### Add Group Post
+
+- **URL** : `/community/:groupId/post`
+- **Method** : `POST`
+- **Auth required** : `YES`
+- **Permissions required** : `None`
+- **URL Parameters** :
+  - `groupId` as `string` - `ID dari group`
+- **Request Header**:
+  - `Content-Type` : `multipart/form-data`
+- **Request Body** :
+  - `title` as `string` - `Judul post`
+  - `text` as `string` - `Teks post`
+  - `image` as `file` - `File gambar post maksimal 5 gambar`
+
+- **Response** :
+
+```json
+{
+  "status": 201,
+  "message": "Post successfully created",
+  "data": {
+    "groupPost": true,
+    "groupId": "qwsdawedawokeaasd,
+    "postId": "id post",
+    "email": "email pengguna yang telah join ke grup",
+    "title": "judul post",
+    "text": "teks post",
+    "imageUrl": "url gambar post",
+    "timestamp": "timestamp server"
+  }
+  "error": false
+}
+```
+
+### Get All Group Post Data
+- **URL** : `/community/YnHnxPwwtgqALxgrNAQb/posts`
+- **Method** : `GET`
+- **Auth required** : `YES`
+- **Params Parameters** :
+  - `q` as `string` - `Judul postingan yang dicari`
+  - `l` as `number` - `Jumlah maksimal postingan yang ditampilkan`
+  - `skip` as `number` - `Jumlah postingan awal yang dilewati`
+  - `sort` as `string` - `Urutan postingan, **popular** untuk urutan berdasarkan likesCount, **default** berdasarkan waktu posting`
+  - `example` - `http://localhost:3000/community/YnHnxPwwtgqALxgrNAQb/posts?q=TEST&l=1&skip=2&sort=popular`
+- **Response** :
+
+```json
+{
+    "status": 200,
+    "message": "Posts successfully retrieved",
+    "data": [
+        {
+            "groupPost": true,
+            "groupId": "YnHnxPwwtgqALxgrNAQb",
+            "postId": "N8rOud2GWYet40HItg0s",
+            "text": "TEST API",
+            "email": "test@api.com",
+            "timestamp": {
+                "_seconds": 1717550154,
+                "_nanoseconds": 667000000
+            },
+            "likesCount": 1,
+            "imageUrls": [
+                "https://storage.googleapis.com/storage-foundie/groups/YnHnxPwwtgqALxgrNAQb/posts/...."
+            ],
+            "title": "TEST POST GROUP EDIT"
+        }
+    ],
+    "error": false
+}
+```
+### Get Group Following Members
+
+- **URL** : `community/:groupId/members`
+- **Method** : `GET`
+- **URL Parameters** :
+  - `groupId` as `string` - `ID dari group`
+- **Auth required** : `YES`
+- **Response**:
+
+```json
+{
+    "status": 200,
+    "message": "Members successfully retrieved",
+    "data": [
+        {
+            "groupId": "YnHnxPwwtgqALxgrNAQb",
+            "email": "test@api.com",
+            "joinedAt": {
+                "_seconds": 1717139266,
+                "_nanoseconds": 496000000
+            }
+        }
+    ],
+    "error": false
+}
+```
+
