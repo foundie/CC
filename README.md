@@ -142,6 +142,7 @@
 - **Method** : `POST`
 - **Auth required** : `YES`
 - **Request Body** :
+  - `email` as `string` - `email pengguna`
   - `password` as `string` - `Password`
 - **Response** :
 
