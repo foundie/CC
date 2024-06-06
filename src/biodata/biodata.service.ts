@@ -128,8 +128,24 @@ export class BiodataService {
     };
   }
 
-  async addPassword(email: string, password: string) {
+  async addPassword(
+    loggedInUserEmail: string,
+    email: string,
+    password: string,
+  ) {
     const userDoc = await this.db.collection('users').doc(email).get();
+
+    // Cek apakah pengguna yang sedang login sama dengan pengguna yang ingin mengubah password
+    if (loggedInUserEmail !== email) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          message: "You are not allowed to change another user's password",
+          error: true,
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
 
     if (!userDoc.exists) {
       throw new HttpException(
