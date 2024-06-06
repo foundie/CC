@@ -52,9 +52,10 @@ export class BiodataController {
   @Post('add-password')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.CREATED)
-  async addPassword(@Request() req, @Body('password') password: string) {
-    // Dapatkan email dari pengguna yang sedang login
-    const email = req.user.username;
+  async addPassword(
+    @Body('email') email: string,
+    @Body('password') password: string,
+  ) {
     return await this.biodataService.addPassword(email, password);
   }
 }

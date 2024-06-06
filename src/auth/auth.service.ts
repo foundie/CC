@@ -60,25 +60,22 @@ export class AuthService {
       const payload = ticket.getPayload();
       const googleUserId = payload['sub'];
 
-      // Mendapatkan atau membuat pengguna dari database
       const db = admin.firestore();
       let userDoc = await db.collection('users').doc(payload['email']).get();
 
       let setPassword = false;
       if (!userDoc.exists) {
-        // Jika pengguna tidak ada, buat pengguna baru
         const newUser = {
           uid: googleUserId,
           email: payload['email'],
           name: payload['name'],
-          // tambahkan field lainnya sesuai kebutuhan
+          role: 'user',
         };
         await db
           .collection('users')
           .doc(payload['email'])
           .set(newUser, { merge: true });
       } else {
-        // Jika pengguna sudah ada, periksa apakah mereka sudah memiliki password
         const userRecord = userDoc.data();
         setPassword = !!userRecord.password;
       }
@@ -86,7 +83,6 @@ export class AuthService {
       userDoc = await db.collection('users').doc(payload['email']).get();
       const userRecord = userDoc.data();
 
-      // Menghasilkan token autentikasi untuk sistem Anda
       const tokenPayload = { username: userRecord.email, sub: userRecord.uid };
       const token = this.jwtService.sign(tokenPayload);
 
@@ -96,7 +92,6 @@ export class AuthService {
         user: {
           name: userRecord.name,
           email: userRecord.email,
-          // tambahkan field lainnya sesuai kebutuhan
           token: token,
         },
         setPassword: setPassword,
