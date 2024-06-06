@@ -51,6 +51,69 @@ export class AuthService {
     };
   }
 
+  async loginWithGoogle(idToken: string) {
+    try {
+      const ticket = await this.client.verifyIdToken({
+        idToken: idToken,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      const payload = ticket.getPayload();
+      const googleUserId = payload['sub'];
+
+      // Mendapatkan atau membuat pengguna dari database
+      const db = admin.firestore();
+      let userDoc = await db.collection('users').doc(payload['email']).get();
+
+      let setPassword = false;
+      if (!userDoc.exists) {
+        // Jika pengguna tidak ada, buat pengguna baru
+        const newUser = {
+          uid: googleUserId,
+          email: payload['email'],
+          name: payload['name'],
+          // tambahkan field lainnya sesuai kebutuhan
+        };
+        await db
+          .collection('users')
+          .doc(payload['email'])
+          .set(newUser, { merge: true });
+      } else {
+        // Jika pengguna sudah ada, periksa apakah mereka sudah memiliki password
+        const userRecord = userDoc.data();
+        setPassword = !!userRecord.password;
+      }
+
+      userDoc = await db.collection('users').doc(payload['email']).get();
+      const userRecord = userDoc.data();
+
+      // Menghasilkan token autentikasi untuk sistem Anda
+      const tokenPayload = { username: userRecord.email, sub: userRecord.uid };
+      const token = this.jwtService.sign(tokenPayload);
+
+      return {
+        status: HttpStatus.OK,
+        message: 'logged in successfully',
+        user: {
+          name: userRecord.name,
+          email: userRecord.email,
+          // tambahkan field lainnya sesuai kebutuhan
+          token: token,
+        },
+        setPassword: setPassword,
+        error: false,
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNAUTHORIZED,
+          message: 'Invalid Google token',
+          error: true,
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+  }
+
   async loginWithEmail(email: string, password: string) {
     const db = admin.firestore();
     const userDoc = await db.collection('users').doc(email).get();

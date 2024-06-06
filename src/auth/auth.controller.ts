@@ -33,7 +33,7 @@ export class AuthController {
       lastName: req.user.lastName,
       picture: req.user.picture,
     };
-    const payload = { username: user.email, sub: user.email }; // Menggunakan email sebagai sub
+    const payload = { username: user.email, sub: user.email };
     const token = this.jwtService.sign(payload);
     return {
       status: HttpStatus.OK,
@@ -41,11 +41,17 @@ export class AuthController {
       user: {
         name: `${user.firstName} ${user.lastName}`,
         email: user.email,
-        role: 'user', // Anda perlu mengatur role pengguna
+        role: 'user',
         token: token,
       },
       error: false,
     };
+  }
+
+  @Post('verify')
+  @HttpCode(HttpStatus.OK)
+  async loginWithGoogle(@Body('token') idToken: string) {
+    return this.authService.loginWithGoogle(idToken);
   }
 
   @Post('login')
