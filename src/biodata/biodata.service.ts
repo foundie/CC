@@ -2,6 +2,7 @@
 // biodata.service.tss
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import * as admin from 'firebase-admin';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class BiodataService {
@@ -124,6 +125,45 @@ export class BiodataService {
       status: HttpStatus.OK,
       message: 'Biodata fetched successfully',
       user: userData,
+    };
+  }
+
+  async addPassword(email: string, password: string) {
+    const userDoc = await this.db.collection('users').doc(email).get();
+
+    if (!userDoc.exists) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'User does not exist',
+          error: true,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    if (!password || password.length < 8) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          message: 'Password must be at least 8 characters long',
+          error: true,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Menambahkan password ke pengguna yang sudah ada
+    await this.db.collection('users').doc(email).update({
+      password: hashedPassword,
+    });
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Password added successfully',
+      error: false,
     };
   }
 }

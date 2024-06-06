@@ -1,6 +1,5 @@
 // register.controller.ts
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
-
 import { RegisterService } from './register.service';
 
 @Controller()
