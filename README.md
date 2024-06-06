@@ -137,6 +137,21 @@
 }
 ```
 
+### add password
+- **URL** : `/biodata/add-password`
+- **Method** : `POST`
+- **Request Body** :
+  - `password` as `string` - `Password`
+- **Response** :
+
+```json
+{
+    "status": 200,
+    "message": "Password added successfully",
+    "error": false
+}
+```
+
 ### User Follow
 
 - **URL** : `/follow/:followingEmail`
