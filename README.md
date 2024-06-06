@@ -72,7 +72,7 @@
 
 ### Gmail Verifikasi
 
-- **URL** : `auth/verify`
+- **URL** : `/auth/verify`
 - **Method** : `POST`
 - - **Request** Body:
   - `token` as `string`
@@ -140,6 +140,7 @@
 ### add password
 - **URL** : `/biodata/add-password`
 - **Method** : `POST`
+- **Auth required** : `YES`
 - **Request Body** :
   - `password` as `string` - `Password`
 - **Response** :
