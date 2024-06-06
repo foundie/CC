@@ -70,6 +70,28 @@
 }
 ```
 
+### Gmail Verifikasi
+
+- **URL** : `auth/verify`
+- **Method** : `POST`
+- - **Request** Body:
+  - `token` as `string`
+- **Response**:
+
+```json
+{
+    "status": 200,
+    "message": "logged in successfully",
+    "user": {
+        "name": "contigency contract",
+        "email": "sanseath2@gmail.com",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbnNlYXRoMkBnbWFpbC5jb20iLCJzdWIiOiIxMDkyMDc1MjExODU2MzkyNTYwMTQiLCJpYXQiOjE3MTc2NTc5NDgsImV4cCI6MTcxNzkxNzE0OH0.o7z20yYy4zyzCZ_Gbu8XeQFaJbvrFDrKr0RwponbYII"
+    },
+    "setPassword": false,
+    "error": false
+}
+```
+
 ### Update Biodata
 - **URL** : `/biodata/add`
 - **Method** : `POST`
