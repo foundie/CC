@@ -6,7 +6,7 @@
 - **HAPI JS** : **https://foundie-backend-hapijs-dev-b3pq7ueuta-uc.a.run.app**
 
 ### API GATEWAY
-> http://34.36.174.255/
+- **http://34.36.174.255/**
 
 
 # API Documentation
