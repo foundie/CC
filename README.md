@@ -1,9 +1,12 @@
 # Backend for Foundie
 > Capstone Project ENTS-H120
 
-### Development backend link : https://foundie-backend-dev-b3pq7ueuta-uc.a.run.app/
+### Development backend link : 
+> https://foundie-backend-dev-b3pq7ueuta-uc.a.run.app/
+> https://foundie-backend-hapijs-dev-b3pq7ueuta-uc.a.run.app
 
-### Backend Link 2 : https://foundie-backend-hapijs-dev-b3pq7ueuta-uc.a.run.app
+### API GATEWAY
+> http://34.36.174.255/
 
 
 # API Documentation
