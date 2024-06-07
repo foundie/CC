@@ -2,7 +2,9 @@
 > Capstone Project ENTS-H120
 
 ### Development backend link : 
+- **NEST JS**
 > https://foundie-backend-dev-b3pq7ueuta-uc.a.run.app/
+- **HAPI JS**
 > https://foundie-backend-hapijs-dev-b3pq7ueuta-uc.a.run.app
 
 ### API GATEWAY
