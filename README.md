@@ -4,6 +4,7 @@
 ### Development backend link : 
 - **NEST JS** : **https://foundie-backend-dev-b3pq7ueuta-uc.a.run.app/**
 - **HAPI JS** : **https://foundie-backend-hapijs-dev-b3pq7ueuta-uc.a.run.app**
+- **FLASK** : **https://foundie-backend-flask-b3pq7ueuta-uc.a.run.app**
 
 ### API GATEWAY
 - **http://34.36.174.255/**
