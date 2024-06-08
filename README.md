@@ -248,6 +248,25 @@
     }
   }
 
+### Skin Tone
+
+- **URL** : `/predict/skin`
+- **Method** : `POST`
+- **Request Header**:
+  - `Content-Type` : `multipart/form-data`
+- **Request Body** :
+  - `image` as `file` - `User's Face`
+- **Response** :
+
+  ```json
+  {
+    "error": false,
+    "status": "success",
+    "data": {
+        "prediction": "Light"
+    }
+  }
+
 ## Products
 
 ### List Product
