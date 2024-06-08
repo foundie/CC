@@ -243,7 +243,7 @@
     "error": false,
     "status": "success",
     "data": {
-        "prediction": "High Visual Weight",
+        "predicted_class": "High Visual Weight",
         "message": "Jenis klasifikasi wajah Anda adalah High Visual Weight",
     }
   }
@@ -262,9 +262,7 @@
   {
     "error": false,
     "status": "success",
-    "data": {
-        "prediction": "Light"
-    }
+    "predicted_class": "Light"
   }
 
 ## Products
