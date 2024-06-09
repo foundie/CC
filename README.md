@@ -636,7 +636,7 @@
 ## Community Group
 > (NOTE: untuk fitur comment, reply, like, delete, edit, dan get detail post untuk postingan grup sama seperti postingan user)
 ### Create Group
-- **URL** : `community/create`
+- **URL** : `/community/create`
 - **Method** : `POST`
 - **Auth required** : `YES`
 - **Request Header**:
@@ -645,7 +645,8 @@
   - `title` as `string` -` Nama Group`
   - `topics` as `text` - `Topik yang akan di angkat di group untuk memisahkan topic bisa gunakan koma(,)`
   - `description` as `text` - `Deskripsi group`
-  - `image` as `file` - `File Foto Profile Group`
+  - `profileImage` as `file` - `File Foto Profile Group`
+  - `coverImage` as `file` - `File Foto Sampul Group`
 - **Response** :
 
 ```json
@@ -782,7 +783,7 @@
 ```
 ### Get Group Following Members
 
-- **URL** : `community/:groupId/members`
+- **URL** : `/community/:groupId/members`
 - **Method** : `GET`
 - **URL Parameters** :
   - `groupId` as `string` - `ID dari group`
