@@ -746,7 +746,7 @@
 ```
 
 ### Get All Group Post Data
-- **URL** : `/community/YnHnxPwwtgqALxgrNAQb/posts`
+- **URL** : `/community/:groupId/posts`
 - **Method** : `GET`
 - **Auth required** : `YES`
 - **Params Parameters** :
