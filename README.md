@@ -651,19 +651,20 @@
 
 ```json
 {
-    "statusCode": 201,
+    "status": 201,
     "message": "Group successfully created",
-    "groupId": "YnHnxPwwtgqALxgrNAQb",
     "data": {
+        "id": "XPnquqG6kQ4cYidIGomy",
         "creator": "test@api.com",
         "title": "TEST GROUP API",
-        "imageUrl": "https://storage.googleapis.com/storage-foundie/groups/....",
+        "profileImageUrl": "https://storage.googleapis.com/storage-foundie/groups/...",
+        "coverImageUrl": "https://storage.googleapis.com/storage-foundie/groups/...",
         "topics": [
             "API",
             "TEST",
-            "BACKEND"
+            "GROUP"
         ],
-        "description": "TEST GROUP API FOR NOW",
+        "description": "BLALALALALALALA",
         "subscription": 0,
         "timestamp": {}
     }
