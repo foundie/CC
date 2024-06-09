@@ -12,14 +12,23 @@ export class GroupService {
     title: string,
     topics: string,
     description: string,
-    imageFile: Express.Multer.File,
+    profileImageFile: Express.Multer.File,
+    coverImageFile: Express.Multer.File,
   ) {
     // Validasi input
-    if (!creator || !title || !topics || !description || !imageFile) {
+    if (
+      !creator ||
+      !title ||
+      !topics ||
+      !description ||
+      !profileImageFile ||
+      !coverImageFile
+    ) {
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
-          message: 'All fields must be filled',
+          message:
+            'All fields must be filled, including profile and cover images',
           error: true,
         },
         HttpStatus.BAD_REQUEST,
@@ -43,11 +52,14 @@ export class GroupService {
     }
 
     // Cek apakah file yang diunggah adalah gambar
-    if (!imageFile.mimetype.startsWith('image/')) {
+    if (
+      !profileImageFile.mimetype.startsWith('image/') ||
+      !coverImageFile.mimetype.startsWith('image/')
+    ) {
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
-          message: 'Uploaded file is not an image',
+          message: 'Uploaded files are not images',
           error: true,
         },
         HttpStatus.BAD_REQUEST,
@@ -67,74 +79,53 @@ export class GroupService {
       );
     }
 
+    // Buat referensi dokumen grup dengan ID unik
     const groupRef = this.db.collection('groups').doc();
-    const bucket = this.storage.bucket();
-    const fileName = `groups/${title}/profileGroup_${Date.now()}`;
-    const file = bucket.file(fileName);
-    const stream = file.createWriteStream({
-      metadata: {
-        contentType: imageFile.mimetype,
-      },
-    });
+    const groupId = groupRef.id;
 
-    stream.write(imageFile.buffer);
-    stream.end();
+    // Gunakan ID grup untuk nama file
+    const profileFileName = `groups/${groupId}/profileGroup_${Date.now()}`;
+    const coverFileName = `groups/${groupId}/coverGroup_${Date.now()}`;
 
-    let imageUrl;
-    await new Promise<void>((resolve, reject) => {
-      stream.on('finish', async () => {
-        try {
-          const signedUrls = await file.getSignedUrl({
-            action: 'read',
-            expires: '03-09-2491',
-          });
-          imageUrl = signedUrls[0];
-          resolve();
-        } catch (error) {
-          reject(
-            new HttpException(
-              {
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                message: 'Failed to upload image',
-                error: true,
-              },
-              HttpStatus.INTERNAL_SERVER_ERROR,
-            ),
-          );
-        }
-      });
+    // Logika pengunggahan foto profil dan sampul
+    const profileImageUrl = await this.uploadImage(
+      profileImageFile,
+      profileFileName,
+    );
+    const coverImageUrl = await this.uploadImage(coverImageFile, coverFileName);
 
-      stream.on('error', (error) => {
-        reject(
-          new HttpException(
-            {
-              status: HttpStatus.INTERNAL_SERVER_ERROR,
-              message: 'Failed to upload image',
-              error: true,
-            },
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          ),
-        );
-      });
-    });
-
+    // Buat data grup
     const groupData = {
+      id: groupId,
       creator,
       title,
-      imageUrl,
+      profileImageUrl,
+      coverImageUrl,
       topics: topicsArray,
       description,
-      subscription: 0,
+      subscription: 1, // Mulai dengan 1 anggota (pembuat grup)
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
     };
 
+    // Buat entri keanggotaan grup untuk pembuat grup
+    const membershipData = {
+      email: creator,
+      groupId: groupId,
+      joinedAt: admin.firestore.FieldValue.serverTimestamp(),
+    };
+    const membershipRef = this.db.collection('groupMemberships').doc();
+
     try {
-      await groupRef.set(groupData);
+      // Simpan data grup dan keanggotaan dalam satu transaksi
+      await this.db.runTransaction(async (transaction) => {
+        transaction.set(groupRef, groupData);
+        transaction.set(membershipRef, membershipData);
+      });
     } catch (error) {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: 'Failed to create group',
+          message: 'Failed to create group and add membership',
           error: true,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -143,9 +134,118 @@ export class GroupService {
 
     return {
       status: HttpStatus.CREATED,
-      message: 'Group successfully created',
-      groupId: groupRef.id,
+      message: 'Group successfully created and creator added as a member',
       data: groupData,
+    };
+  }
+
+  async deleteGroup(email: string, groupId: string) {
+    await this.db.runTransaction(async (transaction) => {
+      const groupRef = this.db.collection('groups').doc(groupId);
+      const groupSnapshot = await transaction.get(groupRef);
+
+      if (!groupSnapshot.exists) {
+        throw new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            message: 'Group not found',
+            error: true,
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      const groupData = groupSnapshot.data();
+      // Validasi pembuat grup
+      if (groupData.creator !== email) {
+        throw new HttpException(
+          {
+            status: HttpStatus.UNAUTHORIZED,
+            message: 'You are not authorized to delete this group',
+            error: true,
+          },
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+
+      // Hapus foto profil dan sampul grup
+      if (groupData.profileImageUrl) {
+        const profileUrlParts = decodeURIComponent(groupData.profileImageUrl)
+          .split('?')[0]
+          .split('/');
+        const profileFile = profileUrlParts.slice(4).join('/');
+        await this.storage.bucket().file(profileFile).delete();
+      }
+      if (groupData.coverImageUrl) {
+        const coverUrlParts = decodeURIComponent(groupData.coverImageUrl)
+          .split('?')[0]
+          .split('/');
+        const coverFile = coverUrlParts.slice(4).join('/');
+        await this.storage.bucket().file(coverFile).delete();
+      }
+
+      // Hapus semua file postingan grup dari penyimpanan
+      await this.deleteGroupFiles(groupId);
+
+      // Hapus postingan grup, komentar, balasan, suka, dan keanggotaan
+      const postsQuerySnapshot = await this.db
+        .collection('posts')
+        .where('groupId', '==', groupId)
+        .get();
+      for (const postDoc of postsQuerySnapshot.docs) {
+        const postId = postDoc.id;
+
+        // Hapus komentar, balasan, dan suka yang terkait dengan postingan
+        const commentsQuerySnapshot = await this.db
+          .collection('comments')
+          .where('postId', '==', postId)
+          .get();
+        for (const commentDoc of commentsQuerySnapshot.docs) {
+          const commentId = commentDoc.id;
+
+          // Hapus balasan yang terkait dengan komentar
+          const repliesQuerySnapshot = await this.db
+            .collection('replies')
+            .where('commentId', '==', commentId)
+            .get();
+          for (const replyDoc of repliesQuerySnapshot.docs) {
+            transaction.delete(replyDoc.ref);
+          }
+
+          // Hapus komentar
+          transaction.delete(commentDoc.ref);
+        }
+
+        // Hapus suka yang terkait dengan postingan
+        const likesQuerySnapshot = await this.db
+          .collection('likes')
+          .where('postId', '==', postId)
+          .get();
+        for (const likeDoc of likesQuerySnapshot.docs) {
+          transaction.delete(likeDoc.ref);
+        }
+
+        // Hapus postingan
+        transaction.delete(postDoc.ref);
+      }
+
+      // Hapus keanggotaan grup
+      const membershipsQuerySnapshot = await this.db
+        .collection('groupMemberships')
+        .where('groupId', '==', groupId)
+        .get();
+      for (const membershipDoc of membershipsQuerySnapshot.docs) {
+        transaction.delete(membershipDoc.ref);
+      }
+
+      // Hapus grup
+      transaction.delete(groupRef);
+    });
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Group and all related data successfully deleted',
+      error: false,
     };
   }
 
@@ -387,5 +487,67 @@ export class GroupService {
       data: membersData,
       error: false,
     };
+  }
+
+  private async uploadImage(
+    file: Express.Multer.File,
+    fileName: string,
+  ): Promise<string> {
+    const bucket = this.storage.bucket();
+    const fileRef = bucket.file(fileName);
+    const stream = fileRef.createWriteStream({
+      metadata: {
+        contentType: file.mimetype,
+      },
+    });
+
+    stream.write(file.buffer);
+    stream.end();
+
+    return new Promise((resolve, reject) => {
+      stream.on('finish', async () => {
+        try {
+          const signedUrls = await fileRef.getSignedUrl({
+            action: 'read',
+            expires: '03-09-2491',
+          });
+          resolve(signedUrls[0]);
+        } catch (error) {
+          reject(
+            new HttpException(
+              {
+                status: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Failed to upload image',
+                error: true,
+              },
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            ),
+          );
+        }
+      });
+
+      stream.on('error', (error) => {
+        reject(
+          new HttpException(
+            {
+              status: HttpStatus.INTERNAL_SERVER_ERROR,
+              message: 'Failed to upload image',
+              error: true,
+            },
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          ),
+        );
+      });
+    });
+  }
+
+  private async deleteGroupFiles(groupId: string) {
+    const bucket = this.storage.bucket();
+    const directory = `groups/${groupId}/posts`;
+
+    const [files] = await bucket.getFiles({ prefix: directory });
+    const deletePromises = files.map((file) => file.delete());
+
+    await Promise.all(deletePromises);
   }
 }

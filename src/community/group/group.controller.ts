@@ -12,7 +12,10 @@ import {
 } from '@nestjs/common';
 import { GroupService } from './group.service';
 import { AuthGuard } from '@nestjs/passport';
-import { FilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
+import {
+  FilesInterceptor,
+  FileFieldsInterceptor,
+} from '@nestjs/platform-express';
 
 @Controller('community')
 export class GroupController {
@@ -20,23 +23,41 @@ export class GroupController {
 
   @Post('create')
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'profileImage', maxCount: 1 },
+      { name: 'coverImage', maxCount: 1 },
+    ]),
+  )
   async createGroup(
     @Request() req,
     @Body('title') title: string,
     @Body('topics') topics: string,
     @Body('description') description: string,
-    @UploadedFiles() imageFile: Express.Multer.File,
+    @UploadedFiles()
+    files: {
+      profileImage: Express.Multer.File[];
+      coverImage: Express.Multer.File[];
+    },
   ) {
-    // Menggunakan email dari pengguna yang saat ini masuk
     const creator = req.user.username;
+    const profileImageFile = files.profileImage[0];
+    const coverImageFile = files.coverImage[0];
+
     return await this.groupService.createGroup(
       creator,
       title,
       topics,
       description,
-      imageFile,
+      profileImageFile,
+      coverImageFile,
     );
+  }
+
+  @Delete('group/:groupId')
+  @UseGuards(AuthGuard('jwt'))
+  async deleteGroup(@Request() req, @Param('groupId') groupId: string) {
+    return await this.groupService.deleteGroup(req.user.username, groupId);
   }
 
   @Post(':groupId/subscribe')
