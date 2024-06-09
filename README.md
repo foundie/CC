@@ -809,3 +809,22 @@
 }
 ```
 
+### Delete Group
+
+- **URL** : `/community/group/:groupId`
+- **Method** : `DELETE`
+- **Auth required** : `YES`
+- **Request Header**:
+  - `Content-Type` : `application/json`
+- **URL Parameters** :
+  - `groupId` as `string` - `ID dari group yang akan dihapus`
+- **Response** :
+
+```json
+{
+  "status": 200,
+  "message": "Group and all related data successfully deleted",
+  "error": false
+}
+```
+
