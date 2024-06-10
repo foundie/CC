@@ -635,7 +635,7 @@
 ```
 
 ## Community Group
-> (NOTE: untuk fitur comment, reply, like, delete, edit, dan get detail post untuk postingan grup sama seperti postingan user)
+> NOTE: untuk fitur comment, reply, like, delete, edit, dan detail post untuk postingan grup sama seperti postingan user
 ### Create Group
 - **URL** : `/community/create`
 - **Method** : `POST`
@@ -826,6 +826,44 @@
   "status": 200,
   "message": "Group and all related data successfully deleted",
   "error": false
+}
+```
+
+### Edit Group
+- **URL** : `/community/update/:GroupId`
+- **Method** : `PATCH`
+- **Auth required** : `YES`
+- **URL Parameters** :
+  - `groupId` as `string` - `ID dari group yang akan diedit`
+- **Request Header**:
+  - `Content-Type` : `multipart/form-data`
+- **Request Body (Optional)** :
+  - `title` as `string` -` Nama Group`
+  - `topics` as `text` - `Topik yang akan di angkat di group untuk memisahkan topic bisa gunakan koma(,)`
+  - `description` as `text` - `Deskripsi group`
+  - `profileImage` as `file` - `File Foto Profile Group`
+  - `coverImage` as `file` - `File Foto Sampul Group`
+- **Response** :
+
+```json
+{
+    "status": 200,
+    "message": "Group updated successfully",
+    "data": {
+        "id": "XPnquqG6kQ4cYidIGomy",
+        "creator": "test@api.com",
+        "title": "TEST GROUP API",
+        "profileImageUrl": "https://storage.googleapis.com/storage-foundie/groups/...",
+        "coverImageUrl": "https://storage.googleapis.com/storage-foundie/groups/...",
+        "topics": [
+            "API",
+            "TEST",
+            "GROUP"
+        ],
+        "description": "BLALALALALALALA",
+        "subscription": 0,
+        "timestamp": {}
+    }
 }
 ```
 
