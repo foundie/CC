@@ -1,0 +1,28 @@
+{
+  "name": "foundie",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "nodemon ./src/server/server.js",
+    "start": "node ./src/server/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@google-cloud/bigquery": "^7.7.0",
+    "@google-cloud/firestore": "^7.7.0",
+    "@hapi/hapi": "^21.3.9",
+    "@tensorflow/tfjs": "^4.19.0",
+    "@tensorflow/tfjs-layers": "^4.19.0",
+    "@tensorflow/tfjs-node": "^4.19.0",
+    "dotenv": "^16.4.5",
+    "formidable": "^3.5.1",
+    "jpeg-js": "^0.4.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.1"
+  }
+}
