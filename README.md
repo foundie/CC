@@ -131,12 +131,13 @@
     "message": "Biodata fetched successfully",
     "user": {
         "role": "user",
-        "name": "johndoe",
-        "email": "johndoe@example.com",
-        "gender": "Pria",
-        "phone": "08123456789",
-        "location": "Amerika",
-        "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/......"
+        "email": "test@api.com",
+        "gender": "hexadesimal",
+        "phone": "123456789",
+        "location": "aaaaaaa",
+        "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/test%40api.com/...",
+        "name": "TES API",
+        "coverImageUrl": "https://storage.googleapis.com/storage-foundie/user/test%40api.com/..."
     }
     "error": false
 }
