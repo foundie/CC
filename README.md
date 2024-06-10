@@ -107,7 +107,8 @@
   - `phone` as `text` - `nomor telephone`
   - `location` as `text` - `lokasi`
   - `gender` as `text` - `gender`
-  - `image` as `file` - `File Foto Profile`
+  - `profileImage` as `file` - `File Foto Profile`
+  - `coverImage` as `file` - `File Foto Sampul Profile`
 - **Response** :
 
 ```json
