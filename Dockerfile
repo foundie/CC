@@ -1,5 +1,5 @@
 # Menggunakan base image Python Alpine
-FROM python:3.10-slim
+FROM python:3.8.10
 
 # Set working directory di dalam container
 WORKDIR /app
@@ -8,10 +8,10 @@ WORKDIR /app
 COPY . .
 
 # Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 # Expose port yang digunakan oleh aplikasi Flask
 EXPOSE 8080
 
 # Menjalankan aplikasi Flask
-CMD ["python", "-m", "predicts.main.face-class"]
+CMD ["python3", "-m", "predicts.main.face-class"]
