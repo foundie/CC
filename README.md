@@ -783,87 +783,62 @@
     "error": false
 }
 ```
-### Get Group Following Members
 
-- **URL** : `/community/:groupId/members`
+### Get All Group Data
+- **URL** : `/community/group/search`
 - **Method** : `GET`
-- **URL Parameters** :
-  - `groupId` as `string` - `ID dari group`
 - **Auth required** : `YES`
-- **Response**:
+- **Params Parameters** :
+  - `q` as `string` - `Judul atau topic yang dicari`
+  - `l` as `number` - `Jumlah maksimal postingan yang ditampilkan`
+  - `skip` as `number` - `Jumlah postingan awal yang dilewati`
+  - `sort` as `string` - `Urutan postingan, **popular** untuk urutan berdasarkan subscription, **default** berdasarkan waktu di buat`
+  - `example` - ` http://localhost:3000/community/group/search?q=test&sort=popular`
+- **Response** :
 
 ```json
 {
     "status": 200,
-    "message": "Members successfully retrieved",
+    "message": "Groups successfully retrieved",
     "data": [
         {
-            "groupId": "YnHnxPwwtgqALxgrNAQb",
-            "email": "test@api.com",
-            "joinedAt": {
-                "_seconds": 1717139266,
-                "_nanoseconds": 496000000
-            }
+            "creator": "test@api.com",
+            "coverImageUrl": "https://storage.googleapis.com/storage-foundie/groups/...",
+            "topics": [
+                "API",
+                "TEST",
+                "GROUP"
+            ],
+            "description": "BLALALALALALALA",
+            "id": "kZ5xRRLTUGpPIiarYshX",
+            "title": "TEST GROUP API ",
+            "profileImageUrl": "https://storage.googleapis.com/storage-foundie/groups/...D",
+            "timestamp": {
+                "_seconds": 1717900624,
+                "_nanoseconds": 452000000
+            },
+            "subscription": 2
+        },
+        {
+            "creator": "test@api.com",
+            "topics": [
+                "API",
+                "TEST",
+                "GROUP",
+                "KOSONG"
+            ],
+            "id": "rW7AcqwrnsPncg6f02xB",
+            "subscription": 1,
+            "timestamp": {
+                "_seconds": 1717982827,
+                "_nanoseconds": 225000000
+            },
+            "title": "TEST GROUP API EDITED",
+            "profileImageUrl": "https://storage.googleapis.com/storage-foundie/groups/...",
+            "coverImageUrl": "https://storage.googleapis.com/storage-foundie/groups/....",
+            "description": "TEST GROUP API KOSONG YANG DI EDIT DONE"
         }
-    ],
-    "error": false
-}
-```
-
-### Delete Group
-
-- **URL** : `/community/group/:groupId`
-- **Method** : `DELETE`
-- **Auth required** : `YES`
-- **Request Header**:
-  - `Content-Type` : `application/json`
-- **URL Parameters** :
-  - `groupId` as `string` - `ID dari group yang akan dihapus`
-- **Response** :
-
-```json
-{
-  "status": 200,
-  "message": "Group and all related data successfully deleted",
-  "error": false
-}
-```
-
-### Edit Group
-- **URL** : `/community/update/:GroupId`
-- **Method** : `PATCH`
-- **Auth required** : `YES`
-- **URL Parameters** :
-  - `groupId` as `string` - `ID dari group yang akan diedit`
-- **Request Header**:
-  - `Content-Type` : `multipart/form-data`
-- **Request Body (Optional)** :
-  - `title` as `string` -` Nama Group`
-  - `topics` as `text` - `Topik yang akan di angkat di group untuk memisahkan topic bisa gunakan koma(,)`
-  - `description` as `text` - `Deskripsi group`
-  - `profileImage` as `file` - `File Foto Profile Group`
-  - `coverImage` as `file` - `File Foto Sampul Group`
-- **Response** :
-
-```json
-{
-    "status": 200,
-    "message": "Group updated successfully",
-    "data": {
-        "id": "XPnquqG6kQ4cYidIGomy",
-        "creator": "test@api.com",
-        "title": "TEST GROUP API",
-        "profileImageUrl": "https://storage.googleapis.com/storage-foundie/groups/...",
-        "coverImageUrl": "https://storage.googleapis.com/storage-foundie/groups/...",
-        "topics": [
-            "API",
-            "TEST",
-            "GROUP"
-        ],
-        "description": "BLALALALALALALA",
-        "subscription": 0,
-        "timestamp": {}
-    }
+    ]
 }
 ```
 
