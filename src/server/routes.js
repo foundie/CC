@@ -1,4 +1,3 @@
-const { data } = require('@tensorflow/tfjs');
 const {  
   getAllProductHandler, filteredProductHandler, predictHandlerST
 } = require('../server/handler');

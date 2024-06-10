@@ -1,4 +1,3 @@
-const { getAllData } = require('../services/storeData');
 const { getAllProduct, filteredProduct } = require('../services/products');
 const ModelService_SkinTone = require('../predicts/skinTone');
 
