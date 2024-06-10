@@ -11,55 +11,16 @@ export class GroupService {
     creator: string,
     title: string,
     topics: string,
-    description: string,
-    profileImageFile: Express.Multer.File,
-    coverImageFile: Express.Multer.File,
+    description?: string,
+    profileImageFile?: Express.Multer.File,
+    coverImageFile?: Express.Multer.File,
   ) {
-    // Validasi input
-    if (
-      !creator ||
-      !title ||
-      !topics ||
-      !description ||
-      !profileImageFile ||
-      !coverImageFile
-    ) {
+    // Validasi input wajib
+    if (!creator || !title || !topics) {
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
-          message:
-            'All fields must be filled, including profile and cover images',
-          error: true,
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    // Cek apakah judul grup sudah ada
-    const existingGroup = await this.db
-      .collection('groups')
-      .where('title', '==', title)
-      .get();
-    if (!existingGroup.empty) {
-      throw new HttpException(
-        {
-          status: HttpStatus.CONFLICT,
-          message: 'Group title already exists',
-          error: true,
-        },
-        HttpStatus.CONFLICT,
-      );
-    }
-
-    // Cek apakah file yang diunggah adalah gambar
-    if (
-      !profileImageFile.mimetype.startsWith('image/') ||
-      !coverImageFile.mimetype.startsWith('image/')
-    ) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          message: 'Uploaded files are not images',
+          message: 'Creator, title, and topics are required',
           error: true,
         },
         HttpStatus.BAD_REQUEST,
@@ -83,26 +44,33 @@ export class GroupService {
     const groupRef = this.db.collection('groups').doc();
     const groupId = groupRef.id;
 
-    // Gunakan ID grup untuk nama file
-    const profileFileName = `groups/${groupId}/profileGroup_${Date.now()}`;
-    const coverFileName = `groups/${groupId}/coverGroup_${Date.now()}`;
+    let profileImageUrl = '';
+    let coverImageUrl = '';
 
-    // Logika pengunggahan foto profil dan sampul
-    const profileImageUrl = await this.uploadImage(
-      profileImageFile,
-      profileFileName,
-    );
-    const coverImageUrl = await this.uploadImage(coverImageFile, coverFileName);
+    // Logika pengunggahan foto profil jika file disediakan
+    if (profileImageFile && profileImageFile.mimetype.startsWith('image/')) {
+      const profileFileName = `groups/${groupId}/profileGroup_${Date.now()}`;
+      profileImageUrl = await this.uploadImage(
+        profileImageFile,
+        profileFileName,
+      );
+    }
 
-    // Buat data grup
+    // Logika pengunggahan foto sampul jika file disediakan
+    if (coverImageFile && coverImageFile.mimetype.startsWith('image/')) {
+      const coverFileName = `groups/${groupId}/coverGroup_${Date.now()}`;
+      coverImageUrl = await this.uploadImage(coverImageFile, coverFileName);
+    }
+
+    // Buat data grup dengan field opsional
     const groupData = {
       id: groupId,
       creator,
       title,
-      profileImageUrl,
-      coverImageUrl,
       topics: topicsArray,
-      description,
+      description: description || '',
+      profileImageUrl: profileImageUrl || '',
+      coverImageUrl: coverImageUrl || '',
       subscription: 1, // Mulai dengan 1 anggota (pembuat grup)
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
     };
@@ -135,8 +103,140 @@ export class GroupService {
     return {
       status: HttpStatus.CREATED,
       message: 'Group successfully created and creator added as a member',
+      groupId: groupId, // Include groupId in the response
       data: groupData,
     };
+  }
+
+  async updateGroup(
+    groupId: string,
+    email: string,
+    title?: string,
+    topics?: string,
+    description?: string,
+    profileImageFile?: Express.Multer.File,
+    coverImageFile?: Express.Multer.File,
+  ) {
+    const groupRef = this.db.collection('groups').doc(groupId);
+    const groupSnapshot = await groupRef.get();
+
+    if (!groupSnapshot.exists) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'Group not found',
+          error: true,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const groupData = groupSnapshot.data();
+
+    if (groupData.creator !== email) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNAUTHORIZED,
+          message: 'You are not authorized to update this group',
+          error: true,
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    let profileImageUrl = groupData.profileImageUrl;
+    if (profileImageFile && profileImageFile.mimetype.startsWith('image/')) {
+      if (profileImageUrl) {
+        const profileImageName = profileImageUrl.split('/').pop().split('?')[0];
+        await this.storage
+          .bucket()
+          .file(`groups/${groupId}/${profileImageName}`)
+          .delete();
+      }
+      const profileFileName = `groups/${groupId}/profileGroup_${Date.now()}`;
+      profileImageUrl = await this.uploadImage(
+        profileImageFile,
+        profileFileName,
+      );
+    }
+
+    let coverImageUrl = groupData.coverImageUrl;
+    if (coverImageFile && coverImageFile.mimetype.startsWith('image/')) {
+      if (coverImageUrl) {
+        const coverImageName = coverImageUrl.split('/').pop().split('?')[0];
+        await this.storage
+          .bucket()
+          .file(`groups/${groupId}/${coverImageName}`)
+          .delete();
+      }
+      const coverFileName = `groups/${groupId}/coverGroup_${Date.now()}`;
+      coverImageUrl = await this.uploadImage(coverImageFile, coverFileName);
+    }
+
+    const updatedGroupData = {
+      ...groupData,
+      title: title || groupData.title,
+      topics: topics
+        ? topics.split(',').map((topic) => topic.trim())
+        : groupData.topics,
+      description: description || groupData.description,
+      profileImageUrl,
+      coverImageUrl,
+    };
+
+    await groupRef.set(updatedGroupData, { merge: true });
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Group updated successfully',
+      data: updatedGroupData,
+    };
+  }
+
+  async getFilteredGroups(
+    q?: string,
+    l?: number,
+    skip?: number,
+    sort?: string,
+  ) {
+    let groupsQuery: admin.firestore.Query = this.db.collection('groups');
+
+    // Sorting
+    if (sort === 'popular') {
+      groupsQuery = groupsQuery.orderBy('subscription', 'desc');
+    } else {
+      groupsQuery = groupsQuery.orderBy('timestamp', 'desc');
+    }
+
+    // Pagination
+    if (l) {
+      groupsQuery = groupsQuery.limit(l);
+    }
+    if (skip) {
+      groupsQuery = groupsQuery.startAfter(skip);
+    }
+
+    const groupsSnapshot = await groupsQuery.get();
+    let groupsData = groupsSnapshot.docs.map((doc) => doc.data());
+
+    // Filter by search query
+    if (q) {
+      const searchWords = q.toLowerCase().split(' ');
+      groupsData = groupsData.filter((group) =>
+        searchWords.some(
+          (word) =>
+            group.title.toLowerCase().includes(word) ||
+            group.topics.some((topic) => topic.toLowerCase().includes(word)),
+        ),
+      );
+    }
+
+    // Return results
+    if (groupsData.length === 0) {
+      throw new HttpException('No groups found', HttpStatus.NOT_FOUND);
+    } else {
+      return groupsData;
+    }
   }
 
   async deleteGroup(email: string, groupId: string) {

@@ -6,14 +6,14 @@ import {
   Body,
   HttpCode,
   HttpStatus,
-  UploadedFile,
   UseGuards,
   Request,
   UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { BiodataService } from './biodata.service';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @Controller('biodata')
 export class BiodataController {
@@ -22,16 +22,30 @@ export class BiodataController {
   @Post('add')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.CREATED)
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'profileImage', maxCount: 1 },
+      { name: 'coverImage', maxCount: 1 },
+    ]),
+  )
   async uploadProfileImage(
     @Request() req,
     @Body('name') name?: string,
     @Body('phone') phone?: string,
     @Body('location') location?: string,
     @Body('gender') gender?: string,
-    @UploadedFile() profileImage?: Express.Multer.File,
+    @UploadedFiles()
+    files?: {
+      profileImage?: Express.Multer.File[];
+      coverImage?: Express.Multer.File[];
+    },
   ) {
     const email = req.user.username;
+    const profileImage = files?.profileImage
+      ? files.profileImage[0]
+      : undefined;
+    const coverImage = files?.coverImage ? files.coverImage[0] : undefined;
+
     return await this.biodataService.addBiodata(
       email,
       name,
@@ -39,6 +53,7 @@ export class BiodataController {
       location,
       gender,
       profileImage,
+      coverImage,
     );
   }
 

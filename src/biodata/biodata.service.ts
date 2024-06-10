@@ -16,97 +16,46 @@ export class BiodataService {
     location?: string,
     gender?: string,
     profileImage?: Express.Multer.File,
+    coverImage?: Express.Multer.File,
   ) {
-    if (!email && !name && !phone && !location && !gender && !profileImage) {
+    // Validasi email sebagai parameter wajib
+    if (!email) {
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
-          message: 'All fields must be filled',
+          message: 'Email is required',
           error: true,
         },
         HttpStatus.BAD_REQUEST,
       );
     }
 
-    let imageUrl;
+    let profileImageUrl;
     if (profileImage) {
-      if (profileImage.size > 1024 * 1024) {
-        throw new HttpException(
-          {
-            status: HttpStatus.BAD_REQUEST,
-            message: 'Profile image should not be more than 1MB',
-            error: true,
-          },
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      if (!profileImage.mimetype.startsWith('image/')) {
-        throw new HttpException(
-          {
-            status: HttpStatus.BAD_REQUEST,
-            message: 'Uploaded file is not an image',
-            error: true,
-          },
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      profileImageUrl = await this.uploadImage(
+        email,
+        profileImage,
+        'profilePicture',
+      );
+    }
 
-      const userDoc = await this.db.collection('users').doc(email).get();
-      const userData = userDoc.data();
-      const oldImageUrl = userData.profileImageUrl;
-
-      if (oldImageUrl) {
-        const oldImageFileName = `user/${email}/profilePicture`;
-        const oldImageFile = this.storage.bucket().file(oldImageFileName);
-        await oldImageFile.delete();
-      }
-
-      const bucket = this.storage.bucket();
-      const fileName = `user/${email}/profilePicture`;
-      const file = bucket.file(fileName);
-      const stream = file.createWriteStream({
-        metadata: {
-          contentType: profileImage.mimetype,
-        },
-      });
-
-      stream.write(profileImage.buffer);
-      stream.end();
-
-      await new Promise<void>((resolve, reject) => {
-        stream.on('finish', async () => {
-          try {
-            const signedUrls = await file.getSignedUrl({
-              action: 'read',
-              expires: '03-09-2491',
-            });
-            imageUrl = signedUrls[0];
-            resolve();
-          } catch (error) {
-            reject(error);
-          }
-        });
-
-        stream.on('error', reject);
-      });
+    let coverImageUrl;
+    if (coverImage) {
+      coverImageUrl = await this.uploadImage(email, coverImage, 'coverPicture');
     }
 
     const userDocRef = this.db.collection('users').doc(email);
-    let userData = (await userDocRef.get()).data();
+    let userData = (await userDocRef.get()).data() || {};
 
     userData = {
       ...userData,
-      name: name !== undefined ? name : userData.name || '',
-      phone: phone !== undefined ? phone : userData.phone || '',
-      location: location !== undefined ? location : userData.location || '',
-      gender: gender !== undefined ? gender : userData.gender || '',
+      name: name ?? userData.name,
+      phone: phone ?? userData.phone,
+      location: location ?? userData.location,
+      gender: gender ?? userData.gender,
+      profileImageUrl: profileImageUrl ?? userData.profileImageUrl,
+      coverImageUrl: coverImageUrl ?? userData.coverImageUrl,
     };
-
-    if (imageUrl) {
-      userData.profileImageUrl = imageUrl;
-    } else if (userData.profileImageUrl === undefined) {
-      userData.profileImageUrl = '';
-    }
 
     await userDocRef.set(userData, { merge: true });
 
@@ -181,5 +130,70 @@ export class BiodataService {
       message: 'Password added successfully',
       error: false,
     };
+  }
+
+  private async uploadImage(
+    email: string,
+    imageFile: Express.Multer.File,
+    imageType: string,
+  ): Promise<string> {
+    if (imageFile.size > 1024 * 1024) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          message: `${imageType} should not be more than 1MB`,
+          error: true,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (!imageFile.mimetype.startsWith('image/')) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          message: 'Uploaded file is not an image',
+          error: true,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const userDoc = await this.db.collection('users').doc(email).get();
+    const userData = userDoc.data();
+    const oldImageUrl = userData[imageType + 'Url'];
+
+    if (oldImageUrl) {
+      const oldImageFileName = `user/${email}/${imageType}`;
+      const oldImageFile = this.storage.bucket().file(oldImageFileName);
+      await oldImageFile.delete();
+    }
+
+    const bucket = this.storage.bucket();
+    const fileName = `user/${email}/${imageType}`;
+    const file = bucket.file(fileName);
+    const stream = file.createWriteStream({
+      metadata: {
+        contentType: imageFile.mimetype,
+      },
+    });
+
+    stream.write(imageFile.buffer);
+    stream.end();
+
+    return new Promise((resolve, reject) => {
+      stream.on('finish', async () => {
+        try {
+          const signedUrls = await file.getSignedUrl({
+            action: 'read',
+            expires: '03-09-2491',
+          });
+          resolve(signedUrls[0]);
+        } catch (error) {
+          reject(error);
+        }
+      });
+
+      stream.on('error', reject);
+    });
   }
 }
