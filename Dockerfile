@@ -10,8 +10,5 @@ COPY . .
 # Install dependencies
 RUN pip install -r requirements.txt
 
-# Expose port yang digunakan oleh aplikasi Flask
-EXPOSE 8080
-
 # Menjalankan aplikasi Flask
 CMD ["python3", "-m", "predicts/main/face-class"]
