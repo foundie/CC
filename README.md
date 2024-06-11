@@ -266,6 +266,7 @@
     "error": false,
     "status": "success",
     "result": "light",
+    "message": "Berikut rekomendasi produk untuk anda : "
     "product": [
         {
         "Brand": "hanasui",
