@@ -23,7 +23,7 @@ async function getAllProduct(){
     //   imageUrl =  ''
     // }
     allProduct.push({
-      "Image": imageUrl,
+      // "Image": imageUrl,
       "Brand": row.brand,
       "Product Title": row.product_title,
       "Variant Name" : row.variant_name,
