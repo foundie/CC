@@ -1,28 +1,20 @@
-// product.controller.ts
-import {
-  Controller,
-  Post,
-  Body,
-  UseGuards,
-  Req,
-  UploadedFile,
-} from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { ProductService } from './product.service';
-import { CreateProductDto } from '../type/product.type';
-import { JwtAuthGuard } from '../guard/jwt.authGuard';
+import { AuthGuard } from '@nestjs/passport';
+import { FormDataRequest } from 'nestjs-form-data';
 
 @Controller('products')
+@FormDataRequest()
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(private productService: ProductService) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Post('add')
-  create(
-    @Body() createProductDto: CreateProductDto,
-    @UploadedFile() imageFile: Express.Multer.File,
-    @Req() req,
+  @Post('filter')
+  @UseGuards(AuthGuard('jwt'))
+  predictProductFilter(
+    @Request() req,
+    @Body('name') name: string,
+    @Body('season') season: string,
   ) {
-    createProductDto.sellerId = req.user.username;
-    return this.productService.create(createProductDto, imageFile);
+    return this.productService.predictProductFilter(name, season);
   }
 }

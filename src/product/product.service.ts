@@ -1,67 +1,42 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { CreateProductDto } from '../type/product.type';
-import * as admin from 'firebase-admin';
+import { HttpService } from '@nestjs/axios';
+import { Observable, of, throwError } from 'rxjs';
+import { switchMap, catchError } from 'rxjs/operators';
+import * as FormData from 'form-data';
 
 @Injectable()
 export class ProductService {
-  private db = admin.firestore();
-  private storage = admin.storage();
+  constructor(private httpService: HttpService) {}
 
-  async create(
-    createProductDto: CreateProductDto,
-    imageFile: Express.Multer.File,
-  ) {
-    try {
-      const productRef = this.db.collection('products').doc();
-      const bucket = this.storage.bucket();
-      const fileName = `makeup_products/${Date.now()}_${imageFile.originalname}`;
-      const file = bucket.file(fileName);
-      const stream = file.createWriteStream({
-        metadata: {
-          contentType: imageFile.mimetype,
-        },
-      });
+  predictProductFilter(name: string, season: string): Observable<any> {
+    // Perhatikan bahwa tipe kembaliannya sekarang adalah Observable<any>
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('season', season);
 
-      stream.write(imageFile.buffer);
-      stream.end();
-
-      let imageUrl;
-      await stream.on('finish', async () => {
-        const signedUrls = await file.getSignedUrl({
-          action: 'read',
-          expires: '03-09-2491',
-        });
-        imageUrl = signedUrls[0];
-
-        const productData = {
-          ...createProductDto,
-          imageUrl: imageUrl,
-        };
-
-        await productRef.set(productData);
-      });
-
-      return {
-        status: HttpStatus.CREATED,
-        message: 'Product successfully created',
-        documentName: productRef.id,
-        data: {
-          id: productRef.id,
-          ...createProductDto,
-          imageUrl: imageUrl, // Include imageUrl in the response
-          error: false,
-        },
-      };
-    } catch (error) {
-      console.error('Error creating product: ', error);
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: 'Error creating product',
-          error: error.message,
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
+    return this.httpService
+      .post(`${process.env.URL_HAPI}/products/filter`, formData, {
+        headers: formData.getHeaders(),
+      })
+      .pipe(
+        switchMap((response) => {
+          // Langsung mengembalikan data dari respons API
+          return of(response.data);
+        }),
+        catchError((error) => {
+          return throwError(
+            new HttpException(
+              {
+                status:
+                  error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+                message:
+                  error.response?.data?.message ||
+                  'An error occurred during the API request',
+              },
+              error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+            ),
+          );
+        }),
       );
-    }
   }
 }
