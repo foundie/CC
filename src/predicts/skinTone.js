@@ -1,6 +1,12 @@
 const tf = require('@tensorflow/tfjs-node');
 const jpeg = require('jpeg-js');
 require('dotenv').config();
+const { BigQuery } = require('@google-cloud/bigquery');
+const projectId = 'capstone-project-foundie';
+
+const bigquery = new BigQuery({
+  projectId,
+});
 
 class L2 {
   constructor(config) {
@@ -58,15 +64,55 @@ class ModelService_SkinTone {
 
       let result;
       if (label == '0') {
-        result = 'Medium Tone'
+        result = 'medium'
       } else if (label == '1') {
-        result = 'Light' 
+        result = 'light' 
       } else {
-        result = 'Dark'
+        result = 'dark'
       }
       return result;
     } catch (error) {
       console.error('Error during prediction:', error);
+    }
+  }
+
+  async productRecommendation(imageBuffer) {
+    try {
+      const result = await this.predict(imageBuffer);
+      const query = `SELECT *
+      FROM \`capstone-project-foundie.all_products.data_tone\` 
+      WHERE \`tone\` LIKE '%${result}%'
+      LIMIT 10
+      `;
+      const options = {
+        query: query,
+        location: 'asia-southeast2',
+      };
+      const [job] = await bigquery.createQueryJob(options);
+      const [rows] = await job.getQueryResults();
+      const recommendedProduct = [];
+    
+      rows.forEach((row) => {
+        recommendedProduct.push({
+        "Brand": row.brand,
+        "Product Title": row.product_title,
+        "Variant Name" : row.variant_name,
+        "Tone" : row.tone,
+        "Type": row.type,
+        "Color Hex": row.color_hex,
+        "Color RGB": row.color_rgb,
+        "Season 1 Name": row.season_1_name,
+        "Season 1 Percent": row.season_1_percent,
+        "S1 Closest Color": row.s1_closest_color,
+        "Season 2 Name": row.season_2_name,
+        "Season 2 Percent": row.season_2_percent,
+        "S2 Closest Color": row.s2_closest_color,
+        "Product URL": row.product_url
+        });
+      });
+      return recommendedProduct;
+    } catch (error) {
+      console.error('Error during recommend:', error);
     }
   }
 

@@ -1,6 +1,7 @@
 const { getAllProduct, filteredProduct } = require('../services/products');
 const ModelService_SkinTone = require('../predicts/skinTone');
 
+
 const modelServiceST = new ModelService_SkinTone();
 async function predictHandlerST(request, h) {
   try {
@@ -9,7 +10,7 @@ async function predictHandlerST(request, h) {
       const response = h.response({
         error: true,
         status: 'fail',
-        message: 'No image provided'
+        message: 'Mohon masukkan image dengan benar.'
       });
       response.code(400);
       return response;
@@ -17,6 +18,8 @@ async function predictHandlerST(request, h) {
     const imageBuffer = Buffer.from(payload.image, 'base64');
     const label = await modelServiceST.predict(imageBuffer);
     const result = await modelServiceST.predict(imageBuffer);
+    const recommendedProduct = await modelServiceST.productRecommendation(imageBuffer);
+
 
     if (label == null){
       const response = h.response({
@@ -30,7 +33,8 @@ async function predictHandlerST(request, h) {
       const response = h.response({
         error: false, 
         status: 'success', 
-        result: result
+        result: result,
+        product: recommendedProduct
         });
         response.code(200);
         return response;
@@ -47,16 +51,6 @@ async function predictHandlerST(request, h) {
   }
 }
 
-async function getAllDataHandler(request, h) {
-  const allData = await getAllData();
-  const response = h.response({
-    error: false,
-    status: "success",
-    data: allData,
-  });
-  response.code(200);
-  return response;
-}
 
 async function getAllProductHandler(request, h){
   const product = await getAllProduct();
@@ -93,6 +87,7 @@ async function filteredProductHandler(request, h){
   }
 }
 
+
 module.exports = { predictHandlerST,
-  getAllDataHandler, getAllProductHandler, filteredProductHandler
+  getAllProductHandler, filteredProductHandler,
 };
