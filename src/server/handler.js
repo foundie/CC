@@ -65,8 +65,17 @@ async function getAllProductHandler(request, h){
 
 async function filteredProductHandler(request, h){
   const {name, season} = request.payload;
+  if (name == '' && season == '') {
+    const response = h.response({
+      error: true,
+      status: "fail",
+      message: "Mohon masukan nama produk atau nama season"
+    });
+    response.code(400);
+    return response;
+  }
+
   const searchResult = await filteredProduct(name, season);
-  
   const response = h.response({
     error: false,
     status : "success",
