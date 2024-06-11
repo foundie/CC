@@ -18,7 +18,12 @@ async function getAllProduct(){
   const allProduct = [];
 
   rows.forEach((row) => {
+    // let imageUrl;
+    // if (row.brand == 'hanasui') {
+    //   imageUrl =  ''
+    // }
     allProduct.push({
+      "Image": imageUrl,
       "Brand": row.brand,
       "Product Title": row.product_title,
       "Variant Name" : row.variant_name,
