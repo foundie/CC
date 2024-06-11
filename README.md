@@ -263,8 +263,8 @@
 
   ```json
   {
+    "status": 200,
     "error": false,
-    "status": "success",
     "result": "light",
     "message": "Berikut rekomendasi produk untuk anda : "
     "product": [
@@ -286,6 +286,40 @@
         },
       ]
   }
+
+
+### Skin Tone Histori
+- **URL** : `/predict/skin/histori`
+- **Method** : `GET`
+- **Auth required** : `YES`
+- **Response**:
+
+```json
+{
+    "status": 200,
+    "error": false,
+    "result": "light",
+    "message": "Berikut rekomendasi produk untuk anda : "
+    "product": [
+        {
+        "Brand": "hanasui",
+        "Product Title": "Hanasui Mattedorable Lip Cream 03 Star",
+        "Variant Name": "03 Star",
+        "Tone": "fair_light",
+        "Type": "lip",
+        "Color Hex": "#e64468",
+        "Color RGB": "(230, 68, 104)",
+        "Season 1 Name": "spring warm",
+        "Season 1 Percent": 50.09388903027193,
+        "S1 Closest Color": "[251.0, 95.0, 87.0]",
+        "Season 2 Name": "summer cool ",
+        "Season 2 Percent": 49.90611096972805,
+        "S2 Closest Color": "[208.0, 49.0, 79.0]",
+        "Product URL": "https://hanasui.id/makeup/lip_cream"
+        },
+      ]
+  }
+```
 
 ## Products
 
