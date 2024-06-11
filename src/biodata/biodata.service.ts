@@ -74,6 +74,7 @@ export class BiodataService {
       status: HttpStatus.OK,
       message: 'Biodata fetched successfully',
       user: userData,
+      error: false,
     };
   }
 

@@ -10,6 +10,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { ProductModule } from './product/product.module';
 import { CommunityModule } from './community/community.module';
 import { BiodataModule } from './biodata/biodata.module';
+import { Face_classificationModule } from './face_classification/face_classification.module';
+import { SkinToneModule } from './skin_tone/skin_tone.module';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { BiodataModule } from './biodata/biodata.module';
     CommunityModule,
     ProductModule,
     BiodataModule,
+    Face_classificationModule,
+    SkinToneModule,
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '3d' },
