@@ -1,4 +1,12 @@
-import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Request,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { ProductService } from './product.service';
 import { AuthGuard } from '@nestjs/passport';
 import { FormDataRequest } from 'nestjs-form-data';
@@ -10,6 +18,7 @@ export class ProductController {
 
   @Post('filter')
   @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
   predictProductFilter(
     @Request() req,
     @Body('name') name: string,
