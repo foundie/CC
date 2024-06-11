@@ -34,6 +34,7 @@ async function predictHandlerST(request, h) {
         error: false, 
         status: 'success', 
         result: result,
+        message: 'Berikut rekomendasi produk untuk anda : ',
         product: recommendedProduct
         });
         response.code(200);
