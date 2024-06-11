@@ -19,7 +19,7 @@ async function predictHandlerST(request, h) {
     const label = await modelServiceST.predict(imageBuffer);
     const result = await modelServiceST.predict(imageBuffer);
     const recommendedProduct = await modelServiceST.productRecommendation(imageBuffer);
-    
+
     if (label == null){
       const response = h.response({
         error: true,
