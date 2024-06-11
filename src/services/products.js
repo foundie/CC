@@ -58,14 +58,23 @@ async function getAllProduct(){
 return allProduct;
 };
 
+function capitalizeFirstLetter(string) {
+  return string.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+}
 async function filteredProduct(name, season){
-    const query = `SELECT *
-    FROM \`capstone-project-foundie.all_products.data\` 
-    WHERE \`product_title\` LIKE '%${name}%' 
-    AND \`season_1_name\` LIKE '%${season}%'
-    OR \`season_2_name\` LIKE '%${season}%'
-    LIMIT 20
-    `;
+  name = name ? capitalizeFirstLetter(name) : name;
+  season = season ? capitalizeFirstLetter(season) : season;
+  let query = `
+  SELECT *
+  FROM \capstone-project-foundie.all_products.data\
+  WHERE TRUE`;
+  if (name) {
+    query += ` AND \product_title\ LIKE '%${name}%'`;
+  }
+  if (season) {
+    query += ` AND (\season_1_name\ LIKE '%${season}%' OR \season_2_name\ LIKE '%${season}%')`;
+  }
+
     const options = {
       query: query,
       location: 'asia-southeast2',
