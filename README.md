@@ -229,6 +229,94 @@
 }
 ```
 
+
+### Get Detail User Profile
+
+- **URL** : `/biodata/:email`
+- **Method** : `GET`
+- **Auth required** : `YES`
+- **Permissions required** : `None`
+- **URL Parameters** :
+  - `Email` as `string` - `Email User`
+
+- **Response** :
+```json
+{
+    "status": 200,
+    "message": "User profile fetched successfully",
+    "data": {
+        "user": {
+            "email": "test@api.com",
+            "gender": "hexadesimal",
+            "phone": "123456789",
+            "location": "",
+            "profileImageUrl": "https://storage.googleapis.com/storage-foundie/",
+            "name": "TES API",
+            "coverImageUrl": "https://storage.googleapis.com/storage-foundie/",
+            "followersCount": 1
+        },
+        "posts": [
+            {
+                "likesCount": 0,
+                "titleArray": [
+                    "TEST",
+                    "API"
+                ],
+                "createdTimestamp": 1717384978619,
+                "postId": "B7S9lyeLyuVTOlbX18J6",
+                "text": "TEST API AFTER EDITED",
+                "title": "TEST API",
+                "email": "test@api.com",
+                "timestamp": {
+                    "_seconds": 1717385102,
+                    "_nanoseconds": 36000000
+                },
+                "imageUrls": [
+                    "https://storage.googleapis.com/storage-foundie/user/"
+                ]
+            },
+            {
+                "groupPost": true,
+                "groupId": "kZ5xRRLTUGpPIiarYshX",
+                "imageUrls": [
+                    "https://storage.googleapis.com/storage-foundie/groups/kZ5xRRLTUGpPIiarYshX/posts/",
+                    "https://storage.googleapis.com/storage-foundie/groups/kZ5xRRLTUGpPIiarYshX/posts/"
+                ],
+                "postId": "yFGUrqxJGwqFTSxlRACb",
+                "text": "LOREM IPMSUM",
+                "title": "TEST GROUP API POST",
+                "email": "test@api.com",
+                "timestamp": {
+                    "_seconds": 1717900816,
+                    "_nanoseconds": 528000000
+                }
+            }
+        ],
+        "groups": [
+            {
+                "groupId": "kZ5xRRLTUGpPIiarYshX",
+                "email": "test@api.com",
+                "joinedAt": {
+                    "_seconds": 1717900624,
+                    "_nanoseconds": 452000000
+                }
+            },
+            {
+                "groupId": "rW7AcqwrnsPncg6f02xB",
+                "email": "test@api.com",
+                "joinedAt": {
+                    "_seconds": 1717982827,
+                    "_nanoseconds": 225000000
+                }
+            }
+        ],
+        "followersCount": 1,
+        "followingCount": 1
+    },
+    "error": false
+}
+```
+
 ## Predict Feature
 
 ### Face Classification
