@@ -574,7 +574,8 @@
       "title": "judul post",
       "text": "teks post",
       "imageUrl": "url gambar post",
-      "timestamp": "timestamp server"
+      "timestamp": "timestamp server",
+      "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/test%40api.com/...",
     },
     "comments": [
       {
@@ -583,13 +584,15 @@
         "email": "email pengguna",
         "text": "teks komentar",
         "timestamp": "timestamp server",
+        "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/test%40api.com/...",
         "replies": [
           {
             "replyId": "id balasan",
             "commentId": "id komentar",
             "email": "email pengguna",
             "text": "teks balasan",
-            "timestamp": "timestamp server"
+            "timestamp": "timestamp server",
+            "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/test%40api.com/...",
           },
         ]
       },
@@ -633,7 +636,8 @@
                 "_seconds": 1716517459,
                 "_nanoseconds": 973000000
             },
-            "likesCount": 2
+            "likesCount": 2,
+            "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/test%40api.com/...",
         }
     ]
     "error": false
@@ -919,7 +923,8 @@
             "imageUrls": [
                 "https://storage.googleapis.com/storage-foundie/groups/YnHnxPwwtgqALxgrNAQb/posts/...."
             ],
-            "title": "TEST POST GROUP EDIT"
+            "title": "TEST POST GROUP EDIT",
+            "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/test%40api.com/...",
         }
     ],
     "error": false
