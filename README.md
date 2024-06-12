@@ -165,7 +165,7 @@
 - **URL** : `/follow/:followingEmail`
 - **Method** : `POST`
 - **Auth required** : `YES`
-- **Request Body** :
+- **Request Params** :
   - `followingEmail` as `string` - `Email Dari Pengguna Yang akan di Ikuti`
 - **Response**:
 
@@ -187,7 +187,7 @@
 - **URL** : `/follow/:followingEmail`
 - **Method** : `DELETE`
 - **Auth required** : `YES`
-- **Request Body** :
+- **Request Params** :
   - `followingEmail` as `string` - `Email Dari Pengguna Yang akan di unfollow`
 - **Response**:
 
@@ -891,6 +891,53 @@
             "profileImageUrl": "https://storage.googleapis.com/storage-foundie/groups/...",
             "coverImageUrl": "https://storage.googleapis.com/storage-foundie/groups/....",
             "description": "TEST GROUP API KOSONG YANG DI EDIT DONE"
+        }
+    ]
+}
+```
+
+### Get All users Data
+- **URL** : `/community/user/search`
+- **Method** : `GET`
+- **Auth required** : `YES`
+- **Params Parameters** :
+  - `q` as `string` - `nama atau email yang dicari`
+  - `l` as `number` - `Jumlah maksimal postingan yang ditampilkan`
+  - `skip` as `number` - `Jumlah postingan awal yang dilewati`
+  - `sort` as `string` - `Urutan postingan, **popular** untuk urutan berdasarkan Followes Count, **default** berdasarkan A-Z `
+  - `example` - `http://localhost:3000/community/user/search?q=Louis`
+- **Response** :
+
+```json
+{
+    "status": 200,
+    "message": "users successfully retrieved",
+    "data": [
+        {
+            "name": "Louis Michael",
+            "email": "aplikasitesterandro@gmail.com",
+            "followersCount": 0
+        },
+        {
+            "name": "Louis Michael",
+            "email": "jvs99@outlook.com",
+            "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/jvs99%40outlook.com/profilePicture",
+            "followersCount": 0
+        },
+        {
+            "name": "Louis Michael",
+            "email": "lostvape01@gmail.com",
+            "followersCount": 0
+        },
+        {
+            "name": "Louis Michael",
+            "email": "lostvape@gmail.com",
+            "followersCount": 0
+        },
+        {
+            "name": "Louis Michael A504D4KY3637",
+            "email": "a504d4ky3637@bangkit.academy",
+            "followersCount": 0
         }
     ]
 }
