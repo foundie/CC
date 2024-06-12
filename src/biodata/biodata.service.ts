@@ -67,13 +67,46 @@ export class BiodataService {
   }
 
   async getMyData(email: string) {
+    // Mengambil data user
     const userDoc = await this.db.collection('users').doc(email).get();
-    const { password, ...userData } = userDoc.data();
+    if (!userDoc.exists) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'User not found',
+          error: true,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    const userData = userDoc.data();
 
+    // Menghilangkan password dan uid dari response
+    const { password, uid, ...safeUserData } = userData;
+
+    // Menghitung jumlah followers
+    const followersSnapshot = await this.db
+      .collection('follows')
+      .where('followingEmail', '==', email)
+      .get();
+    const followersCount = followersSnapshot.size;
+
+    // Menghitung jumlah following
+    const followingSnapshot = await this.db
+      .collection('follows')
+      .where('followerEmail', '==', email)
+      .get();
+    const followingCount = followingSnapshot.size;
+
+    // Menambahkan jumlah followers dan following ke data yang akan dikembalikan
     return {
       status: HttpStatus.OK,
       message: 'Biodata fetched successfully',
-      user: userData,
+      user: {
+        ...safeUserData,
+        followersCount,
+        followingCount,
+      },
       error: false,
     };
   }

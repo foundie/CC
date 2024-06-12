@@ -239,6 +239,51 @@ export class GroupService {
     }
   }
 
+  async getFilteredUsers(q?: string, l?: number, skip?: number, sort?: string) {
+    let usersQuery: admin.firestore.Query = this.db.collection('users');
+
+    // Sorting
+    if (sort === 'popular') {
+      usersQuery = usersQuery.orderBy('followersCount', 'desc');
+    } else {
+      usersQuery = usersQuery.orderBy('name', 'asc');
+    }
+
+    // Pagination
+    if (l) {
+      usersQuery = usersQuery.limit(l);
+    }
+    if (skip) {
+      usersQuery = usersQuery.startAfter(skip);
+    }
+
+    const usersSnapshot = await usersQuery.get();
+    let usersData = usersSnapshot.docs.map((doc) => {
+      const { uid, password, role, location, phone, gender, ...data } =
+        doc.data();
+      return data;
+    });
+
+    // Filter by search query
+    if (q) {
+      const searchWords = q.toLowerCase().split(' ');
+      usersData = usersData.filter((user) =>
+        searchWords.some(
+          (word) =>
+            user.name.toLowerCase().includes(word) ||
+            user.email.toLowerCase().includes(word),
+        ),
+      );
+    }
+
+    // Return results
+    if (usersData.length === 0) {
+      throw new HttpException('No users found', HttpStatus.NOT_FOUND);
+    } else {
+      return usersData;
+    }
+  }
+
   async deleteGroup(email: string, groupId: string) {
     await this.db.runTransaction(async (transaction) => {
       const groupRef = this.db.collection('groups').doc(groupId);

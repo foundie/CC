@@ -70,6 +70,7 @@ export class AuthService {
           email: payload['email'],
           name: payload['name'],
           role: 'user',
+          followersCount: 0, // Menambahkan followersCount dengan nilai awal 0
         };
         await db
           .collection('users')

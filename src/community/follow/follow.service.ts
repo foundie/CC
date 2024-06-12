@@ -45,10 +45,8 @@ export class FollowService {
 
     const userRef = this.db.collection('users').doc(followingEmail);
     await userRef.update({
-      followsCount: admin.firestore.FieldValue.increment(1),
+      followersCount: admin.firestore.FieldValue.increment(1),
     });
-
-    await followRef.set(followData);
 
     return {
       status: HttpStatus.CREATED,
@@ -82,7 +80,7 @@ export class FollowService {
 
     const userRef = this.db.collection('users').doc(followingEmail);
     await userRef.update({
-      followsCount: admin.firestore.FieldValue.increment(-1),
+      followersCount: admin.firestore.FieldValue.increment(-1),
     });
 
     return {

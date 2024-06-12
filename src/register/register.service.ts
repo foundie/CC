@@ -65,6 +65,7 @@ export class RegisterService {
       email,
       password: hashedPassword,
       role: 'user',
+      followersCount: 0,
     });
 
     return {

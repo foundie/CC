@@ -125,6 +125,34 @@ export class GroupController {
     }
   }
 
+  @Get('user/search')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.FOUND)
+  async getFilteredUsers(
+    @Query('q') q?: string,
+    @Query('l') l?: string,
+    @Query('skip') skip?: number,
+    @Query('sort') sort?: string,
+  ) {
+    try {
+      const limit = l ? parseInt(l, 10) : undefined;
+
+      const users = await this.groupService.getFilteredUsers(
+        q,
+        limit,
+        skip,
+        sort,
+      );
+      return {
+        status: HttpStatus.OK,
+        message: 'users successfully retrieved',
+        data: users,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
   @Delete('group/:groupId')
   @UseGuards(AuthGuard('jwt'))
   async deleteGroup(@Request() req, @Param('groupId') groupId: string) {
@@ -134,7 +162,6 @@ export class GroupController {
   @Post(':groupId/subscribe')
   @UseGuards(AuthGuard('jwt'))
   async joinGroup(@Request() req, @Param('groupId') groupId: string) {
-    // Menggunakan email dari pengguna yang saat ini masuk
     const email = req.user.username;
     return await this.groupService.joinGroup(email, groupId);
   }
@@ -142,7 +169,6 @@ export class GroupController {
   @Delete(':groupId/unsubscribe')
   @UseGuards(AuthGuard('jwt'))
   async leaveGroup(@Request() req, @Param('groupId') groupId: string) {
-    // Menggunakan email dari pengguna yang saat ini masuk
     const email = req.user.username;
     return await this.groupService.leaveGroup(email, groupId);
   }
