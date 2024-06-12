@@ -18,7 +18,6 @@ export class BiodataService {
     profileImage?: Express.Multer.File,
     coverImage?: Express.Multer.File,
   ) {
-    // Validasi email sebagai parameter wajib
     if (!email) {
       throw new HttpException(
         {
@@ -45,16 +44,17 @@ export class BiodataService {
     }
 
     const userDocRef = this.db.collection('users').doc(email);
-    let userData = (await userDocRef.get()).data() || {};
+    const existingUserData = (await userDocRef.get()).data() || {};
 
-    userData = {
-      ...userData,
-      name: name ?? userData.name,
-      phone: phone ?? userData.phone,
-      location: location ?? userData.location,
-      gender: gender ?? userData.gender,
-      profileImageUrl: profileImageUrl ?? userData.profileImageUrl,
-      coverImageUrl: coverImageUrl ?? userData.coverImageUrl,
+    // Membuat objek userData baru dengan hanya menyertakan properti yang memiliki nilai yang ditentukan
+    const userData = {
+      ...existingUserData,
+      ...(name && { name }),
+      ...(phone && { phone }),
+      ...(location && { location }),
+      ...(gender && { gender }),
+      ...(profileImageUrl && { profileImageUrl }),
+      ...(coverImageUrl && { coverImageUrl }),
     };
 
     await userDocRef.set(userData, { merge: true });
@@ -162,6 +162,62 @@ export class BiodataService {
     return {
       status: HttpStatus.OK,
       message: 'Password added successfully',
+      error: false,
+    };
+  }
+
+  async getUserProfile(email: string) {
+    const userProfile = await this.db.collection('users').doc(email).get();
+    if (!userProfile.exists) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'User not found',
+          error: true,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    let userData = userProfile.data();
+
+    // Menghapus properti sensitif dari objek userData
+    const { password, uid, role, ...safeUserData } = userData;
+    userData = safeUserData;
+
+    const postsSnapshot = await this.db
+      .collection('posts')
+      .where('email', '==', email)
+      .get();
+    const posts = postsSnapshot.docs.map((doc) => doc.data());
+
+    const groupMembershipsSnapshot = await this.db
+      .collection('groupMemberships')
+      .where('email', '==', email)
+      .get();
+    const groups = groupMembershipsSnapshot.docs.map((doc) => doc.data());
+
+    const followersSnapshot = await this.db
+      .collection('follows')
+      .where('followingEmail', '==', email)
+      .get();
+    const followersCount = followersSnapshot.size;
+
+    const followingSnapshot = await this.db
+      .collection('follows')
+      .where('followerEmail', '==', email)
+      .get();
+    const followingCount = followingSnapshot.size;
+
+    return {
+      status: HttpStatus.OK,
+      message: 'User profile fetched successfully',
+      data: {
+        user: userData, // Objek userData yang sudah dibersihkan
+        posts,
+        groups,
+        followersCount,
+        followingCount,
+      },
       error: false,
     };
   }

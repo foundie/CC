@@ -10,6 +10,7 @@ import {
   Request,
   UseInterceptors,
   UploadedFiles,
+  Param,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { BiodataService } from './biodata.service';
@@ -78,5 +79,11 @@ export class BiodataController {
       email,
       password,
     );
+  }
+
+  @Get(':email')
+  @UseGuards(AuthGuard('jwt'))
+  async getProfile(@Param('email') email: string) {
+    return await this.biodataService.getUserProfile(email);
   }
 }
