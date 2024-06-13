@@ -136,9 +136,9 @@
         "gender": "hexadesimal",
         "phone": "123456789",
         "location": "aaaaaaa",
-        "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/test%40api.com/...",
+        "profilePictureUrl": "https://storage.googleapis.com/storage-foundie/user/test%40api.com/...",
         "name": "TES API",
-        "coverImageUrl": "https://storage.googleapis.com/storage-foundie/user/test%40api.com/...",
+        "coverPictureUrl": "https://storage.googleapis.com/storage-foundie/user/test%40api.com/...",
         "description": "text description after edit",
         "followersCount": 1,
         "followingCount": 1
