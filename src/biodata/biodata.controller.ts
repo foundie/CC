@@ -35,6 +35,7 @@ export class BiodataController {
     @Body('phone') phone?: string,
     @Body('location') location?: string,
     @Body('gender') gender?: string,
+    @Body('description') description?: string,
     @UploadedFiles()
     files?: {
       profileImage?: Express.Multer.File[];
@@ -53,6 +54,7 @@ export class BiodataController {
       phone,
       location,
       gender,
+      description,
       profileImage,
       coverImage,
     );

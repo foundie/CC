@@ -15,6 +15,7 @@ export class BiodataService {
     phone?: string,
     location?: string,
     gender?: string,
+    description?: string,
     profileImage?: Express.Multer.File,
     coverImage?: Express.Multer.File,
   ) {
@@ -29,35 +30,39 @@ export class BiodataService {
       );
     }
 
-    let profileImageUrl;
+    let profileImageUrl, coverImageUrl;
+
+    const uploadPromises = [];
     if (profileImage) {
-      profileImageUrl = await this.uploadImage(
-        email,
-        profileImage,
-        'profilePicture',
+      uploadPromises.push(
+        this.uploadImage(email, profileImage, 'profilePicture'),
       );
     }
-
-    let coverImageUrl;
     if (coverImage) {
-      coverImageUrl = await this.uploadImage(email, coverImage, 'coverPicture');
+      uploadPromises.push(this.uploadImage(email, coverImage, 'coverPicture'));
     }
 
-    const userDocRef = this.db.collection('users').doc(email);
-    const existingUserData = (await userDocRef.get()).data() || {};
+    const [profileImageResult, coverImageResult] =
+      await Promise.all(uploadPromises);
 
-    // Membuat objek userData baru dengan hanya menyertakan properti yang memiliki nilai yang ditentukan
+    if (profileImage) {
+      profileImageUrl = profileImageResult;
+    }
+    if (coverImage) {
+      coverImageUrl = coverImageResult;
+    }
+
     const userData = {
-      ...existingUserData,
       ...(name && { name }),
       ...(phone && { phone }),
       ...(location && { location }),
       ...(gender && { gender }),
-      ...(profileImageUrl && { profileImageUrl }),
-      ...(coverImageUrl && { coverImageUrl }),
+      ...(description && { description }), // Tambahkan description ke userData
+      ...(profileImageUrl && { profilePictureUrl: profileImageUrl }),
+      ...(coverImageUrl && { coverPictureUrl: coverImageUrl }),
     };
 
-    await userDocRef.set(userData, { merge: true });
+    await this.db.collection('users').doc(email).set(userData, { merge: true });
 
     return {
       status: HttpStatus.CREATED,
@@ -251,16 +256,22 @@ export class BiodataService {
     const userDoc = await this.db.collection('users').doc(email).get();
     const userData = userDoc.data();
     const oldImageUrl = userData[imageType + 'Url'];
-
     if (oldImageUrl) {
-      const oldImageFileName = `user/${email}/${imageType}`;
-      const oldImageFile = this.storage.bucket().file(oldImageFileName);
-      await oldImageFile.delete();
+      const oldImageFileName = oldImageUrl
+        .replace('https://storage.googleapis.com/storage-foundie/', '')
+        .split('?')[0];
+
+      await this.storage
+        .bucket('storage-foundie')
+        .file(decodeURIComponent(oldImageFileName))
+        .delete();
     }
 
+    const timestamp = new Date().getTime();
+    const newFileName = `user/${email}/${imageType}_${timestamp}`;
+
     const bucket = this.storage.bucket();
-    const fileName = `user/${email}/${imageType}`;
-    const file = bucket.file(fileName);
+    const file = bucket.file(newFileName);
     const stream = file.createWriteStream({
       metadata: {
         contentType: imageFile.mimetype,
@@ -277,6 +288,12 @@ export class BiodataService {
             action: 'read',
             expires: '03-09-2491',
           });
+          await this.db
+            .collection('users')
+            .doc(email)
+            .update({
+              [imageType + 'Url']: signedUrls[0],
+            });
           resolve(signedUrls[0]);
         } catch (error) {
           reject(error);
