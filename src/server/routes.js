@@ -1,11 +1,22 @@
 const {  
   getAllProductHandler, filteredProductHandler,
-  predictHandlerST,
+  predictHandlerST, predictHandlerFC
 } = require('../server/handler');
 
 
 
 const routes = [
+  {
+    method: 'POST',
+    path: '/predict/face',
+    handler: predictHandlerFC,
+    options: {
+        payload: {
+        allow: 'multipart/form-data',
+        multipart: true,
+      }
+    }
+  },
   {
     method: 'POST',
     path: '/predict/skin',

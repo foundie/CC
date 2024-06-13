@@ -1,5 +1,6 @@
 const { getAllProduct, filteredProduct } = require('../services/products')
 const ModelService_SkinTone = require('../predicts/skinTone');
+const ModelService_FaceClassification = require('../predicts/faceClassification');
 
 const modelServiceST = new ModelService_SkinTone();
 async function predictHandlerST(request, h) {
@@ -50,6 +51,49 @@ async function predictHandlerST(request, h) {
   }
 }
 
+const modelServiceFC = new ModelService_FaceClassification();
+async function predictHandlerFC(request, h) {
+  try {
+    const { payload } = request;
+    const imageBuffer = Buffer.from(payload.image, 'base64');
+    const prediction = await modelServiceFC.predict(imageBuffer);
+    const result = await modelServiceFC.predict(imageBuffer);
+    console.log(result);
+    if (prediction != null){
+      let explanation;
+      if (result == 'Low Visual Weight'){
+        explanation = 'Jenis klasifikasi wajah anda adalah Low Visual Weight'
+      } else {
+        explanation = 'Jenis klasifikasi wajah anda adalah High Visual Weight'
+      }
+      const response = h.response({
+        error: false, 
+        status: 'success', 
+        prediction,
+        message: explanation
+        });
+        response.code(200);
+        return response;
+    } else {
+      const response = h.response({
+        error: true,
+        status: 'fail',
+        message: 'Prediksi gagal. Mohon masukkan image dengan benar'
+      });
+      response.code(400);
+      return response;
+    }
+} catch (error) {
+    console.error('Error during prediction :', error);
+    const response = h.response({
+      error: true, 
+      status: 'fail', 
+      message: error.message 
+    });
+    response.code(500);
+    return response;
+  }
+}
 
 async function getAllProductHandler(request, h){
   const {limit, skip} = request.query;
@@ -97,6 +141,6 @@ async function filteredProductHandler(request, h){
 }
 
 
-module.exports = { predictHandlerST,
+module.exports = { predictHandlerST, predictHandlerFC,
   getAllProductHandler, filteredProductHandler,
 };
