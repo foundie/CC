@@ -419,13 +419,17 @@
 
 - **URL** : `/products`
 - **Method** : `GET`
+- **Parameters** :
+  - `limit` as `int`, optional, default 10
+  - `skip` as `int`, optional, default 0
 - **Response** :
   
    ```json
   {
     "error": false,
     "status": "success",
-    "data": {
+    "data": [
+   {
         "Brand": "hanasui",
         "Product Title": "Hanasui Mattedorable Lip Cream 03 Star",
         "Variant Name": "03 Star",
@@ -439,7 +443,8 @@
         "Season 2 Percent": 49.90611096972805,
         "S2 Closest Color": "[208.0, 49.0, 79.0]",
         "Product URL": "https://hanasui.id/makeup/lip_cream"
-    }
+    },
+   ]
   }
 
 ### Filter Product
