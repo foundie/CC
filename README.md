@@ -361,6 +361,7 @@
     "message": "Berikut rekomendasi produk untuk anda : "
     "product": [
         {
+        "Image": "https://hanasui.id/front-end/assets/img/product_image/bf83c7d933d5f63108fb3b2c327f8cf3.png",
         "Brand": "hanasui",
         "Product Title": "Hanasui Mattedorable Lip Cream 03 Star",
         "Variant Name": "03 Star",
@@ -394,6 +395,7 @@
     "message": "Berikut rekomendasi produk untuk anda : "
     "product": [
         {
+        "Image": "https://hanasui.id/front-end/assets/img/product_image/bf83c7d933d5f63108fb3b2c327f8cf3.png",
         "Brand": "hanasui",
         "Product Title": "Hanasui Mattedorable Lip Cream 03 Star",
         "Variant Name": "03 Star",
@@ -422,6 +424,7 @@
 - **Parameters** :
   - `limit` as `int`, optional, default 10
   - `skip` as `int`, optional, default 0
+- **Example** : 'https://foundie-backend-dev-b3pq7ueuta-uc.a.run.app/products?limit=1&skip=0'
 - **Response** :
   
    ```json
@@ -430,6 +433,7 @@
     "status": "success",
     "data": [
    {
+        "Image": "https://hanasui.id/front-end/assets/img/product_image/bf83c7d933d5f63108fb3b2c327f8cf3.png",
         "Brand": "hanasui",
         "Product Title": "Hanasui Mattedorable Lip Cream 03 Star",
         "Variant Name": "03 Star",
@@ -463,6 +467,7 @@
     "error": false,
     "status": "success",
     "data": {
+        "Image": "https://hanasui.id/front-end/assets/img/product_image/bf83c7d933d5f63108fb3b2c327f8cf3.png",
         "Brand": "hanasui",
         "Product Title": "Hanasui Mattedorable Lip Cream 03 Star",
         "Variant Name": "03 Star",
