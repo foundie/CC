@@ -107,6 +107,7 @@
   - `phone` as `text` - `nomor telephone`
   - `location` as `text` - `lokasi`
   - `gender` as `text` - `gender`
+  - `description` as `text` - `description`
   - `profileImage` as `file` - `File Foto Profile`
   - `coverImage` as `file` - `File Foto Sampul Profile`
 - **Response** :
@@ -138,6 +139,7 @@
         "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/test%40api.com/...",
         "name": "TES API",
         "coverImageUrl": "https://storage.googleapis.com/storage-foundie/user/test%40api.com/...",
+        "description": "text description after edit",
         "followersCount": 1,
         "followingCount": 1
     }
