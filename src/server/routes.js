@@ -1,6 +1,6 @@
 const {  
   getAllProductHandler, filteredProductHandler,
-  predictHandlerST
+  predictHandlerST,
 } = require('../server/handler');
 
 

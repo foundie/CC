@@ -18,7 +18,9 @@
     "@tensorflow/tfjs": "^4.19.0",
     "@tensorflow/tfjs-layers": "^4.19.0",
     "@tensorflow/tfjs-node": "^4.19.0",
+    "canvas": "^2.11.2",
     "dotenv": "^16.4.5",
+    "face-api.js": "^0.22.2",
     "formidable": "^3.5.1",
     "jpeg-js": "^0.4.4"
   },

@@ -60,15 +60,14 @@ class ModelService_SkinTone {
       const prediction = this.model.predict(tensor);
       // Interpret the prediction
       const label = this.interpretPrediction(prediction);
-      console.log('Hasil Prediksi:', label);
-
+      console.log('Hasil prediksi : ', label)
       let result;
       if (label == '0') {
-        result = 'medium'
+        result = 'dark'
       } else if (label == '1') {
         result = 'light' 
-      } else {
-        result = 'dark'
+      } else if (label == '2'){
+        result = 'medium'
       }
       return result;
     } catch (error) {
@@ -117,8 +116,9 @@ class ModelService_SkinTone {
   }
 
   interpretPrediction(prediction) {
-    const predictionValue = prediction.dataSync()[0];
-    return predictionValue;
+    const predictionValue = prediction.dataSync();
+    const result = predictionValue.indexOf(Math.max(...predictionValue));
+    return String(result); 
   }
 
   imageToTensor(imageBuffer) {

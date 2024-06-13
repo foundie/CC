@@ -5,10 +5,23 @@ const bigquery = new BigQuery({
   projectId,
 });
 
-async function getAllProduct(){
+async function getAllProduct(limit, skip){
+  limit = limit || 10;
+  skip = skip || 0;
+
+  limit = parseInt(limit, 10);
+  skip = parseInt(skip, 10);
+
+  if (isNaN(limit) || limit <= 0) {
+      limit = 10; // default limit
+  }
+
+  if (isNaN(skip) || skip < 0) {
+      skip = 0; // default skip
+  }
   const query = `SELECT *
   FROM \`capstone-project-foundie.all_products.data\`
-  LIMIT 20`;
+  LIMIT ${limit} OFFSET ${skip}`;
   const options = {
     query: query,
     location: 'asia-southeast2',
@@ -59,9 +72,13 @@ return allProduct;
 };
 
 function capitalizeFirstLetter(string) {
-  return string.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+  return string.split(' ')
+  .map(word => word.charAt(0)
+  .toUpperCase() 
+  + word.slice(1)
+  .toLowerCase()).join(' ');
 }
-async function filteredProduct(name, season){
+async function filteredProduct(name, season) {
   name = name ? capitalizeFirstLetter(name) : name;
   season = season ? capitalizeFirstLetter(season) : season;
   let query = `

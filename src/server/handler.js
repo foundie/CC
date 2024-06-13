@@ -1,6 +1,5 @@
-const { getAllProduct, filteredProduct } = require('../services/products');
+const { getAllProduct, filteredProduct } = require('../services/products')
 const ModelService_SkinTone = require('../predicts/skinTone');
-
 
 const modelServiceST = new ModelService_SkinTone();
 async function predictHandlerST(request, h) {
@@ -53,7 +52,8 @@ async function predictHandlerST(request, h) {
 
 
 async function getAllProductHandler(request, h){
-  const product = await getAllProduct();
+  const {limit, skip} = request.query;
+  const product = await getAllProduct(limit, skip);
   const response = h.response({
     error: false,
     status: "success",
