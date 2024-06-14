@@ -6,22 +6,28 @@ const bigquery = new BigQuery({
 });
 
 async function getAllProduct(limit, skip){
-  limit = limit || 10;
-  skip = skip || 0;
+    limit = parseInt(limit, 10);
+    skip = parseInt(skip, 10);
 
-  limit = parseInt(limit, 10);
-  skip = parseInt(skip, 10);
+    // Validasi nilai yang diberikan oleh user
+    if (isNaN(limit) || limit <= 0) {
+        limit = undefined; // Tidak memberikan nilai default
+    }
 
-  if (isNaN(limit) || limit <= 0) {
-      limit = 10; // default limit
-  }
+    if (isNaN(skip) || skip < 0) {
+        skip = undefined; // Tidak memberikan nilai default
+    }
 
-  if (isNaN(skip) || skip < 0) {
-      skip = 0; // default skip
-  }
-  const query = `SELECT *
-  FROM \`capstone-project-foundie.all_products.data\`
-  LIMIT ${limit} OFFSET ${skip}`;
+    // Buat query SQL sesuai dengan input user
+    let query = 'SELECT * FROM `capstone-project-foundie.all_products.data`';
+
+    if (limit !== undefined && skip !== undefined) {
+        query += ` LIMIT ${limit} OFFSET ${skip}`;
+    } else if (limit !== undefined) {
+        query += ` LIMIT ${limit}`;
+    } else if (skip !== undefined) {
+        query += ` OFFSET ${skip}`;
+    }
   const options = {
     query: query,
     location: 'asia-southeast2',
