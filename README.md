@@ -422,8 +422,8 @@
 - **URL** : `/products`
 - **Method** : `GET`
 - **Parameters** :
-  - `limit` as `int`, optional, default 10
-  - `skip` as `int`, optional, default 0
+  - `limit` as `int`, optional
+  - `skip` as `int`, optional
 - **Example** : 'https://foundie-backend-dev-b3pq7ueuta-uc.a.run.app/products?limit=1&skip=0'
 - **Response** :
   
