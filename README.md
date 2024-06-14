@@ -271,10 +271,7 @@
                 "text": "TEST API AFTER EDITED",
                 "title": "TEST API",
                 "email": "test@api.com",
-                "timestamp": {
-                    "_seconds": 1717385102,
-                    "_nanoseconds": 36000000
-                },
+                "timestamp": "09-06-2024 09:40"
                 "imageUrls": [
                     "https://storage.googleapis.com/storage-foundie/user/"
                 ]
@@ -290,28 +287,19 @@
                 "text": "LOREM IPMSUM",
                 "title": "TEST GROUP API POST",
                 "email": "test@api.com",
-                "timestamp": {
-                    "_seconds": 1717900816,
-                    "_nanoseconds": 528000000
-                }
+                "timestamp": "09-06-2024 09:40"
             }
         ],
         "groups": [
             {
                 "groupId": "kZ5xRRLTUGpPIiarYshX",
                 "email": "test@api.com",
-                "joinedAt": {
-                    "_seconds": 1717900624,
-                    "_nanoseconds": 452000000
-                }
+                "joinedAt": "09-06-2024 09:37"
             },
             {
                 "groupId": "rW7AcqwrnsPncg6f02xB",
                 "email": "test@api.com",
-                "joinedAt": {
-                    "_seconds": 1717982827,
-                    "_nanoseconds": 225000000
-                }
+                "joinedAt": "09-06-2024 09:37"
             }
         ],
         "followersCount": 1,
@@ -382,7 +370,7 @@
 
 
 ### Skin Tone Histori
-- **URL** : `/predict/skin/histori`
+- **URL** : `/predict/skin/history`
 - **Method** : `GET`
 - **Auth required** : `YES`
 - **Response**:
@@ -646,10 +634,7 @@
             "text": "lorem",
             "title": "lisptik",
             "email": "johndoe@example.com",
-            "timestamp": {
-                "_seconds": 1716517459,
-                "_nanoseconds": 973000000
-            },
+            "timestamp": "03-06-2024 10:25",
             "likesCount": 2,
             "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/test%40api.com/...",
         }
@@ -929,10 +914,7 @@
             "postId": "N8rOud2GWYet40HItg0s",
             "text": "TEST API",
             "email": "test@api.com",
-            "timestamp": {
-                "_seconds": 1717550154,
-                "_nanoseconds": 667000000
-            },
+            "timestamp": "09-06-2024 09:40"
             "likesCount": 1,
             "imageUrls": [
                 "https://storage.googleapis.com/storage-foundie/groups/YnHnxPwwtgqALxgrNAQb/posts/...."
@@ -974,10 +956,7 @@
             "id": "kZ5xRRLTUGpPIiarYshX",
             "title": "TEST GROUP API ",
             "profileImageUrl": "https://storage.googleapis.com/storage-foundie/groups/...D",
-            "timestamp": {
-                "_seconds": 1717900624,
-                "_nanoseconds": 452000000
-            },
+            "timestamp": "09-06-2024 09:37",
             "subscription": 2
         },
         {
@@ -990,10 +969,7 @@
             ],
             "id": "rW7AcqwrnsPncg6f02xB",
             "subscription": 1,
-            "timestamp": {
-                "_seconds": 1717982827,
-                "_nanoseconds": 225000000
-            },
+            "timestamp": "09-06-2024 09:37",
             "title": "TEST GROUP API EDITED",
             "profileImageUrl": "https://storage.googleapis.com/storage-foundie/groups/...",
             "coverImageUrl": "https://storage.googleapis.com/storage-foundie/groups/....",
