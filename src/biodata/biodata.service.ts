@@ -3,6 +3,8 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 import * as bcrypt from 'bcrypt';
+import { convertTimestampToDate } from '../utils/timestamp.utils';
+import { Timestamp } from 'firebase/firestore';
 
 @Injectable()
 export class BiodataService {
@@ -57,7 +59,7 @@ export class BiodataService {
       ...(phone && { phone }),
       ...(location && { location }),
       ...(gender && { gender }),
-      ...(description && { description }), // Tambahkan description ke userData
+      ...(description && { description }),
       ...(profileImageUrl && { profilePictureUrl: profileImageUrl }),
       ...(coverImageUrl && { coverPictureUrl: coverImageUrl }),
     };
@@ -185,7 +187,6 @@ export class BiodataService {
     }
     let userData = userProfile.data();
 
-    // Menghapus properti sensitif dari objek userData
     const { password, uid, role, ...safeUserData } = userData;
     userData = safeUserData;
 
@@ -193,13 +194,27 @@ export class BiodataService {
       .collection('posts')
       .where('email', '==', email)
       .get();
-    const posts = postsSnapshot.docs.map((doc) => doc.data());
+    const posts = postsSnapshot.docs.map((doc) => {
+      const postData = doc.data();
+      // Konversi timestamp untuk setiap post
+      postData.timestamp = convertTimestampToDate(
+        postData.timestamp as Timestamp,
+      );
+      return postData;
+    });
 
     const groupMembershipsSnapshot = await this.db
       .collection('groupMemberships')
       .where('email', '==', email)
       .get();
-    const groups = groupMembershipsSnapshot.docs.map((doc) => doc.data());
+    const groups = groupMembershipsSnapshot.docs.map((doc) => {
+      const groupData = doc.data();
+      // Konversi timestamp untuk setiap keanggotaan grup
+      groupData.joinedAt = convertTimestampToDate(
+        groupData.joinedAt as Timestamp,
+      );
+      return groupData;
+    });
 
     const followersSnapshot = await this.db
       .collection('follows')
@@ -217,7 +232,7 @@ export class BiodataService {
       status: HttpStatus.OK,
       message: 'User profile fetched successfully',
       data: {
-        user: userData, // Objek userData yang sudah dibersihkan
+        user: userData,
         posts,
         groups,
         followersCount,

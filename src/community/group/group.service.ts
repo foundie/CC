@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import * as admin from 'firebase-admin';
+import { Timestamp } from 'firebase/firestore';
+import { convertTimestampToDate } from '../../utils/timestamp.utils';
 
 @Injectable()
 export class GroupService {
@@ -217,7 +219,14 @@ export class GroupService {
     }
 
     const groupsSnapshot = await groupsQuery.get();
-    let groupsData = groupsSnapshot.docs.map((doc) => doc.data());
+    let groupsData = groupsSnapshot.docs.map((doc) => {
+      const groupData = doc.data();
+      // Konversi timestamp untuk setiap group
+      groupData.timestamp = convertTimestampToDate(
+        groupData.timestamp as Timestamp,
+      );
+      return groupData;
+    });
 
     // Filter by search query
     if (q) {
@@ -235,7 +244,12 @@ export class GroupService {
     if (groupsData.length === 0) {
       throw new HttpException('No groups found', HttpStatus.NOT_FOUND);
     } else {
-      return groupsData;
+      return {
+        status: HttpStatus.OK,
+        message: 'Groups successfully retrieved',
+        data: groupsData,
+        error: false,
+      };
     }
   }
 

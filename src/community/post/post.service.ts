@@ -1,6 +1,8 @@
 // post.service.ts
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import * as admin from 'firebase-admin';
+import { Timestamp } from 'firebase/firestore';
+import { convertTimestampToDate } from '../../utils/timestamp.utils';
 import {
   CollectionReference,
   DocumentData,
@@ -292,7 +294,10 @@ export class PostService {
     const postData = postSnapshot.data();
     delete postData.titleArray;
 
-    // Mengambil gambar profil pembuat postingan
+    postData.timestamp = convertTimestampToDate(
+      postData.timestamp as Timestamp,
+    );
+
     const userSnapshot = await this.db
       .collection('users')
       .doc(postData.email)
@@ -308,7 +313,10 @@ export class PostService {
     const commentsData = [];
     for (const commentDoc of commentsQuerySnapshot.docs) {
       const commentData = commentDoc.data();
-      // Mengambil gambar profil pengguna yang berkomentar
+      commentData.timestamp = convertTimestampToDate(
+        commentData.timestamp as Timestamp,
+      );
+
       const commentUserSnapshot = await this.db
         .collection('users')
         .doc(commentData.email)
@@ -317,7 +325,6 @@ export class PostService {
         ? commentUserSnapshot.data().profileImageUrl
         : null;
 
-      // Mengambil balasan untuk setiap komentar
       const repliesQuerySnapshot = await this.db
         .collection('replies')
         .where('commentId', '==', commentData.commentId)
@@ -325,7 +332,11 @@ export class PostService {
       const repliesData = [];
       for (const replyDoc of repliesQuerySnapshot.docs) {
         const replyData = replyDoc.data();
-        // Mengambil gambar profil pengguna yang memberikan balasan
+
+        replyData.timestamp = convertTimestampToDate(
+          replyData.timestamp as Timestamp,
+        );
+
         const replyUserSnapshot = await this.db
           .collection('users')
           .doc(replyData.email)
@@ -343,7 +354,14 @@ export class PostService {
       .collection('likes')
       .where('postId', '==', postId)
       .get();
-    const likesData = likesQuerySnapshot.docs.map((doc) => doc.data());
+    const likesData = likesQuerySnapshot.docs.map((doc) => {
+      const likeData = doc.data();
+
+      likeData.timestamp = convertTimestampToDate(
+        likeData.timestamp as Timestamp,
+      );
+      return likeData;
+    });
 
     return {
       status: HttpStatus.OK,
@@ -377,7 +395,10 @@ export class PostService {
     }
 
     const postsSnapshot = await postsQuery.get();
-    let postsData = postsSnapshot.docs.map((doc) => doc.data());
+    let postsData = postsSnapshot.docs.map((doc) => {
+      const postData = doc.data();
+      return postData;
+    });
 
     // Filter by search query
     if (q) {
@@ -404,6 +425,7 @@ export class PostService {
         post.profileImageUrl = userSnapshot.exists
           ? userSnapshot.data().profileImageUrl
           : null;
+        post.timestamp = convertTimestampToDate(post.timestamp as Timestamp);
         return post;
       }),
     );
@@ -453,7 +475,10 @@ export class PostService {
     }
 
     const postsSnapshot = await postsQuery.get();
-    let postsData = postsSnapshot.docs.map((doc) => doc.data());
+    let postsData = postsSnapshot.docs.map((doc) => {
+      const postData = doc.data();
+      return postData;
+    });
 
     // Filter by search query
     if (q) {
@@ -476,6 +501,8 @@ export class PostService {
         post.profileImageUrl = userSnapshot.exists
           ? userSnapshot.data().profileImageUrl
           : null;
+        // Konversi timestamp untuk setiap post
+        post.timestamp = convertTimestampToDate(post.timestamp as Timestamp);
         return post;
       }),
     );

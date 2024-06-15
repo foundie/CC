@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, HttpException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { switchMap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { switchMap, catchError } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
 import * as FormData from 'form-data';
 import { config } from 'dotenv';
 import * as admin from 'firebase-admin';
@@ -15,24 +15,57 @@ export class Face_classificationService {
   predictFace(
     email: string,
     image: Buffer,
-  ): Observable<{ prediction: string; message: string }> {
+  ): Observable<{
+    status: HttpStatus;
+    error: boolean;
+    data: {
+      predicted_class: string;
+      message: string;
+    };
+  }> {
     const formData = new FormData();
     formData.append('image', image, 'face.jpg');
 
     return this.httpService
-      .post(`${process.env.URL_HAPI}/predict/face`, formData, {
+      .post(`${process.env.URL_FACE_CLASSIFICATION}/predict/face`, formData, {
         headers: formData.getHeaders(),
       })
       .pipe(
         switchMap((response) => {
-          const { prediction, message } = response.data;
+          // Menggunakan 'predicted_class' dari respons API
+          const { predicted_class } = response.data;
+          // Membuat pesan berdasarkan 'predicted_class'
+          const message = `Jenis klasifikasi wajah Anda adalah ${predicted_class}`;
           return this.savePredictionToFirebase(email, {
-            prediction,
-            message,
+            prediction: predicted_class,
+            message: message,
             type: 'face classification',
           }).then(() => {
-            return { prediction, message };
+            return {
+              status: HttpStatus.OK,
+              error: false,
+              data: {
+                predicted_class: predicted_class,
+                message: message,
+              },
+            };
           });
+        }),
+        catchError((error) => {
+          console.log(error);
+          return throwError(
+            new HttpException(
+              {
+                status:
+                  error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+                message:
+                  error.response?.data?.message ||
+                  'An error occurred during the API request',
+                error: true,
+              },
+              error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+            ),
+          );
         }),
       );
   }
@@ -41,10 +74,14 @@ export class Face_classificationService {
     email: string,
     predictionData: { prediction: string; message: string; type: string },
   ) {
-    const historyRef = admin.firestore().collection('histori').doc();
-    await historyRef.set({
-      email,
-      ...predictionData,
-    });
+    const docId = `${email}_${predictionData.type}`;
+    const historyRef = admin.firestore().collection('histori').doc(docId);
+    await historyRef.set(
+      {
+        email,
+        ...predictionData,
+      },
+      { merge: true },
+    );
   }
 }

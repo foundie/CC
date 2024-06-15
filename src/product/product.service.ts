@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { Observable, of, throwError } from 'rxjs';
-import { switchMap, catchError } from 'rxjs/operators';
+import { switchMap, catchError, map } from 'rxjs/operators';
 import * as FormData from 'form-data';
 
 @Injectable()
@@ -35,6 +35,32 @@ export class ProductService {
               },
               error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
             ),
+          );
+        }),
+      );
+  }
+
+  getProducts(limit?: number, skip?: number): Observable<any> {
+    let queryParams = '';
+    if (limit !== undefined) {
+      queryParams += `?limit=${limit}`;
+    }
+    if (skip !== undefined) {
+      queryParams += limit !== undefined ? `&skip=${skip}` : `?skip=${skip}`;
+    }
+
+    return this.httpService
+      .get(`${process.env.URL_HAPI}/products${queryParams}`)
+      .pipe(
+        map((response) => response.data),
+        catchError((error) => {
+          throw new HttpException(
+            {
+              status: HttpStatus.INTERNAL_SERVER_ERROR,
+              error: 'There was a problem accessing the products API',
+              message: error,
+            },
+            HttpStatus.INTERNAL_SERVER_ERROR,
           );
         }),
       );

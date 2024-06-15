@@ -29,7 +29,7 @@ export class SkinToneController {
     );
   }
 
-  @Get('skin/histori')
+  @Get('history')
   @UseGuards(AuthGuard('jwt'))
   async getHistory(@Request() req) {
     const loggedInUserEmail = req.user.username;
