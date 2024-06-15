@@ -12,6 +12,9 @@ const InputError = require('../exceptions/InputError');
       cors:  {
         origin: ['*'],
       },
+        payload: {
+          maxBytes: 2000000,
+        }
     },
   });
 
@@ -33,7 +36,7 @@ const InputError = require('../exceptions/InputError');
         const newResponse = h.response({
           error: true,
           status: 'fail',
-          message: 'Payload content length greater than maximum allowed: 1000000'
+          message: 'Maksimal ukuran gambar adalah 2 MB.'
         });
         newResponse.code(413);
         return newResponse;
