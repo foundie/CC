@@ -591,6 +591,7 @@
       "imageUrl": "url gambar post",
       "timestamp": "timestamp server",
       "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/test%40api.com/...",
+      "name": "TES API"
     },
     "comments": [
       {
@@ -600,6 +601,7 @@
         "text": "teks komentar",
         "timestamp": "timestamp server",
         "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/test%40api.com/...",
+        "name": "TES API"
         "replies": [
           {
             "replyId": "id balasan",
@@ -608,6 +610,7 @@
             "text": "teks balasan",
             "timestamp": "timestamp server",
             "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/test%40api.com/...",
+            "name": "TES API"
           },
         ]
       },
@@ -650,6 +653,7 @@
             "timestamp": "03-06-2024 10:25",
             "likesCount": 2,
             "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/test%40api.com/...",
+            "name": "TES API"
         }
     ]
     "error": false
@@ -934,6 +938,7 @@
             ],
             "title": "TEST POST GROUP EDIT",
             "profileImageUrl": "https://storage.googleapis.com/storage-foundie/user/test%40api.com/...",
+            "name": "TES API"
         }
     ],
     "error": false
