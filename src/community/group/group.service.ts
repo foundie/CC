@@ -245,9 +245,7 @@ export class GroupService {
       throw new HttpException('No groups found', HttpStatus.NOT_FOUND);
     } else {
       return {
-        status: HttpStatus.OK,
-        message: 'Groups successfully retrieved',
-        data: groupsData,
+        groupsData,
         error: false,
       };
     }
@@ -610,7 +608,8 @@ export class GroupService {
       text,
       imageUrls,
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
-      groupPost: true, // menandakan ini adalah postingan grup
+      likesCount: 0,
+      groupPost: true,
     };
 
     await postRef.set(postData);

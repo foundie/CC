@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { HttpStatus, Injectable, HttpException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { switchMap, catchError } from 'rxjs/operators';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, of } from 'rxjs';
 import * as FormData from 'form-data';
 import { config } from 'dotenv';
 import * as admin from 'firebase-admin';
@@ -12,13 +13,13 @@ config();
 export class Face_classificationService {
   constructor(private httpService: HttpService) {}
 
-  predictFace(
+  async predictFace(
     email: string,
     image: Buffer,
-  ): Observable<{
+  ): Promise<{
     status: HttpStatus;
     error: boolean;
-    data: {
+    data?: {
       predicted_class: string;
       message: string;
     };
@@ -26,48 +27,50 @@ export class Face_classificationService {
     const formData = new FormData();
     formData.append('image', image, 'face.jpg');
 
-    return this.httpService
-      .post(`${process.env.URL_FACE_CLASSIFICATION}/predict/face`, formData, {
-        headers: formData.getHeaders(),
-      })
-      .pipe(
-        switchMap((response) => {
-          // Menggunakan 'predicted_class' dari respons API
-          const { predicted_class } = response.data;
-          // Membuat pesan berdasarkan 'predicted_class'
-          const message = `Jenis klasifikasi wajah Anda adalah ${predicted_class}`;
-          return this.savePredictionToFirebase(email, {
-            prediction: predicted_class,
-            message: message,
-            type: 'face classification',
-          }).then(() => {
-            return {
-              status: HttpStatus.OK,
-              error: false,
-              data: {
-                predicted_class: predicted_class,
-                message: message,
-              },
-            };
-          });
-        }),
-        catchError((error) => {
-          console.log(error);
-          return throwError(
-            new HttpException(
-              {
-                status:
-                  error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
-                message:
-                  error.response?.data?.message ||
-                  'An error occurred during the API request',
-                error: true,
-              },
-              error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
-            ),
-          );
-        }),
-      );
+    try {
+      const response = await this.httpService
+        .post(`${process.env.URL_FACE_CLASSIFICATION}/predict/face`, formData, {
+          headers: formData.getHeaders(),
+        })
+        .toPromise();
+
+      const predicted_class =
+        response.data.predicted_class || 'tidak terdeteksi';
+      const message =
+        predicted_class === 'tidak terdeteksi'
+          ? 'Tidak terdeteksi wajah'
+          : `Jenis klasifikasi wajah Anda adalah ${predicted_class}`;
+
+      await this.savePredictionToFirebase(email, {
+        prediction: predicted_class,
+        message: message,
+        type: 'face classification',
+      });
+
+      return {
+        status: HttpStatus.OK,
+        error: false,
+        data: {
+          predicted_class: predicted_class,
+          message: message,
+        },
+      };
+    } catch (error) {
+      await this.savePredictionToFirebase(email, {
+        prediction: 'tidak terdeteksi',
+        message: 'Tidak terdeteksi wajah',
+        type: 'face classification',
+      });
+
+      return {
+        status: error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        error: true,
+        data: {
+          predicted_class: 'tidak terdeteksi',
+          message: 'Tidak terdeteksi wajah',
+        },
+      };
+    }
   }
 
   private async savePredictionToFirebase(

@@ -302,9 +302,10 @@ export class PostService {
       .collection('users')
       .doc(postData.email)
       .get();
-    postData.profileImageUrl = userSnapshot.exists
-      ? userSnapshot.data().profileImageUrl
+    postData.profilePictureUrl = userSnapshot.exists
+      ? userSnapshot.data().profilePictureUrl
       : null;
+    postData.name = userSnapshot.exists ? userSnapshot.data().name : null;
 
     const commentsQuerySnapshot = await this.db
       .collection('comments')
@@ -321,8 +322,11 @@ export class PostService {
         .collection('users')
         .doc(commentData.email)
         .get();
-      commentData.profileImageUrl = commentUserSnapshot.exists
-        ? commentUserSnapshot.data().profileImageUrl
+      commentData.profilePictureUrl = commentUserSnapshot.exists
+        ? commentUserSnapshot.data().profilePictureUrl
+        : null;
+      commentData.name = commentUserSnapshot.exists
+        ? commentUserSnapshot.data().name
         : null;
 
       const repliesQuerySnapshot = await this.db
@@ -341,8 +345,11 @@ export class PostService {
           .collection('users')
           .doc(replyData.email)
           .get();
-        replyData.profileImageUrl = replyUserSnapshot.exists
-          ? replyUserSnapshot.data().profileImageUrl
+        replyData.profilePictureUrl = replyUserSnapshot.exists
+          ? replyUserSnapshot.data().profilePictureUrl
+          : null;
+        replyData.name = replyUserSnapshot.exists
+          ? replyUserSnapshot.data().name
           : null;
         repliesData.push(replyData);
       }
@@ -395,10 +402,7 @@ export class PostService {
     }
 
     const postsSnapshot = await postsQuery.get();
-    let postsData = postsSnapshot.docs.map((doc) => {
-      const postData = doc.data();
-      return postData;
-    });
+    let postsData = postsSnapshot.docs.map((doc) => doc.data());
 
     // Filter by search query
     if (q) {
@@ -414,23 +418,26 @@ export class PostService {
       );
     }
 
-    // Remove titleArray from the response and add profile images
-    const postsWithProfileImages = await Promise.all(
+    const postsWithProfileImagesAndNames = await Promise.all(
       postsData.map(async (post) => {
         delete post.titleArray;
         const userSnapshot = await this.db
           .collection('users')
           .doc(post.email)
           .get();
+
         post.profileImageUrl = userSnapshot.exists
-          ? userSnapshot.data().profileImageUrl
+          ? userSnapshot.data().profilePictureUrl
           : null;
+        post.name = userSnapshot.exists
+          ? userSnapshot.data().name
+          : 'Anonymous';
         post.timestamp = convertTimestampToDate(post.timestamp as Timestamp);
         return post;
       }),
     );
 
-    if (postsWithProfileImages.length === 0) {
+    if (postsWithProfileImagesAndNames.length === 0) {
       throw new HttpException(
         {
           status: HttpStatus.NOT_FOUND,
@@ -443,7 +450,7 @@ export class PostService {
       return {
         status: HttpStatus.OK,
         message: 'Posts successfully retrieved',
-        data: postsWithProfileImages,
+        data: postsWithProfileImagesAndNames,
         error: false,
       };
     }
@@ -462,6 +469,7 @@ export class PostService {
 
     // Sorting
     if (sort === 'popular') {
+      // Pastikan indeks untuk 'likesCount' telah dibuat di Firebase console
       postsQuery = postsQuery.orderBy('likesCount', 'desc');
     } else {
       postsQuery = postsQuery.orderBy('timestamp', 'desc');
@@ -475,10 +483,7 @@ export class PostService {
     }
 
     const postsSnapshot = await postsQuery.get();
-    let postsData = postsSnapshot.docs.map((doc) => {
-      const postData = doc.data();
-      return postData;
-    });
+    let postsData = postsSnapshot.docs.map((doc) => doc.data());
 
     // Filter by search query
     if (q) {
@@ -488,8 +493,8 @@ export class PostService {
       );
     }
 
-    // Remove titleArray from the response if it exists and add profile images
-    const postsWithProfileImages = await Promise.all(
+    // Remove titleArray from the response if it exists and add profile images and names
+    const postsWithProfileImagesAndNames = await Promise.all(
       postsData.map(async (post) => {
         if (post.titleArray) {
           delete post.titleArray;
@@ -499,15 +504,17 @@ export class PostService {
           .doc(post.email)
           .get();
         post.profileImageUrl = userSnapshot.exists
-          ? userSnapshot.data().profileImageUrl
+          ? userSnapshot.data().profilePictureUrl
           : null;
-        // Konversi timestamp untuk setiap post
+        post.name = userSnapshot.exists
+          ? userSnapshot.data().name
+          : 'Anonymous'; // Menambahkan nama pengguna
         post.timestamp = convertTimestampToDate(post.timestamp as Timestamp);
         return post;
       }),
     );
 
-    if (postsWithProfileImages.length === 0) {
+    if (postsWithProfileImagesAndNames.length === 0) {
       throw new HttpException(
         {
           status: HttpStatus.NOT_FOUND,
@@ -520,7 +527,7 @@ export class PostService {
       return {
         status: HttpStatus.OK,
         message: 'Posts successfully retrieved',
-        data: postsWithProfileImages,
+        data: postsWithProfileImagesAndNames,
         error: false,
       };
     }
