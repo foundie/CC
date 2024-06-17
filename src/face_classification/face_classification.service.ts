@@ -57,7 +57,7 @@ export class Face_classificationService {
       };
     } catch (error) {
       await this.savePredictionToFirebase(email, {
-        prediction: 'tidak terdeteksi',
+        prediction: 'Tidak terdeteksi',
         message: 'Tidak terdeteksi wajah',
         type: 'face classification',
       });
@@ -66,7 +66,7 @@ export class Face_classificationService {
         status: error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
         error: true,
         data: {
-          predicted_class: 'tidak terdeteksi',
+          predicted_class: 'Tidak terdeteksi',
           message: 'Tidak terdeteksi wajah',
         },
       };
