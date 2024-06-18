@@ -549,6 +549,36 @@
     }
   }
 
+### Compare Product
+
+- **URL** : `/products/compare`
+- **Method** : `GET`
+- **Parameters** :
+  - `index` as `int`
+- **Response** :
+
+  ```json
+  {
+    "error": false,
+    "status": "success",
+    "data": {
+        "Image": "https://hanasui.id/front-end/assets/img/product_image/bf83c7d933d5f63108fb3b2c327f8cf3.png",
+        "Brand": "hanasui",
+        "Product Title": "Hanasui Mattedorable Lip Cream 03 Star",
+        "Variant Name": "03 Star",
+        "Type": "lip",
+        "Color Hex": "#e64468",
+        "Color RGB": "(230, 68, 104)",
+        "Season 1 Name": "spring warm",
+        "Season 1 Percent": 50.09388903027193,
+        "S1 Closest Color": "[251.0, 95.0, 87.0]",
+        "Season 2 Name": "summer cool ",
+        "Season 2 Percent": 49.90611096972805,
+        "S2 Closest Color": "[208.0, 49.0, 79.0]",
+        "Product URL": "https://hanasui.id/makeup/lip_cream"
+    }
+  }
+
 ## Community
 ### Add Post
 
