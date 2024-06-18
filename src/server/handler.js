@@ -1,6 +1,76 @@
 const { getAllProduct, filteredProduct } = require('../services/products')
 const ModelService_SkinTone = require('../predicts/skinTone');
 const ModelService_FaceClassification = require('../predicts/faceClassification');
+const { readFileFromGCS, showProductsDetailsByBrand } = require('../services/compare');
+
+const compareProduct = async (request, h) => {
+  const { index } = request.query;
+
+  if (index === undefined) {
+    return h.response({
+      error: true,
+      status: 'fail', 
+      message: 'Parameter index diperlukan.' 
+    }).code(400);
+  }
+
+  const selectedIndex = parseInt(index.trim(), 10);
+
+  if (isNaN(selectedIndex)) {
+    return h.response({
+    error: true,
+    status: 'fail', 
+    message: 'Parameter index harus berupa angka.' 
+    }).code(400);
+  }
+
+  try {
+    const cleanResults = await readFileFromGCS();
+    const result = showProductsDetailsByBrand(cleanResults, selectedIndex);
+
+    if (result && result.topSimilarities && result.topSimilarities.length > 0) {
+      const { topSimilarities, brandCounts, referenceProduct } = result;
+
+      return h.response({
+        error: false,
+        status: "success",
+        product: {
+          "Brand": referenceProduct['Brand'],
+          "Product Title": referenceProduct['Product Title'],
+          "Variant Name": referenceProduct['Variant Name'],
+          "Shade": referenceProduct['Shade'],
+          "Tone": referenceProduct['Tone'],
+          "Color HEX": referenceProduct['Color HEX'],
+          "Season 1 Name": referenceProduct['Season 1 Name'],
+          "Type": referenceProduct['Type']
+        },
+        similarProducts: topSimilarities,
+        brandCounts: brandCounts
+      }).code(200);
+    } else {
+      return h.response({
+        error: true,
+        status: 'fail', 
+        message: 'No similar products found.'
+       }).code(404);
+    }
+  } catch (error) {
+    console.error(error);
+    return h.response({
+      error: true,
+      status: 'fail', 
+      message: error.message 
+    }).code(500);
+  }
+};
+
+function capitalizeFirstLetter(string) {
+  return string.split(' ')
+  .map(word => word.charAt(0)
+  .toUpperCase() 
+  + word.slice(1)
+  .toLowerCase()).join(' ');
+}
 
 const modelServiceST = new ModelService_SkinTone();
 async function predictHandlerST(request, h) {
@@ -17,7 +87,8 @@ async function predictHandlerST(request, h) {
     }
     const imageBuffer = Buffer.from(payload.image, 'base64');
     const label = await modelServiceST.predict(imageBuffer);
-    const result = await modelServiceST.predict(imageBuffer);
+    let result = await modelServiceST.predict(imageBuffer);
+    result = result ? capitalizeFirstLetter(result) : result;
     const recommendedProduct = await modelServiceST.productRecommendation(imageBuffer);
 
     if (label == null){
@@ -33,7 +104,7 @@ async function predictHandlerST(request, h) {
         error: false, 
         status: 'success', 
         result: result,
-        message: 'Berikut rekomendasi produk untuk anda : ',
+        message: 'Berikut rekomendasi produk untuk anda',
         product: recommendedProduct
         });
         response.code(200);
@@ -123,7 +194,7 @@ async function filteredProductHandler(request, h){
   const response = h.response({
     error: false,
     status : "success",
-    message: "Berikut adalah hasil pencarian Anda : ",
+    message: "Berikut adalah hasil pencarian Anda",
     data: searchResult
   });
   if (searchResult == ''){
@@ -142,5 +213,5 @@ async function filteredProductHandler(request, h){
 
 
 module.exports = { predictHandlerST, predictHandlerFC,
-  getAllProductHandler, filteredProductHandler,
+  getAllProductHandler, filteredProductHandler, compareProduct
 };

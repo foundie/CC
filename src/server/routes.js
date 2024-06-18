@@ -1,11 +1,15 @@
 const {  
   getAllProductHandler, filteredProductHandler,
-  predictHandlerST, predictHandlerFC
+  predictHandlerST, predictHandlerFC, compareProduct
 } = require('../server/handler');
 
 
-
 const routes = [
+  {
+    method: 'GET',
+    path: '/products/compare',
+    handler: compareProduct
+  },
   {
     method: 'POST',
     path: '/predict/face',
