@@ -366,6 +366,50 @@
         },
       ]
   }
+``
+
+### Color analysis
+
+- **URL** : `/predict/color`
+- **Method** : `POST`
+- **Auth required** : `YES`
+- **Request Body:**
+  - `brightnessLevel` as `number` - `Tingkat kecerahan yang diinginkan, rentang nilai dari 1 (terang) hingga 5 (gelap).`
+  - `bluePreferences` as `number` - `Preferensi untuk warna biru, nilai 0 (hangat) atau 1 (dingin).`
+  - `yellowPreferences` as `number` - `Preferensi untuk warna kuning, nilai 0 (hangat) atau 1 (dingin).`
+  - `greenPreferences` as `number` - `Preferensi untuk warna hijau, nilai 0 (hangat) atau 1 (dingin).`
+  - `pinkPreferences` as `number` - `Preferensi untuk warna merah muda, nilai 0 (hangat) atau 1 (dingin).`
+  - `brownPreferences` as `number` - `Preferensi untuk warna coklat, nilai 0 (hangat) atau 1 (dingin).`
+  - `clarityLevel` as `number` - `Tingkat kejernihan yang diinginkan, rentang nilai dari 1 (jernih) hingga 5 (kabur).`
+- **Response** :
+
+```json
+{
+    "status": 200,
+    "message": "Color analysis successfully completed",
+    "data": {
+        "dominantCharacteristic": "cool",
+        "secondaryCharacteristic": "light",
+        "colorSeason": "Winter Cool",
+        "seasonCompatibilityPercentages": {
+            "Autumn Deep": 4,
+            "Winter Deep": 11,
+            "Spring Light": 6,
+            "Summer Light": 13,
+            "Autumn Soft": 4,
+            "Summer Soft": 11,
+            "Spring Clear": 6,
+            "Winter Clear": 13,
+            "Autumn Warm": 3,
+            "Spring Warm": 4,
+            "Summer Cool": 13,
+            "Winter Cool": 14
+        },
+        "type": "color analysis"
+    },
+    "error": false
+}
+```
 
 
 ### Predict Histori
@@ -380,6 +424,27 @@
     "error": false,
     "message": "History records retrieved successfully.",
     "data": [
+        {
+            "type": "Color Analysis"
+            "colorSeason": "Winter Cool",
+            "seasonCompatibilityPercentages": {
+                "Autumn Soft": 4,
+                "Spring Warm": 4,
+                "Summer Cool": 13,
+                "Spring Clear": 6,
+                "Spring Light": 6,
+                "Autumn Warm": 3,
+                "Summer Soft": 11,
+                "Summer Light": 13,
+                "Winter Clear": 13,
+                "Autumn Deep": 4,
+                "Winter Cool": 14,
+                "Winter Deep": 11
+            },
+            "email": "test@api.com",
+            "dominantCharacteristic": "Cool",
+            "secondaryCharacteristic": "Light",
+        },
         {
             "prediction": "High Visual Weight",
             "message": "Jenis klasifikasi wajah Anda adalah High Visual Weight",
