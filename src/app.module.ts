@@ -12,6 +12,7 @@ import { CommunityModule } from './community/community.module';
 import { BiodataModule } from './biodata/biodata.module';
 import { Face_classificationModule } from './face_classification/face_classification.module';
 import { SkinToneModule } from './skin_tone/skin_tone.module';
+import { ColorAnalysisModule } from './color-analysis/color-analysis.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { SkinToneModule } from './skin_tone/skin_tone.module';
     BiodataModule,
     Face_classificationModule,
     SkinToneModule,
+    ColorAnalysisModule,
     JwtModule.register({
       secret: jwtConstants.secret,
     }),
