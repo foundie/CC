@@ -257,7 +257,8 @@
             "profileImageUrl": "https://storage.googleapis.com/storage-foundie/",
             "name": "TES API",
             "coverImageUrl": "https://storage.googleapis.com/storage-foundie/",
-            "followersCount": 1
+            "followersCount": 1,
+            "followingCount": 1
         },
         "posts": [
             {
@@ -302,8 +303,6 @@
                 "joinedAt": "09-06-2024 09:37"
             }
         ],
-        "followersCount": 1,
-        "followingCount": 1
     },
     "error": false
 }
@@ -345,7 +344,7 @@
   {
     "status": 200,
     "error": false,
-    "result": "light",
+    "result": "Light",
     "message": "Berikut rekomendasi produk untuk anda : "
     "product": [
         {
@@ -391,7 +390,7 @@
             "message": "Berikut rekomendasi produk untuk anda : ",
             "type": "skin tone",
             "email": "test@api.com",
-            "result": "medium",
+            "result": "Medium",
             "products": [
                {
         	      "Image": "https://hanasui.id/front-end/assets/img/product_image/bf83c7d933d5f63108fb3b2c327f8cf3.png",
