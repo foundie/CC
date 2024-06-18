@@ -220,13 +220,13 @@ export class BiodataService {
       .collection('follows')
       .where('followingEmail', '==', email)
       .get();
-    const followersCount = followersSnapshot.size;
+    userData.followersCount = followersSnapshot.size;
 
     const followingSnapshot = await this.db
       .collection('follows')
       .where('followerEmail', '==', email)
       .get();
-    const followingCount = followingSnapshot.size;
+    userData.followingCount = followingSnapshot.size;
 
     return {
       status: HttpStatus.OK,
@@ -235,8 +235,6 @@ export class BiodataService {
         user: userData,
         posts,
         groups,
-        followersCount,
-        followingCount,
       },
       error: false,
     };

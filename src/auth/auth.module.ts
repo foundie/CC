@@ -9,7 +9,6 @@ import { jwtConstants } from './auth.secret';
   imports: [
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '3d' },
     }),
   ],
   providers: [AuthService, GoogleStrategy],

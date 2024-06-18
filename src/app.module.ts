@@ -25,7 +25,6 @@ import { SkinToneModule } from './skin_tone/skin_tone.module';
     SkinToneModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '3d' },
     }),
   ],
   controllers: [AppController],
