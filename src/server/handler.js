@@ -2,6 +2,7 @@ const { getAllProduct, filteredProduct } = require('../services/products')
 const ModelService_SkinTone = require('../predicts/skinTone');
 const ModelService_FaceClassification = require('../predicts/faceClassification');
 const { readFileFromGCS, showProductsDetailsByBrand } = require('../services/compare');
+
 const compareProduct = async (request, h) => {
   const { index } = request.query;
 
@@ -24,10 +25,10 @@ const compareProduct = async (request, h) => {
   }
 
   try {
-    const cleanResults = await readFileFromGCS();
+    const { cleanResults, reverseToneMapping, reverseSeasonMapping, reverseTypeMapping } = await readFileFromGCS();
     console.log(`Panjang data yang dibaca dari GCS: ${cleanResults.length}`);
     console.log(`Selected Index: ${selectedIndex}`)
-    const result = showProductsDetailsByBrand(cleanResults, selectedIndex);
+    const result = showProductsDetailsByBrand(cleanResults, selectedIndex,  reverseToneMapping, reverseSeasonMapping, reverseTypeMapping);
 
     if (result && result.topSimilarities && result.topSimilarities.length > 0) {
       const { topSimilarities, brandCounts, referenceProduct } = result;
@@ -40,10 +41,10 @@ const compareProduct = async (request, h) => {
           "Product Title": referenceProduct['Product Title'],
           "Variant Name": referenceProduct['Variant Name'],
           "Shade": referenceProduct['Shade'],
-          "Tone": referenceProduct['Tone'],
+          "Tone": reverseToneMapping[referenceProduct['Tone']],
           "Color HEX": referenceProduct['Color HEX'],
-          "Season 1 Name": referenceProduct['Season 1 Name'],
-          "Type": referenceProduct['Type']
+          "Season 1 Name": reverseSeasonMapping[referenceProduct['Season 1 Name']],
+          "Type": reverseTypeMapping[referenceProduct['Type']]
         },
         similarProducts: topSimilarities,
         brandCounts: brandCounts

@@ -1,7 +1,6 @@
 const csv = require('csv-parser');
 const skmeans = require('skmeans');
 const { Storage } = require('@google-cloud/storage');
-const results = [];
 
 const storage = new Storage({
   projectId: 'capstone-project-foundie'
@@ -12,7 +11,7 @@ const fileName = 'data/products/updated_index.csv';
 
 const readFileFromGCS = async () => {
   return new Promise((resolve, reject) => {
-    const results = []; // Inisialisasi array results di dalam scope fungsi
+    const results = [];
     const bucket = storage.bucket(bucketName);
     const file = bucket.file(fileName);
     const readStream = file.createReadStream();
@@ -23,8 +22,6 @@ const readFileFromGCS = async () => {
         results.push(data);
       })
       .on('end', () => {
-       
-        // Proses mapping dan filtering di sini
         const toneMapping = {'dark_deep': 0, 'medium_tan': 2, 'fair_light': 1};
         const seasonMapping = {
           'autumn warm': 1, 'autumn soft': 2, 'autumn deep': 3,
@@ -34,6 +31,19 @@ const readFileFromGCS = async () => {
         };
         const typeMapping = {'lip': 1, 'face': 2, 'foundation & cussion': 3, 'cheek': 4, 'powder': 5, 'eye': 6};
 
+        const reverseToneMapping = Object.keys(toneMapping).reduce((obj, key) => {
+          obj[toneMapping[key]] = key;
+          return obj;
+        }, {});
+        const reverseSeasonMapping = Object.keys(seasonMapping).reduce((obj, key) => {
+          obj[seasonMapping[key]] = key;
+          return obj;
+        }, {});
+        const reverseTypeMapping = Object.keys(typeMapping).reduce((obj, key) => {
+          obj[typeMapping[key]] = key;
+          return obj;
+        }, {});
+
         results.forEach(row => {
           row['Tone'] = toneMapping[row['Tone']] || 'Unknown Tone';
           row['Season 1 Name'] = seasonMapping[row['Season 1 Name']] || 'Unknown Season';
@@ -41,7 +51,7 @@ const readFileFromGCS = async () => {
         });
 
         const cleanResults = results.filter(row => row['Tone'] && row['Season 1 Name'] && row['Shade'] && row['Type']);
-        resolve(cleanResults);
+        resolve({ cleanResults, reverseToneMapping, reverseSeasonMapping, reverseTypeMapping });
       })
       .on('error', (error) => {
         reject(error);
@@ -49,17 +59,24 @@ const readFileFromGCS = async () => {
   });
 };
 
-const showProductsDetailsByBrand = (data, selectedIndex, nClusters = 60, topN = 10) => {
-  console.log(`Selected Index: ${selectedIndex}`); // Debugging: Log indeks yang dipilih
-
+const showProductsDetailsByBrand = (data, selectedIndex, reverseToneMapping, reverseSeasonMapping, reverseTypeMapping, nClusters = 60, topN = 10) => {
   if (selectedIndex < 0 || selectedIndex >= data.length) {
-    console.error(`Error: Indeks ${selectedIndex} tidak valid.`); // Debugging: Log jika indeks tidak valid
     throw new Error(`Indeks ${selectedIndex} tidak valid.`);
   }
 
-  // Proses clustering dan pencarian produk serupa di sini
   const referenceProduct = data[selectedIndex];
-  const features = data.map(row => [parseFloat(row['Shade']), row['Tone'], row['Season 1 Name'], row['Type']]);
+  const features = data.map(row => {
+    const shade = parseFloat(row['Shade']);
+    const tone = row['Tone'];
+    const season = row['Season 1 Name'];
+    const type = row['Type'];
+
+    if (isNaN(shade) || tone === undefined || season === undefined || type === undefined) {
+      throw new Error('Data tidak valid ditemukan dalam proses clustering.');
+    }
+
+    return [shade, tone, season, type];
+  });
 
   const kmeansResult = skmeans(features, nClusters);
   const clusters = kmeansResult.idxs;
@@ -69,24 +86,21 @@ const showProductsDetailsByBrand = (data, selectedIndex, nClusters = 60, topN = 
   const clusterLabel = data[selectedIndex]['Cluster'];
   const similarProducts = data.filter(row => row['Cluster'] === clusterLabel);
 
-  // Kembalikan hasilnya
   const referenceFeatures = features[selectedIndex];
   const similarities = similarProducts.map(product => {
     const productFeatures = features[data.indexOf(product)];
     const distance = Math.sqrt(referenceFeatures.reduce((sum, val, i) => sum + Math.pow(val - productFeatures[i], 2), 0));
     const similarity = 1 / (1 + distance);
 
-
-
     return {
       "Brand": product['Brand'],
       "Product Title": product['Product Title'],
-      "Type": product['Type'],
+      "Type": reverseTypeMapping[product['Type']],
       "Variant Name": product['Variant Name'],
       "Shade": product['Shade'],
-      "Tone": product['Tone'],
+      "Tone": reverseToneMapping[product['Tone']],
       "Color HEX": product['Color HEX'],
-      "Season 1 Name": product['Season 1 Name'],
+      "Season 1 Name": reverseSeasonMapping[product['Season 1 Name']],
       "Similarity": similarity
     };
   });
@@ -102,7 +116,6 @@ const showProductsDetailsByBrand = (data, selectedIndex, nClusters = 60, topN = 
     brandCounts[similarity.Brand]++;
     topSimilarities.push(similarity);
   });
-
 
   return { topSimilarities, brandCounts, referenceProduct };
 };
