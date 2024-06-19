@@ -105,8 +105,9 @@ export class GroupService {
     return {
       status: HttpStatus.CREATED,
       message: 'Group successfully created and creator added as a member',
-      groupId: groupId, // Include groupId in the response
+      groupId: groupId,
       data: groupData,
+      error: false,
     };
   }
 
@@ -242,7 +243,14 @@ export class GroupService {
 
     // Return results
     if (groupsData.length === 0) {
-      throw new HttpException('No groups found', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          message: 'No groups found',
+          error: true,
+        },
+        HttpStatus.NOT_FOUND,
+      );
     } else {
       return {
         groupsData,
@@ -290,9 +298,19 @@ export class GroupService {
 
     // Return results
     if (usersData.length === 0) {
-      throw new HttpException('No users found', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: true,
+          message: 'No users found',
+        },
+        HttpStatus.NOT_FOUND,
+      );
     } else {
-      return usersData;
+      return {
+        data: usersData,
+        error: false,
+      };
     }
   }
 
@@ -458,6 +476,7 @@ export class GroupService {
       message: 'Successfully joined the group',
       membershipId: membershipRef.id,
       data: membershipData,
+      error: false,
     };
   }
 

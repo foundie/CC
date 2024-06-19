@@ -65,4 +65,41 @@ export class ProductService {
         }),
       );
   }
+
+  compareProduct(index: number): Observable<any> {
+    return this.httpService
+      .get(`${process.env.URL_HAPI}/products/compare?index=${index}`)
+      .pipe(
+        map((response) => {
+          // Pastikan untuk menangani respons sesuai dengan struktur yang diharapkan
+          if (response.data.error) {
+            throw new HttpException(
+              {
+                status: HttpStatus.BAD_REQUEST,
+                error: true,
+                message:
+                  response.data.message ||
+                  'Error occurred during product comparison',
+              },
+              HttpStatus.BAD_REQUEST,
+            );
+          }
+          return response.data;
+        }),
+        catchError((error) => {
+          // Tangani kesalahan yang mungkin terjadi selama permintaan HTTP
+          throw new HttpException(
+            {
+              status:
+                error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+              error: true,
+              message:
+                error.response?.data?.message ||
+                'An error occurred during the API request',
+            },
+            error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }),
+      );
+  }
 }

@@ -35,4 +35,11 @@ export class ProductController {
   ) {
     return this.productService.predictProductFilter(name, season);
   }
+
+  @Get('compare')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
+  compareProducts(@Query('index') index: number) {
+    return this.productService.compareProduct(index);
+  }
 }
