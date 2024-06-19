@@ -43,10 +43,14 @@ const readFileFromGCS = async () => {
   });
 };
 
-const showProductsDetailsByBrand = (data, selectedIndex, nClusters = 60, topN = 10) => {
+const validateIndex = (data, selectedIndex) => {
   if (selectedIndex < 0 || selectedIndex >= data.length) {
     throw new Error(`Indeks ${selectedIndex} tidak valid.`);
   }
+};
+
+const showProductsDetailsByBrand = (data, selectedIndex, nClusters = 60, topN = 10) => {
+  validateIndex(data, selectedIndex);
 
   const referenceProduct = data[selectedIndex];
   const features = data.map(row => [parseFloat(row['Shade']), row['Tone'], row['Season 1 Name'], row['Type']]);
@@ -93,4 +97,4 @@ const showProductsDetailsByBrand = (data, selectedIndex, nClusters = 60, topN = 
   return { topSimilarities, brandCounts, referenceProduct };
 };
 
-module.exports = { readFileFromGCS, showProductsDetailsByBrand };
+module.exports = { readFileFromGCS, showProductsDetailsByBrand }; 

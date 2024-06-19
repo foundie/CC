@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "nodemon ./src/server/server.js",
     "start": "node ./src/server/server.js",
-    "testing": "node ./src/predicts/coloranalysis.js"
+    "testing": "node ./src/predicts/coloranalysis2.js"
   },
   "keywords": [],
   "author": "",

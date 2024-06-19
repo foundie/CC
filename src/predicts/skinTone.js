@@ -79,7 +79,7 @@ class ModelService_SkinTone {
     try {
       const result = await this.predict(imageBuffer);
       const query = `SELECT *
-      FROM \`capstone-project-foundie.all_products.table_final\` 
+      FROM \`capstone-project-foundie.all_products.data\` 
       WHERE \`tone\` LIKE '%${result}%'
       LIMIT 10
       `;

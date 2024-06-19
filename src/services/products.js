@@ -19,7 +19,7 @@ async function getAllProduct(limit, skip){
     }
 
     // Buat query SQL sesuai dengan input user
-    let query = 'SELECT * FROM `capstone-project-foundie.all_products.table_final`';
+    let query = 'SELECT * FROM `capstone-project-foundie.all_products.data`';
 
     if (limit !== undefined && skip !== undefined) {
         query += ` LIMIT ${limit} OFFSET ${skip}`;
@@ -67,19 +67,15 @@ function capitalizeFirstLetter(string) {
   + word.slice(1)
   .toLowerCase()).join(' ');
 }
-async function filteredProduct(name, season) {
+async function filteredProduct(name) {
   name = name ? capitalizeFirstLetter(name) : name;
-  season = season ? capitalizeFirstLetter(season) : season;
-  let query = `
-  SELECT *
-  FROM \capstone-project-foundie.all_products.table_final\
-  WHERE TRUE`;
-  if (name) {
-    query += ` AND \product_title\ LIKE '%${name}%'`;
-  }
-  if (season) {
-    query += ` AND (\season_1_name\ LIKE '%${season}%' OR \season_2_name\ LIKE '%${season}%')`;
-  }
+    let query = `
+    SELECT *
+    FROM \`capstone-project-foundie.all_products.data\`
+    WHERE TRUE`;
+    if (name) {
+        query += ` AND \`product_title\` LIKE '%${name}%'`;
+    }
 
     const options = {
       query: query,
@@ -92,6 +88,7 @@ async function filteredProduct(name, season) {
 
     rows.forEach((row) => {
       filterResult.push({
+      "Index": row.Index,
       "Image": row.image_url,
       "Brand": row.brand,
       "Product Title": row.product_title,

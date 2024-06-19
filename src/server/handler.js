@@ -26,6 +26,8 @@ const compareProduct = async (request, h) => {
 
   try {
     const cleanResults = await readFileFromGCS();
+    console.log(`Panjang data yang dibaca dari GCS: ${cleanResults.length}`);
+    console.log(`Selected Index: ${selectedIndex}`)
     const result = showProductsDetailsByBrand(cleanResults, selectedIndex);
 
     if (result && result.topSimilarities && result.topSimilarities.length > 0) {
@@ -63,6 +65,7 @@ const compareProduct = async (request, h) => {
     }).code(500);
   }
 };
+
 
 function capitalizeFirstLetter(string) {
   return string.split(' ')
@@ -179,18 +182,18 @@ async function getAllProductHandler(request, h){
 }
 
 async function filteredProductHandler(request, h){
-  const {name, season} = request.payload;
-  if (name == '' && season == '') {
+  const {name} = request.payload;
+  if (name == '') {
     const response = h.response({
       error: true,
       status: "fail",
-      message: "Mohon masukan nama produk atau nama season"
+      message: "Mohon masukan nama produk"
     });
     response.code(400);
     return response;
   }
 
-  const searchResult = await filteredProduct(name, season);
+  const searchResult = await filteredProduct(name);
   const response = h.response({
     error: false,
     status : "success",
@@ -201,7 +204,7 @@ async function filteredProductHandler(request, h){
     const response = h.response({
       error: true,
       status: "fail",
-      message: "Produk Tidak ada. Mohon masukkan Nama Produk dan Season dengan benar"
+      message: "Produk Tidak ada. Mohon masukkan Nama Produk dengan benar"
     });
     response.code(400);
     return response;
@@ -213,5 +216,5 @@ async function filteredProductHandler(request, h){
 
 
 module.exports = { predictHandlerST, predictHandlerFC,
-  getAllProductHandler, filteredProductHandler, compareProduct
+  getAllProductHandler, filteredProductHandler, compareProduct,
 };
