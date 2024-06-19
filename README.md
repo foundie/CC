@@ -910,6 +910,7 @@
 {
     "status": 201,
     "message": "Group successfully created",
+    "error": false
     "data": {
         "id": "XPnquqG6kQ4cYidIGomy",
         "creator": "test@api.com",
@@ -941,6 +942,7 @@
 {
     "status": 201,
     "message": "Successfully joined the group",
+    "error": false
     "membershipId": "Zgpb1sRiycmW3R5bsCMJ",
     "data": {
         "email": "test@api.com",
@@ -1055,6 +1057,7 @@
 {
     "status": 200,
     "message": "Groups successfully retrieved",
+    "error": false
     "data": [
         {
             "creator": "test@api.com",
@@ -1107,6 +1110,7 @@
 {
     "status": 200,
     "message": "users successfully retrieved",
+    "error": false
     "data": [
         {
             "name": "Louis Michael",
