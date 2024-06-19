@@ -64,69 +64,6 @@ const compareProduct = async (request, h) => {
     }).code(500);
   }
 };
-// const compareProduct = async (request, h) => {
-//   const { index } = request.query;
-
-//   if (index === undefined) {
-//     return h.response({
-//       error: true,
-//       status: 'fail', 
-//       message: 'Parameter index diperlukan.' 
-//     }).code(400);
-//   }
-
-//   const selectedIndex = parseInt(index.trim(), 10);
-
-//   if (isNaN(selectedIndex)) {
-//     return h.response({
-//     error: true,
-//     status: 'fail', 
-//     message: 'Parameter index harus berupa angka.' 
-//     }).code(400);
-//   }
-
-//   try {
-//     const cleanResults = await readFileFromGCS();
-//     console.log(`Panjang data yang dibaca dari GCS: ${cleanResults.length}`);
-//     console.log(`Selected Index: ${selectedIndex}`)
-//     const result = showProductsDetailsByBrand(cleanResults, selectedIndex);
-
-//     if (result && result.topSimilarities && result.topSimilarities.length > 0) {
-//       const { topSimilarities, brandCounts, referenceProduct } = result;
-
-//       return h.response({
-//         error: false,
-//         status: "success",
-//         product: {
-//           "Brand": referenceProduct['Brand'],
-//           "Product Title": referenceProduct['Product Title'],
-//           "Variant Name": referenceProduct['Variant Name'],
-//           "Shade": referenceProduct['Shade'],
-//           "Tone": referenceProduct['Tone'],
-//           "Color HEX": referenceProduct['Color HEX'],
-//           "Season 1 Name": referenceProduct['Season 1 Name'],
-//           "Type": referenceProduct['Type']
-//         },
-//         similarProducts: topSimilarities,
-//         brandCounts: brandCounts
-//       }).code(200);
-//     } else {
-//       return h.response({
-//         error: true,
-//         status: 'fail', 
-//         message: 'No similar products found.'
-//        }).code(404);
-//     }
-//   } catch (error) {
-//     console.error(error);
-//     return h.response({
-//       error: true,
-//       status: 'fail', 
-//       message: error.message 
-//     }).code(500);
-//   }
-// };
-
 
 function capitalizeFirstLetter(string) {
   return string.split(' ')
@@ -243,18 +180,18 @@ async function getAllProductHandler(request, h){
 }
 
 async function filteredProductHandler(request, h){
-  const {name} = request.payload;
-  if (name == '') {
+  const {product_title, brand, variant_name, type} = request.payload;
+  if (product_title == '' && brand == '' && variant_name == '' && type == '') {
     const response = h.response({
       error: true,
       status: "fail",
-      message: "Mohon masukan nama produk"
+      message: "Mohon masukan Product Title, Brand, Variant Name atau Type."
     });
     response.code(400);
     return response;
   }
 
-  const searchResult = await filteredProduct(name);
+  const searchResult = await filteredProduct(product_title, type, brand, variant_name);
   const response = h.response({
     error: false,
     status : "success",
@@ -265,7 +202,7 @@ async function filteredProductHandler(request, h){
     const response = h.response({
       error: true,
       status: "fail",
-      message: "Produk Tidak ada. Mohon masukkan Nama Produk dengan benar"
+      message: "Produk Tidak ada."
     });
     response.code(400);
     return response;
