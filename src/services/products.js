@@ -87,7 +87,7 @@ async function filteredProduct(product_title, type, brand, variant_name) {
   if (variant_name) {
     query += ` AND \`variant_name\` LIKE '%${variant_name}%'`;
   }
-
+  `LIMIT 20`;
   const options = {
     query: query,
     location: 'asia-southeast2',

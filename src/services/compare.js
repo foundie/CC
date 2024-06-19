@@ -25,7 +25,7 @@ const readFileFromGCS = async () => {
       .on('end', () => {
        
         // Proses mapping dan filtering di sini
-        const toneMapping = {'dark_deep': 3, 'medium_tan': 2, 'fair_light': 1};
+        const toneMapping = {'dark_deep': 0, 'medium_tan': 2, 'fair_light': 1};
         const seasonMapping = {
           'autumn warm': 1, 'autumn soft': 2, 'autumn deep': 3,
           'summer soft': 4, 'summer cool': 5, 'summer light': 6,
@@ -75,6 +75,8 @@ const showProductsDetailsByBrand = (data, selectedIndex, nClusters = 60, topN = 
     const productFeatures = features[data.indexOf(product)];
     const distance = Math.sqrt(referenceFeatures.reduce((sum, val, i) => sum + Math.pow(val - productFeatures[i], 2), 0));
     const similarity = 1 / (1 + distance);
+
+
 
     return {
       "Brand": product['Brand'],
