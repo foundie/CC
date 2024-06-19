@@ -383,44 +383,37 @@ export class PostService {
   }
 
   async getFilteredPosts(q: string, l: number, skip: number, sort: string) {
+    // Ambil semua post
     let postsQuery: Query<DocumentData> = this.db.collection(
       'posts',
     ) as CollectionReference;
 
-    // Sorting
-    if (sort === 'popular') {
-      postsQuery = postsQuery.orderBy('likesCount', 'desc');
-    } else {
-      postsQuery = postsQuery.orderBy('timestamp', 'desc');
-    }
+    const allPostsSnapshot = await postsQuery.get();
+    let allPostsData = allPostsSnapshot.docs.map((doc) => doc.data());
 
-    if (l) {
-      postsQuery = postsQuery.limit(l);
-    }
-    if (skip) {
-      postsQuery = postsQuery.offset(skip);
-    }
-
-    const postsSnapshot = await postsQuery.get();
-    let postsData = postsSnapshot.docs.map((doc) => doc.data());
-
-    // Filter by search query
+    // Filter berdasarkan query pencarian
     if (q) {
       const searchWords = q.toLowerCase().split(' ');
-      postsData = postsData.filter(
-        (post) =>
-          post.titleArray &&
-          searchWords.every((word) =>
-            post.titleArray
-              .map((titleWord) => titleWord.toLowerCase())
-              .includes(word),
-          ),
+      allPostsData = allPostsData.filter((post) =>
+        searchWords.some((word) => post.title.toLowerCase().includes(word)),
       );
     }
 
+    // Terapkan sorting
+    if (sort === 'popular') {
+      allPostsData.sort((a, b) => b.likesCount - a.likesCount);
+    } else {
+      allPostsData.sort((a, b) => b.timestamp.seconds - a.timestamp.seconds);
+    }
+
+    // Terapkan limit dan skip
+    const startIndex = skip || 0;
+    const endIndex = startIndex + (l || allPostsData.length);
+    const postsData = allPostsData.slice(startIndex, endIndex);
+
+    // Konversi timestamp dan tambahkan profil image dan nama
     const postsWithProfileImagesAndNames = await Promise.all(
       postsData.map(async (post) => {
-        delete post.titleArray;
         const userSnapshot = await this.db
           .collection('users')
           .doc(post.email)
@@ -432,11 +425,14 @@ export class PostService {
         post.name = userSnapshot.exists
           ? userSnapshot.data().name
           : 'Anonymous';
-        post.timestamp = convertTimestampToDate(post.timestamp as Timestamp);
+        post.timestamp = convertTimestampToDate(
+          new Timestamp(post.timestamp._seconds, post.timestamp._nanoseconds),
+        );
         return post;
       }),
     );
 
+    // Return results
     if (postsWithProfileImagesAndNames.length === 0) {
       throw new HttpException(
         {

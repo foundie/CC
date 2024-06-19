@@ -31,9 +31,9 @@ export class ProductController {
   predictProductFilter(
     @Request() req,
     @Body('name') name: string,
-    @Body('season') season: string,
+    @Body('season') season?: string,
   ) {
-    return this.productService.predictProductFilter(name, season);
+    return this.productService.predictProductFilter(name, season || '');
   }
 
   @Get('compare')

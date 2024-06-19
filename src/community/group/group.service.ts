@@ -3,6 +3,8 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 import { Timestamp } from 'firebase/firestore';
 import { convertTimestampToDate } from '../../utils/timestamp.utils';
+import { plainToClass } from 'class-transformer';
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class GroupService {
@@ -203,36 +205,12 @@ export class GroupService {
     sort?: string,
   ) {
     let groupsQuery: admin.firestore.Query = this.db.collection('groups');
+    const allGroupsSnapshot = await groupsQuery.get();
+    let allGroupsData = allGroupsSnapshot.docs.map((doc) => doc.data());
 
-    // Sorting
-    if (sort === 'popular') {
-      groupsQuery = groupsQuery.orderBy('subscription', 'desc');
-    } else {
-      groupsQuery = groupsQuery.orderBy('timestamp', 'desc');
-    }
-
-    // Pagination
-    if (l) {
-      groupsQuery = groupsQuery.limit(l);
-    }
-    if (skip) {
-      groupsQuery = groupsQuery.startAfter(skip);
-    }
-
-    const groupsSnapshot = await groupsQuery.get();
-    let groupsData = groupsSnapshot.docs.map((doc) => {
-      const groupData = doc.data();
-      // Konversi timestamp untuk setiap group
-      groupData.timestamp = convertTimestampToDate(
-        groupData.timestamp as Timestamp,
-      );
-      return groupData;
-    });
-
-    // Filter by search query
     if (q) {
       const searchWords = q.toLowerCase().split(' ');
-      groupsData = groupsData.filter((group) =>
+      allGroupsData = allGroupsData.filter((group) =>
         searchWords.some(
           (word) =>
             group.title.toLowerCase().includes(word) ||
@@ -241,53 +219,54 @@ export class GroupService {
       );
     }
 
+    if (sort === 'popular') {
+      allGroupsData.sort((a, b) => b.subscription - a.subscription);
+    } else {
+      allGroupsData.sort((a, b) => b.timestamp.seconds - a.timestamp.seconds);
+    }
+
+    const startIndex = skip || 0;
+    const endIndex = startIndex + (l || allGroupsData.length);
+    const groupsData = allGroupsData.slice(startIndex, endIndex);
+
+    const convertedGroupsData = groupsData.map((group) => ({
+      ...group,
+      timestamp: convertTimestampToDate(
+        new Timestamp(group.timestamp._seconds, group.timestamp._nanoseconds),
+      ),
+    }));
+
     // Return results
-    if (groupsData.length === 0) {
+    if (convertedGroupsData.length === 0) {
       throw new HttpException(
         {
           status: HttpStatus.NOT_FOUND,
-          message: 'No groups found',
           error: true,
+          message: 'No groups found',
         },
         HttpStatus.NOT_FOUND,
       );
     } else {
       return {
-        groupsData,
+        status: HttpStatus.OK,
+        message: 'Groups successfully retrieved',
         error: false,
+        data: convertedGroupsData,
       };
     }
   }
 
   async getFilteredUsers(q?: string, l?: number, skip?: number, sort?: string) {
     let usersQuery: admin.firestore.Query = this.db.collection('users');
-
-    // Sorting
-    if (sort === 'popular') {
-      usersQuery = usersQuery.orderBy('followersCount', 'desc');
-    } else {
-      usersQuery = usersQuery.orderBy('name', 'asc');
-    }
-
-    // Pagination
-    if (l) {
-      usersQuery = usersQuery.limit(l);
-    }
-    if (skip) {
-      usersQuery = usersQuery.startAfter(skip);
-    }
-
-    const usersSnapshot = await usersQuery.get();
-    let usersData = usersSnapshot.docs.map((doc) => {
-      const { uid, password, role, location, phone, gender, ...data } =
-        doc.data();
-      return data;
+    const allUsersSnapshot = await usersQuery.get();
+    let allUsersData = allUsersSnapshot.docs.map((doc) => {
+      return plainToClass(UserDto, doc.data());
     });
 
-    // Filter by search query
+    // Filter berdasarkan query pencarian
     if (q) {
       const searchWords = q.toLowerCase().split(' ');
-      usersData = usersData.filter((user) =>
+      allUsersData = allUsersData.filter((user) =>
         searchWords.some(
           (word) =>
             user.name.toLowerCase().includes(word) ||
@@ -295,6 +274,18 @@ export class GroupService {
         ),
       );
     }
+
+    // Terapkan sorting
+    if (sort === 'popular') {
+      allUsersData.sort((a, b) => b.followersCount - a.followersCount);
+    } else {
+      allUsersData.sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    // Terapkan limit dan skip
+    const startIndex = skip || 0;
+    const endIndex = startIndex + (l || allUsersData.length);
+    const usersData = allUsersData.slice(startIndex, endIndex);
 
     // Return results
     if (usersData.length === 0) {
@@ -308,8 +299,10 @@ export class GroupService {
       );
     } else {
       return {
-        data: usersData,
+        status: HttpStatus.OK,
+        message: 'Groups successfully retrieved',
         error: false,
+        data: usersData,
       };
     }
   }

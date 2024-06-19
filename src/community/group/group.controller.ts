@@ -101,56 +101,40 @@ export class GroupController {
 
   @Get('group/search')
   @UseGuards(AuthGuard('jwt'))
-  @HttpCode(HttpStatus.FOUND)
+  @HttpCode(HttpStatus.OK)
   async getFilteredGroups(
     @Query('q') q?: string,
-    @Query('l') l?: number,
+    @Query('l') l?: string,
     @Query('skip') skip?: number,
     @Query('sort') sort?: string,
   ) {
-    try {
-      const groups = await this.groupService.getFilteredGroups(
-        q,
-        l,
-        skip,
-        sort,
-      );
-      return {
-        status: HttpStatus.OK,
-        message: 'Groups successfully retrieved',
-        data: groups,
-      };
-    } catch (error) {
-      throw new HttpException(error.message, error.status);
-    }
+    const limit = l ? parseInt(l, 10) : undefined;
+    const groups = await this.groupService.getFilteredGroups(
+      q,
+      limit,
+      skip,
+      sort,
+    );
+    return groups;
   }
 
   @Get('user/search')
   @UseGuards(AuthGuard('jwt'))
-  @HttpCode(HttpStatus.FOUND)
+  @HttpCode(HttpStatus.OK)
   async getFilteredUsers(
     @Query('q') q?: string,
     @Query('l') l?: string,
     @Query('skip') skip?: number,
     @Query('sort') sort?: string,
   ) {
-    try {
-      const limit = l ? parseInt(l, 10) : undefined;
-
-      const users = await this.groupService.getFilteredUsers(
-        q,
-        limit,
-        skip,
-        sort,
-      );
-      return {
-        status: HttpStatus.OK,
-        message: 'users successfully retrieved',
-        data: users,
-      };
-    } catch (error) {
-      throw new HttpException(error.message, error.status);
-    }
+    const limit = l ? parseInt(l, 10) : undefined;
+    const users = await this.groupService.getFilteredUsers(
+      q,
+      limit,
+      skip,
+      sort,
+    );
+    return users;
   }
 
   @Delete('group/:groupId')

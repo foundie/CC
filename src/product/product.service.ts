@@ -8,11 +8,12 @@ import * as FormData from 'form-data';
 export class ProductService {
   constructor(private httpService: HttpService) {}
 
-  predictProductFilter(name: string, season: string): Observable<any> {
-    // Perhatikan bahwa tipe kembaliannya sekarang adalah Observable<any>
+  predictProductFilter(name: string, season?: string): Observable<any> {
+    // Tipe kembaliannya adalah Observable<any>
     const formData = new FormData();
     formData.append('name', name);
-    formData.append('season', season);
+    // Gunakan string kosong sebagai nilai default jika 'season' tidak ada
+    formData.append('season', season || '');
 
     return this.httpService
       .post(`${process.env.URL_HAPI}/products/filter`, formData, {
@@ -24,6 +25,7 @@ export class ProductService {
           return of(response.data);
         }),
         catchError((error) => {
+          // Tangani kesalahan dan kembalikan HttpException
           return throwError(
             new HttpException(
               {
