@@ -29,11 +29,16 @@ export class ProductController {
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
   predictProductFilter(
-    @Request() req,
-    @Body('name') name: string,
-    @Body('season') season?: string,
+    @Body()
+    options: {
+      product_title?: string;
+      type?: string;
+      brand?: string;
+      variant_name?: string;
+      season?: string;
+    },
   ) {
-    return this.productService.predictProductFilter(name, season || '');
+    return this.productService.predictProductFilter(options);
   }
 
   @Get('compare')

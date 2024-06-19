@@ -8,12 +8,25 @@ import * as FormData from 'form-data';
 export class ProductService {
   constructor(private httpService: HttpService) {}
 
-  predictProductFilter(name: string, season?: string): Observable<any> {
-    // Tipe kembaliannya adalah Observable<any>
+  predictProductFilter(options: {
+    product_title?: string;
+    type?: string;
+    brand?: string;
+    variant_name?: string;
+  }): Observable<any> {
     const formData = new FormData();
-    formData.append('name', name);
-    // Gunakan string kosong sebagai nilai default jika 'season' tidak ada
-    formData.append('season', season || '');
+    if (options.product_title) {
+      formData.append('product_title', options.product_title);
+    }
+    if (options.type) {
+      formData.append('type', options.type);
+    }
+    if (options.brand) {
+      formData.append('brand', options.brand);
+    }
+    if (options.variant_name) {
+      formData.append('variant_name', options.variant_name);
+    }
 
     return this.httpService
       .post(`${process.env.URL_HAPI}/products/filter`, formData, {
@@ -21,22 +34,14 @@ export class ProductService {
       })
       .pipe(
         switchMap((response) => {
-          // Langsung mengembalikan data dari respons API
           return of(response.data);
         }),
         catchError((error) => {
-          // Tangani kesalahan dan kembalikan HttpException
-          return throwError(
-            new HttpException(
-              {
-                status:
-                  error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
-                message:
-                  error.response?.data?.message ||
-                  'An error occurred during the API request',
-              },
-              error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
-            ),
+          const errorMessage =
+            error.response?.data || 'An error occurred during the API request';
+          throw new HttpException(
+            errorMessage,
+            error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
           );
         }),
       );
