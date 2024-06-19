@@ -569,7 +569,7 @@
         "Product Title": "Matte Lip Cream",
         "Variant Name": "Feeling Red",
         "Shade": "7",
-        "Tone": Medium,
+        "Tone": "Medium",
         "Color HEX": "d22e30",
         "Season 1 Name": "autumn warm",
         "Type": "lip",
@@ -581,7 +581,7 @@
         "Type": "lip",
         "Variant Name": "Feeling Red",
         "Shade": "7",
-        "Tone": Medium,
+        "Tone": "Medium",
         "Color HEX": "d22e30",
         "Season 1 Name": "autumn warm",
         "Similarity": 1
