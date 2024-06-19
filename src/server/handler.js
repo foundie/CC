@@ -2,7 +2,6 @@ const { getAllProduct, filteredProduct } = require('../services/products')
 const ModelService_SkinTone = require('../predicts/skinTone');
 const ModelService_FaceClassification = require('../predicts/faceClassification');
 const { readFileFromGCS, showProductsDetailsByBrand } = require('../services/compare');
-
 const compareProduct = async (request, h) => {
   const { index } = request.query;
 
@@ -65,6 +64,68 @@ const compareProduct = async (request, h) => {
     }).code(500);
   }
 };
+// const compareProduct = async (request, h) => {
+//   const { index } = request.query;
+
+//   if (index === undefined) {
+//     return h.response({
+//       error: true,
+//       status: 'fail', 
+//       message: 'Parameter index diperlukan.' 
+//     }).code(400);
+//   }
+
+//   const selectedIndex = parseInt(index.trim(), 10);
+
+//   if (isNaN(selectedIndex)) {
+//     return h.response({
+//     error: true,
+//     status: 'fail', 
+//     message: 'Parameter index harus berupa angka.' 
+//     }).code(400);
+//   }
+
+//   try {
+//     const cleanResults = await readFileFromGCS();
+//     console.log(`Panjang data yang dibaca dari GCS: ${cleanResults.length}`);
+//     console.log(`Selected Index: ${selectedIndex}`)
+//     const result = showProductsDetailsByBrand(cleanResults, selectedIndex);
+
+//     if (result && result.topSimilarities && result.topSimilarities.length > 0) {
+//       const { topSimilarities, brandCounts, referenceProduct } = result;
+
+//       return h.response({
+//         error: false,
+//         status: "success",
+//         product: {
+//           "Brand": referenceProduct['Brand'],
+//           "Product Title": referenceProduct['Product Title'],
+//           "Variant Name": referenceProduct['Variant Name'],
+//           "Shade": referenceProduct['Shade'],
+//           "Tone": referenceProduct['Tone'],
+//           "Color HEX": referenceProduct['Color HEX'],
+//           "Season 1 Name": referenceProduct['Season 1 Name'],
+//           "Type": referenceProduct['Type']
+//         },
+//         similarProducts: topSimilarities,
+//         brandCounts: brandCounts
+//       }).code(200);
+//     } else {
+//       return h.response({
+//         error: true,
+//         status: 'fail', 
+//         message: 'No similar products found.'
+//        }).code(404);
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     return h.response({
+//       error: true,
+//       status: 'fail', 
+//       message: error.message 
+//     }).code(500);
+//   }
+// };
 
 
 function capitalizeFirstLetter(string) {

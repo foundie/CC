@@ -8,19 +8,23 @@ const storage = new Storage({
 });
 
 const bucketName = 'storage-foundie';
-const fileName = 'data/products/foundie_data_products.csv';
+const fileName = 'data/products/updated_index.csv';
 
 const readFileFromGCS = async () => {
   return new Promise((resolve, reject) => {
+    const results = []; // Inisialisasi array results di dalam scope fungsi
     const bucket = storage.bucket(bucketName);
     const file = bucket.file(fileName);
-
     const readStream = file.createReadStream();
 
     readStream
       .pipe(csv())
-      .on('data', (data) => results.push(data))
+      .on('data', (data) => {
+        results.push(data);
+      })
       .on('end', () => {
+       
+        // Proses mapping dan filtering di sini
         const toneMapping = {'dark_deep': 3, 'medium_tan': 2, 'fair_light': 1};
         const seasonMapping = {
           'autumn warm': 1, 'autumn soft': 2, 'autumn deep': 3,
@@ -31,27 +35,29 @@ const readFileFromGCS = async () => {
         const typeMapping = {'lip': 1, 'face': 2, 'foundation & cussion': 3, 'cheek': 4, 'powder': 5, 'eye': 6};
 
         results.forEach(row => {
-          row['Tone'] = toneMapping[row['Tone']];
-          row['Season 1 Name'] = seasonMapping[row['Season 1 Name']];
-          row['Type'] = typeMapping[row['Type']];
+          row['Tone'] = toneMapping[row['Tone']] || 'Unknown Tone';
+          row['Season 1 Name'] = seasonMapping[row['Season 1 Name']] || 'Unknown Season';
+          row['Type'] = typeMapping[row['Type']] || 'Unknown Type';
         });
 
         const cleanResults = results.filter(row => row['Tone'] && row['Season 1 Name'] && row['Shade'] && row['Type']);
         resolve(cleanResults);
       })
-      .on('error', reject);
+      .on('error', (error) => {
+        reject(error);
+      });
   });
 };
 
-const validateIndex = (data, selectedIndex) => {
+const showProductsDetailsByBrand = (data, selectedIndex, nClusters = 60, topN = 10) => {
+  console.log(`Selected Index: ${selectedIndex}`); // Debugging: Log indeks yang dipilih
+
   if (selectedIndex < 0 || selectedIndex >= data.length) {
+    console.error(`Error: Indeks ${selectedIndex} tidak valid.`); // Debugging: Log jika indeks tidak valid
     throw new Error(`Indeks ${selectedIndex} tidak valid.`);
   }
-};
 
-const showProductsDetailsByBrand = (data, selectedIndex, nClusters = 60, topN = 10) => {
-  validateIndex(data, selectedIndex);
-
+  // Proses clustering dan pencarian produk serupa di sini
   const referenceProduct = data[selectedIndex];
   const features = data.map(row => [parseFloat(row['Shade']), row['Tone'], row['Season 1 Name'], row['Type']]);
 
@@ -63,6 +69,7 @@ const showProductsDetailsByBrand = (data, selectedIndex, nClusters = 60, topN = 
   const clusterLabel = data[selectedIndex]['Cluster'];
   const similarProducts = data.filter(row => row['Cluster'] === clusterLabel);
 
+  // Kembalikan hasilnya
   const referenceFeatures = features[selectedIndex];
   const similarities = similarProducts.map(product => {
     const productFeatures = features[data.indexOf(product)];
@@ -94,7 +101,8 @@ const showProductsDetailsByBrand = (data, selectedIndex, nClusters = 60, topN = 
     topSimilarities.push(similarity);
   });
 
+
   return { topSimilarities, brandCounts, referenceProduct };
 };
 
-module.exports = { readFileFromGCS, showProductsDetailsByBrand }; 
+module.exports = { readFileFromGCS, showProductsDetailsByBrand };
