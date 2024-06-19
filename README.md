@@ -524,7 +524,6 @@
   - `Content-Type` : `multipart/form-data`
 - **Request Body** :
   - `name` as `string` - `Product Title`
-  - `season` as `string` - `Season Name`
 - **Response** :
   
    ```json
@@ -532,6 +531,7 @@
     "error": false,
     "status": "success",
     "data": {
+        "Index": 0,
         "Image": "https://hanasui.id/front-end/assets/img/product_image/bf83c7d933d5f63108fb3b2c327f8cf3.png",
         "Brand": "hanasui",
         "Product Title": "Hanasui Mattedorable Lip Cream 03 Star",
