@@ -412,7 +412,7 @@
 ```
 
 
-### Predict Histori
+### Predict History
 - **URL** : `/predict/history`
 - **Method** : `GET`
 - **Auth required** : `YES`
@@ -523,7 +523,10 @@
 - **Request Header**:
   - `Content-Type` : `multipart/form-data`
 - **Request Body** :
-  - `name` as `string` - `Product Title`
+  - `product_title` as `string` - `Product Title`
+  - `type` as `string` - `Type`
+  - `brand` as `string` - `Brand`
+  - `variant_name` as `string` - `Variant Name`
 - **Response** :
   
    ```json
@@ -561,23 +564,29 @@
   {
     "error": false,
     "status": "success",
-    "data": {
-        "Image": "https://hanasui.id/front-end/assets/img/product_image/bf83c7d933d5f63108fb3b2c327f8cf3.png",
-        "Brand": "hanasui",
-        "Product Title": "Hanasui Mattedorable Lip Cream 03 Star",
-        "Variant Name": "03 Star",
+    "product": {
+        "Brand": "wardah",
+        "Product Title": "Matte Lip Cream",
+        "Variant Name": "Feeling Red",
+        "Shade": "7",
+        "Tone": Medium,
+        "Color HEX": "d22e30",
+        "Season 1 Name": "autumn warm",
         "Type": "lip",
-        "Color Hex": "#e64468",
-        "Color RGB": "(230, 68, 104)",
-        "Season 1 Name": "spring warm",
-        "Season 1 Percent": 50.09388903027193,
-        "S1 Closest Color": "[251.0, 95.0, 87.0]",
-        "Season 2 Name": "summer cool ",
-        "Season 2 Percent": 49.90611096972805,
-        "S2 Closest Color": "[208.0, 49.0, 79.0]",
-        "Product URL": "https://hanasui.id/makeup/lip_cream"
-    }
-  }
+    },
+  "similarProducts": [
+      {
+        "Brand": "wardah",
+        "Product Title": "Matte Lip Cream",
+        "Type": "lip",
+        "Variant Name": "Feeling Red",
+        "Shade": "7",
+        "Tone": Medium,
+        "Color HEX": "d22e30",
+        "Season 1 Name": "autumn warm",
+        "Similarity": 1
+       }, 
+  ]
 
 ## Community
 ### Add Post
