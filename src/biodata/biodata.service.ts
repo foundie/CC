@@ -212,14 +212,27 @@ export class BiodataService {
       .collection('groupMemberships')
       .where('email', '==', email)
       .get();
-    const groups = groupMembershipsSnapshot.docs.map((doc) => {
-      const groupData = doc.data();
-      // Konversi timestamp untuk setiap keanggotaan grup
-      groupData.joinedAt = convertTimestampToDate(
-        groupData.joinedAt as Timestamp,
-      );
-      return groupData;
-    });
+    const groups = await Promise.all(
+      groupMembershipsSnapshot.docs.map(async (doc) => {
+        const groupData = doc.data();
+        groupData.joinedAt = convertTimestampToDate(
+          groupData.joinedAt as Timestamp,
+        );
+
+        const groupId = groupData.groupId;
+        const groupSnapshot = await this.db
+          .collection('groups')
+          .doc(groupId)
+          .get();
+        if (groupSnapshot.exists) {
+          const groupInfo = groupSnapshot.data();
+          groupData.title = groupInfo.title;
+          groupData.profilePictureUrl = groupInfo.profileImageUrl;
+        }
+
+        return groupData;
+      }),
+    );
 
     const followersSnapshot = await this.db
       .collection('follows')
