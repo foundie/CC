@@ -299,12 +299,16 @@
             {
                 "groupId": "kZ5xRRLTUGpPIiarYshX",
                 "email": "test@api.com",
-                "joinedAt": "09-06-2024 09:37"
+                "joinedAt": "09-06-2024 09:37".
+                "title": "TEST GROUP API ",
+                "profilePictureUrl": "https://storage.googleapis.com/storage-foundie/groups/"
             },
             {
                 "groupId": "rW7AcqwrnsPncg6f02xB",
                 "email": "test@api.com",
-                "joinedAt": "09-06-2024 09:37"
+                "joinedAt": "09-06-2024 09:37",
+                "title": "TEST GROUP API EDITED",
+                "profilePictureUrl": "https://storage.googleapis.com/storage-foundie/groups/"
             }
         ],
     },
