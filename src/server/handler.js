@@ -37,6 +37,7 @@ const compareProduct = async (request, h) => {
         error: false,
         status: "success",
         product: {
+          "Image": referenceProduct['Image URL'],
           "Brand": referenceProduct['Brand'],
           "Product Title": referenceProduct['Product Title'],
           "Variant Name": referenceProduct['Variant Name'],

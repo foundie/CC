@@ -93,6 +93,7 @@ const showProductsDetailsByBrand = (data, selectedIndex, reverseToneMapping, rev
     const similarity = 1 / (1 + distance);
 
     return {
+      "Image": product['Image URL'],
       "Brand": product['Brand'],
       "Product Title": product['Product Title'],
       "Type": reverseTypeMapping[product['Type']],
