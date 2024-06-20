@@ -396,24 +396,40 @@
     "status": 200,
     "message": "Color analysis successfully completed",
     "data": {
-        "dominantCharacteristic": "cool",
-        "secondaryCharacteristic": "light",
-        "colorSeason": "Winter Cool",
+        "dominantCharacteristic": "Cool",
+        "secondaryCharacteristic": "Dark",
+        "colorSeason": "Summer Cool",
         "seasonCompatibilityPercentages": {
-            "Autumn Deep": 4,
-            "Winter Deep": 11,
-            "Spring Light": 6,
-            "Summer Light": 13,
-            "Autumn Soft": 4,
-            "Summer Soft": 11,
-            "Spring Clear": 6,
-            "Winter Clear": 13,
-            "Autumn Warm": 3,
-            "Spring Warm": 4,
-            "Summer Cool": 13,
-            "Winter Cool": 14
+            "Autumn Deep": 8,
+            "Winter Deep": 15,
+            "Spring Light": 2,
+            "Summer Light": 9,
+            "Autumn Soft": 8,
+            "Summer Soft": 15,
+            "Spring Clear": 2,
+            "Winter Clear": 9,
+            "Autumn Warm": 5,
+            "Spring Warm": 1,
+            "Summer Cool": 15,
+            "Winter Cool": 11
         },
-        "type": "color analysis"
+        "description": "Tips for Choosing Colors: Select serene, calm colors like cool blues, soft pinks, and muted purples. Jewelry: Silver and white gold pieces suit your cool tones. Hair Colors: Ash blonde, light brown, or cool-toned highlights. Lipstick Colors: Opt for cool, soft shades like rose or soft berry.",
+        "seasonImage": "https://storage.googleapis.com/storage-foundie/data/images/season/Summer%20Cool.png",
+        "palette": [
+            "#E9738D",
+            "#99AEAE",
+            "#99888D",
+            "#697A7E",
+            "#646093",
+            "#48457A",
+            "#918C86",
+            "#73606A",
+            "#62BBC5",
+            "#226C63",
+            "#1F6680",
+            "#16525A"
+        ],
+        "type": "Color Analysis"
     },
     "error": false
 }
