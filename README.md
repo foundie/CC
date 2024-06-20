@@ -600,6 +600,7 @@
     },
   "similarProducts": [
       {
+        "Image": "https://hanasui.id/front-end/assets/img/product_image/bf83c7d933d5f63108fb3b2c327f8cf3.png",
         "Brand": "wardah",
         "Product Title": "Matte Lip Cream",
         "Type": "lip",
