@@ -254,7 +254,7 @@
             "gender": "hexadesimal",
             "phone": "123456789",
             "location": "",
-            "profileImageUrl": "https://storage.googleapis.com/storage-foundie/",
+            "profilePictureUrl": "https://storage.googleapis.com/storage-foundie/",
             "name": "TES API",
             "coverImageUrl": "https://storage.googleapis.com/storage-foundie/",
             "followersCount": 1,
@@ -275,7 +275,9 @@
                 "timestamp": "09-06-2024 09:40"
                 "imageUrls": [
                     "https://storage.googleapis.com/storage-foundie/user/"
-                ]
+                ],
+                "profilePictureUrl": "https://storage.googleapis.com/storage-foundie/",
+                "name": "TES API",
             },
             {
                 "groupPost": true,
@@ -288,7 +290,9 @@
                 "text": "LOREM IPMSUM",
                 "title": "TEST GROUP API POST",
                 "email": "test@api.com",
-                "timestamp": "09-06-2024 09:40"
+                "timestamp": "09-06-2024 09:40",
+                "profilePictureUrl": "https://storage.googleapis.com/storage-foundie/",
+                "name": "TES API",
             }
         ],
         "groups": [
