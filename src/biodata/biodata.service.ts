@@ -200,6 +200,11 @@ export class BiodataService {
       postData.timestamp = convertTimestampToDate(
         postData.timestamp as Timestamp,
       );
+
+      // Tambahkan nama dan URL gambar profil ke setiap post
+      postData.name = userData.name;
+      postData.profilePictureUrl = userData.profilePictureUrl;
+
       return postData;
     });
 
