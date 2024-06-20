@@ -2,6 +2,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ColorAnalysisDto } from './dto/color-analysis.dto';
 import * as admin from 'firebase-admin';
+import {
+  seasonDescriptions,
+  seasonImage,
+  seasonPalettes,
+} from '../utils/color.data';
 
 @Injectable()
 export class ColorAnalysisService {
@@ -233,6 +238,15 @@ export class ColorAnalysisService {
         characteristics,
       );
 
+      // Mendapatkan URL gambar musim berdasarkan colorSeason
+      const seasonImageURL = seasonImage[season];
+
+      // Mendapatkan deskripsi musim berdasarkan colorSeason
+      const seasonDescription = seasonDescriptions[season];
+
+      // Mendapatkan palet warna musim berdasarkan colorSeason
+      const seasonPalette = seasonPalettes[season];
+
       const analysisResult = {
         status: HttpStatus.OK,
         message: 'Color analysis successfully completed',
@@ -241,6 +255,9 @@ export class ColorAnalysisService {
           secondaryCharacteristic: this.capitalizeFirstLetter(secondary),
           colorSeason: this.capitalizeFirstLetter(season),
           seasonCompatibilityPercentages: seasonPercentages,
+          description: seasonDescription,
+          seasonImage: seasonImageURL,
+          palette: seasonPalette,
           type: 'Color Analysis',
         },
         error: false,
