@@ -1,8 +1,7 @@
-Flask==3.0.3
-gunicorn==20.1.0  # Contoh versi, sesuaikan dengan versi yang kompatibel dengan Flask Anda
-numpy==1.24.3
-Pillow==10.3.0
-opencv-python-headless==4.10.0
-torch==2.3.0+cu121
-torchvision==0.18.0+cu121
-tensorflow==2.13.1
+Flask==3.1.0
+numpy==1.26.3
+opencv-python==4.11.0.86
+Pillow==11.1.0
+tensorflow==2.15.0
+torch==2.1.2
+torchvision==0.16.2
